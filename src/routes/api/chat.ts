@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-type ChatMsg = { role: "user" | "assistant"; content: string };
+type Att = { name: string; type: string; data: string };
+type ChatMsg = { role: "user" | "assistant"; content: string; attachments?: Att[] };
 
 const SYSTEM = "You are the AI Smart Tutor for Tourism Workforce 2031, a tourism and hospitality workforce-readiness platform in Zimbabwe. Give practical, concise, guest-centred guidance. Current tutor mode and learner context are provided below.";
 
@@ -25,7 +26,20 @@ export const Route = createFileRoute("/api/chat")({
         if (!Array.isArray(body.messages)) return new Response("Messages are required", { status: 400 });
         const messages = [
           { role: "system", content: `${MODULE_SYSTEM[String(body.module)] ?? SYSTEM}\nContext gathered from the learner:\n${String(body.context ?? "").slice(0, 2000)}` },
-          ...body.messages.slice(-30).map((m) => ({ role: m.role === "assistant" ? "assistant" : "user", content: String(m.content).slice(0, 4000) })),
+          ...body.messages.slice(-30).map((m) => {
+            const role = m.role === "assistant" ? "assistant" : "user";
+            const text = String(m.content).slice(0, 4000);
+            const atts = role === "user" && Array.isArray(m.attachments) ? m.attachments.slice(0, 5) : [];
+            if (!atts.length) return { role, content: text };
+            const parts: unknown[] = [{ type: "text", text: text || "Please look at the attached file." }];
+            for (const a of atts) {
+              const data = String(a.data);
+              if (!data.startsWith("data:") || data.length > 8_000_000) continue;
+              if (String(a.type).startsWith("image/")) parts.push({ type: "image_url", image_url: { url: data } });
+              else if (a.type === "application/pdf") parts.push({ type: "file", file: { filename: String(a.name).slice(0, 120), file_data: data } });
+            }
+            return { role, content: parts };
+          }),
         ];
         const upstream = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",

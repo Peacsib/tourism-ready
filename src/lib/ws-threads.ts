@@ -1,6 +1,6 @@
 import type { CardKind, WorkspaceId } from "./workspaces";
 
-export type WsMessage = { id: string; role: "user" | "assistant"; content: string; card?: CardKind };
+export type WsMessage = { id: string; role: "user" | "assistant"; content: string; card?: CardKind; files?: string[] };
 export type WsThread = { id: string; module: WorkspaceId; title: string; focus: string; mode?: string; updatedAt: number; messages: WsMessage[] };
 
 const key = (uid: string) => `tw2031-ws-threads-${uid}`;
