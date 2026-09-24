@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, Bot, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, Meter, Panel, ReadinessPath, Signal, StatePill, Tag } from "@/components/tw/motifs";
 import { ARTICLES, COURSES, TRENDS, type RoleId } from "@/lib/data";
