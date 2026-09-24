@@ -34,7 +34,7 @@ function Onboarding() {
     const f = focus?.trim().slice(0, 120);
     if (!user || !f) return;
     const id = newId();
-    upsertThread(user.id, { id, module: w.id, title: `${f} session`, focus: f, updatedAt: Date.now(), messages: [] });
+    upsertThread(user.id, { id, module: w.id, title: f === "Open topic" ? "New chat" : `${f} session`, focus: f, updatedAt: Date.now(), messages: [] });
     navigate({ to: "/app/ws/$module/$threadId", params: { module: w.id, threadId: id } });
   };
 
