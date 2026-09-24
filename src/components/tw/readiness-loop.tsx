@@ -28,11 +28,12 @@ export function ReadinessLoop({ pathname }: { pathname: string }) {
         <p className="eyebrow text-cyan">Your readiness loop</p>
         {gap ? (
           <p className="mt-1 text-sm">
-            Biggest skills gap: <span className="font-medium">{gap.name}</span>{" "}
+            Biggest skills gap: <Link to="/app/tutor" search={{ skill: gap.id }} className="font-medium underline decoration-dotted hover:text-gold" title="Ask the AI Tutor about this skill">{gap.name}</Link>{" "}
             <span className="text-muted-foreground">({gap.state} · {gap.level}%)</span>
             {sim && <> · practise it in <Link to="/app/simulations/$id" params={{ id: sim.id }} className="font-medium text-gold hover:underline">{sim.title}</Link></>}
           </p>
         ) : <p className="mt-1 text-sm">All passport skills are verified.</p>}
+        {gap && <Link to="/app/tutor" search={{ skill: gap.id }} className="mt-1 inline-block text-xs font-medium text-cyan hover:underline">Work on this with the AI Tutor →</Link>}
         <p className="mt-1 text-xs text-muted-foreground">Next: {next.why}.</p>
       </div>
       <Link to={next.to} className="inline-flex items-center justify-center gap-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors hover:border-gold/50 hover:text-gold">

@@ -1,3 +1,7 @@
+import { Link } from "@tanstack/react-router";
+import { ArrowRight as ArrowRightIcon2 } from "lucide-react";
+import { StatePill as StatePill2 } from "@/components/tw/motifs";
+import { useApp } from "@/lib/store";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowUpRight, Bookmark, BookmarkCheck, FileText } from "lucide-react";
@@ -14,6 +18,7 @@ export const Route = createFileRoute("/app/intelligence")({
 });
 
 function Intelligence() {
+  const { competencies } = useApp();
   const [trend, setTrend] = useState(TRENDS[0]!.id);
   const [open, setOpen] = useState<Article | null>(null);
   const [saved, setSaved] = useState<string[]>([]);
@@ -53,6 +58,22 @@ function Intelligence() {
             <div className="mt-6 border-t pt-4">
               <p className="eyebrow text-gold">Why it matters</p>
               <p className="mt-2">{t.impact}</p>
+            </div>
+            <div className="mt-6 border-t pt-4">
+              <p className="eyebrow text-cyan">Related skills in your passport</p>
+              <ul className="mt-3 space-y-2">
+                {t.skills.map((sid) => {
+                  const c = competencies.find((x) => x.id === sid);
+                  if (!c) return null;
+                  return (
+                    <li key={sid} className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                      <span className="flex items-center gap-2"><span className="font-medium">{c.name}</span><StatePill2 state={c.state} /></span>
+                      <Link to="/app/tutor" search={{ skill: c.id }} className="inline-flex items-center gap-1 text-xs font-medium text-gold hover:underline">Develop this skill <ArrowRightIcon2 className="h-3 w-3" /></Link>
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="mt-3 text-[11px] text-muted-foreground">Momentum figures are demonstration data.</p>
             </div>
           </div>
         </div>
