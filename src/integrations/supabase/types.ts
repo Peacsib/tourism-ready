@@ -100,15 +100,195 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          app_state: Json
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          goal: string | null
+          headline: string | null
+          id: string
+          location: string | null
+          organisation: string | null
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          app_state?: Json
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          goal?: string | null
+          headline?: string | null
+          id: string
+          location?: string | null
+          organisation?: string | null
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          app_state?: Json
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          goal?: string | null
+          headline?: string | null
+          id?: string
+          location?: string | null
+          organisation?: string | null
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sim_attempts: {
+        Row: {
+          added_to_passport: boolean
+          competencies: Json
+          created_at: string
+          id: string
+          scores: Json
+          sim_id: string
+          taken_on: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          added_to_passport?: boolean
+          competencies?: Json
+          created_at?: string
+          id: string
+          scores?: Json
+          sim_id: string
+          taken_on?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          added_to_passport?: boolean
+          competencies?: Json
+          created_at?: string
+          id?: string
+          scores?: Json
+          sim_id?: string
+          taken_on?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_competencies: {
+        Row: {
+          category: string
+          competency_id: string
+          level: number
+          links: Json
+          name: string
+          state: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          competency_id: string
+          level?: number
+          links?: Json
+          name: string
+          state?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          competency_id?: string
+          level?: number
+          links?: Json
+          name?: string
+          state?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_timeline: {
+        Row: {
+          created_at: string
+          detail: string | null
+          entry_date: string | null
+          id: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: string | null
+          entry_date?: string | null
+          id: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          detail?: string | null
+          entry_date?: string | null
+          id?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role:
+        | "student"
+        | "professional"
+        | "employer"
+        | "educator"
+        | "entrepreneur"
+        | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -235,6 +415,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: [
+        "student",
+        "professional",
+        "employer",
+        "educator",
+        "entrepreneur",
+        "admin",
+      ],
+    },
   },
 } as const
