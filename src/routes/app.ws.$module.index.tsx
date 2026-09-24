@@ -107,22 +107,15 @@ function Onboarding() {
                       </span>
                     </button>
                   ))}
-                  <div className={cn("fade-up rounded-2xl border border-dashed px-5 py-4 transition-all", own ? "border-gold bg-gold/10 shadow-md" : "bg-background hover:border-foreground/25")}
+                  <button onClick={() => { setOwn(true); setFocus("Open topic"); }}
+                    className={cn("fade-up flex w-full items-center justify-between rounded-2xl border border-dashed px-5 py-4 text-left transition-all",
+                      own ? "border-gold bg-gold/10 shadow-md" : "bg-background hover:-translate-y-0.5 hover:border-foreground/25 hover:shadow-sm")}
                     style={{ animationDelay: `${w.chips.length * 70}ms` }}>
-                    <button onClick={() => { setOwn(true); setFocus(custom.trim() || null); }} className="flex w-full items-center justify-between text-left">
-                      <span className="flex items-center gap-2 font-medium"><PenLine className="h-4 w-4 text-cyan" /> I have my own topic</span>
-                      <span className={cn("flex h-5 w-5 items-center justify-center rounded-full border", own && custom.trim() ? "border-gold bg-gold text-background" : "")}>
-                        {own && custom.trim() && <Check className="h-3 w-3" />}
-                      </span>
-                    </button>
-                    {own && (
-                      <input autoFocus value={custom} maxLength={120}
-                        onChange={(e) => { setCustom(e.target.value); setFocus(e.target.value.trim() || null); }}
-                        onKeyDown={(e) => { if (e.key === "Enter" && custom.trim()) start(); }}
-                        placeholder="e.g. Safari guiding in Hwange, wine pairing, tour pricing…"
-                        className="mt-3 w-full rounded-xl border bg-background px-4 py-3 text-sm outline-none focus:border-gold focus:ring-2 focus:ring-gold/30" />
-                    )}
-                  </div>
+                    <span className="flex items-center gap-2 font-medium"><PenLine className="h-4 w-4 text-cyan" /> I have my own topic</span>
+                    <span className={cn("flex h-5 w-5 items-center justify-center rounded-full border transition-colors", own ? "border-gold bg-gold text-background" : "")}>
+                      {own && <Check className="h-3 w-3" />}
+                    </span>
+                  </button>
                 </div>
                 <div className="mt-auto flex gap-3 pt-10">
                   <Button variant="ghost" size="lg" onClick={() => setStep(0)}>Back</Button>
