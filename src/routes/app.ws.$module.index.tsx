@@ -1,6 +1,6 @@
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, PenLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isWorkspaceId, WORKSPACES } from "@/lib/workspaces";
 import { newId, upsertThread } from "@/lib/ws-threads";
@@ -27,11 +27,14 @@ function Onboarding() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [focus, setFocus] = useState<string | null>(null);
+  const [own, setOwn] = useState(false);
+  const [custom, setCustom] = useState("");
 
   const start = () => {
-    if (!user || !focus) return;
+    const f = focus?.trim().slice(0, 120);
+    if (!user || !f) return;
     const id = newId();
-    upsertThread(user.id, { id, module: w.id, title: `${focus} session`, focus, updatedAt: Date.now(), messages: [] });
+    upsertThread(user.id, { id, module: w.id, title: `${f} session`, focus: f, updatedAt: Date.now(), messages: [] });
     navigate({ to: "/app/ws/$module/$threadId", params: { module: w.id, threadId: id } });
   };
 
@@ -94,16 +97,32 @@ function Onboarding() {
                 <h2 className="mt-2 font-display text-3xl font-semibold leading-tight">{w.chipQuestion}</h2>
                 <div className="mt-6 space-y-3">
                   {w.chips.map((c, i) => (
-                    <button key={c} onClick={() => setFocus(c)}
+                    <button key={c} onClick={() => { setOwn(false); setFocus(c); }}
                       className={cn("fade-up flex w-full items-center justify-between rounded-2xl border px-5 py-4 text-left transition-all",
-                        focus === c ? "border-gold bg-gold/10 shadow-md" : "bg-background hover:-translate-y-0.5 hover:border-foreground/25 hover:shadow-sm")}
+                        !own && focus === c ? "border-gold bg-gold/10 shadow-md" : "bg-background hover:-translate-y-0.5 hover:border-foreground/25 hover:shadow-sm")}
                       style={{ animationDelay: `${i * 70}ms` }}>
                       <span className="font-medium">{c}</span>
-                      <span className={cn("flex h-5 w-5 items-center justify-center rounded-full border transition-colors", focus === c ? "border-gold bg-gold text-background" : "")}>
-                        {focus === c && <Check className="h-3 w-3" />}
+                      <span className={cn("flex h-5 w-5 items-center justify-center rounded-full border transition-colors", !own && focus === c ? "border-gold bg-gold text-background" : "")}>
+                        {!own && focus === c && <Check className="h-3 w-3" />}
                       </span>
                     </button>
                   ))}
+                  <div className={cn("fade-up rounded-2xl border border-dashed px-5 py-4 transition-all", own ? "border-gold bg-gold/10 shadow-md" : "bg-background hover:border-foreground/25")}
+                    style={{ animationDelay: `${w.chips.length * 70}ms` }}>
+                    <button onClick={() => { setOwn(true); setFocus(custom.trim() || null); }} className="flex w-full items-center justify-between text-left">
+                      <span className="flex items-center gap-2 font-medium"><PenLine className="h-4 w-4 text-cyan" /> I have my own topic</span>
+                      <span className={cn("flex h-5 w-5 items-center justify-center rounded-full border", own && custom.trim() ? "border-gold bg-gold text-background" : "")}>
+                        {own && custom.trim() && <Check className="h-3 w-3" />}
+                      </span>
+                    </button>
+                    {own && (
+                      <input autoFocus value={custom} maxLength={120}
+                        onChange={(e) => { setCustom(e.target.value); setFocus(e.target.value.trim() || null); }}
+                        onKeyDown={(e) => { if (e.key === "Enter" && custom.trim()) start(); }}
+                        placeholder="e.g. Safari guiding in Hwange, wine pairing, tour pricing…"
+                        className="mt-3 w-full rounded-xl border bg-background px-4 py-3 text-sm outline-none focus:border-gold focus:ring-2 focus:ring-gold/30" />
+                    )}
+                  </div>
                 </div>
                 <div className="mt-auto flex gap-3 pt-10">
                   <Button variant="ghost" size="lg" onClick={() => setStep(0)}>Back</Button>
