@@ -162,11 +162,11 @@ export type Article = {
 };
 
 export const TRENDS = [
-  { id: "ai", name: "AI in hospitality", momentum: 92, change: "+18%", note: "Chat-based guest service and AI-assisted reservations are becoming standard in regional hotel groups.", impact: "Front-office staff increasingly supervise AI tools rather than replace them." },
-  { id: "dcx", name: "Digital customer experience", momentum: 84, change: "+11%", note: "Mobile check-in, WhatsApp concierge and digital payments now shape first impressions.", impact: "Guest communication skills now extend to digital channels." },
-  { id: "auto", name: "Automation", momentum: 71, change: "+7%", note: "Channel managers and automated rate updates reduce manual reservation work.", impact: "Accuracy shifts from data entry to system oversight." },
-  { id: "sus", name: "Sustainable tourism", momentum: 78, change: "+9%", note: "Visitors and operators prioritise community benefit, conservation and low-impact travel.", impact: "Guides and managers need to communicate sustainability credibly." },
-  { id: "emerging", name: "Emerging tourism tech", momentum: 63, change: "+14%", note: "Virtual previews, smart-room controls and data-driven destination marketing are emerging.", impact: "Early exposure creates a clear competitive advantage for graduates." },
+  { id: "ai", skills: ["aiprompt","comm","pms"], name: "AI in hospitality", momentum: 92, change: "+18%", note: "Chat-based guest service and AI-assisted reservations are becoming standard in regional hotel groups.", impact: "Front-office staff increasingly supervise AI tools rather than replace them." },
+  { id: "dcx", skills: ["comm","aiprompt","mkt"], name: "Digital customer experience", momentum: 84, change: "+11%", note: "Mobile check-in, WhatsApp concierge and digital payments now shape first impressions.", impact: "Guest communication skills now extend to digital channels." },
+  { id: "auto", skills: ["pms","res"], name: "Automation", momentum: 71, change: "+7%", note: "Channel managers and automated rate updates reduce manual reservation work.", impact: "Accuracy shifts from data entry to system oversight." },
+  { id: "sus", skills: ["dest","itin"], name: "Sustainable tourism", momentum: 78, change: "+9%", note: "Visitors and operators prioritise community benefit, conservation and low-impact travel.", impact: "Guides and managers need to communicate sustainability credibly." },
+  { id: "emerging", skills: ["mkt","aiprompt"], name: "Emerging tourism tech", momentum: 63, change: "+14%", note: "Virtual previews, smart-room controls and data-driven destination marketing are emerging.", impact: "Early exposure creates a clear competitive advantage for graduates." },
 ];
 
 export const ARTICLES: Article[] = [
