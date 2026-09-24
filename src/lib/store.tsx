@@ -1,5 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { COMPETENCIES, PERSONAS, POSTS, TIMELINE_SEED, type Competency, type Persona, type Post, type RoleId } from "./data";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { COMPETENCIES, PERSONAS, POSTS, ROLES, TIMELINE_SEED, type Competency, type Persona, type Post, type RoleId } from "./data";
+import { initialsOf, useAuth } from "./auth";
+import { loadCloudState, saveCloudState, type CloudState } from "./cloud-sync";
 
 export type Notification = { id: string; text: string; time: string; read: boolean; to: string };
 export type TimelineEntry = { id: string; type: string; title: string; detail: string; date: string; fresh?: boolean };
