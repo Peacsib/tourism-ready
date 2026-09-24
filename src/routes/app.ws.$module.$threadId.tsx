@@ -104,7 +104,7 @@ function ChatCanvas({ w, thread, onChange, sidebarOpen, openSidebar }: { w: Work
   useEffect(() => { if (!busy) taRef.current?.focus(); }, [busy]);
 
   const context = [
-    `Workspace: ${w.label}. Session focus chosen during onboarding: ${thread.focus}. Active mode: ${mode}.`,
+    `Workspace: ${w.label}. ${thread.focus === "Open topic" ? "No preset focus — the user brings their own topic; follow their lead." : `Session focus chosen during onboarding: ${thread.focus}.`} Active mode: ${mode}.`,
     `Learner: ${persona.name} (${persona.role}). Goal: ${persona.goal}.`,
     `Skills: ${competencies.map((c) => `${c.name} ${c.state} ${c.level}%`).join("; ")}`,
   ].join("\n");
@@ -177,7 +177,7 @@ function ChatCanvas({ w, thread, onChange, sidebarOpen, openSidebar }: { w: Work
             <div className="pt-[12vh] text-center">
               <div className="flex justify-center"><AgentMark w={w} size="lg" /></div>
               <p className="eyebrow mt-4">{w.agent}</p>
-              <h2 className="mt-2 font-display text-2xl font-semibold">How can I help with {thread.focus}?</h2>
+              <h2 className="mt-2 font-display text-2xl font-semibold">{thread.focus === "Open topic" ? "What would you like to explore?" : `How can I help with ${thread.focus}?`}</h2>
               <p className="mt-2 text-sm text-muted-foreground">{w.welcomeBody}</p>
             </div>
           ) : (
