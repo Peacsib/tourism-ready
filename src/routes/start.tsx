@@ -97,7 +97,7 @@ function Start() {
         <div className="mt-20 rounded-3xl border bg-card/60 p-6 md:p-8">
           <div className="flex flex-col justify-between gap-2 md:flex-row md:items-end">
             <div>
-              <p className="eyebrow text-cyan">Demo mode</p>
+              <p className="eyebrow text-cyan">Quick start</p>
               <h2 className="mt-2 text-xl font-semibold">Enter instantly as a sample persona</h2>
             </div>
             <p className="text-sm text-muted-foreground">Sample starting points. Your own name and progress stay on your account.</p>
