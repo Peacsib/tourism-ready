@@ -126,10 +126,59 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (hydrated) localStorage.setItem(KEY, JSON.stringify(state));
   }, [state, hydrated]);
 
-  const persona = useMemo(() => {
-    const p = PERSONAS.find((x) => x.id === state.personaId) ?? PERSONAS[0]!;
-    return state.role ? { ...p, role: state.role } : p;
-  }, [state.personaId, state.role]);
+  // Load this member's passport from the cloud, or seed the cloud on first sign-in.
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!user?.id) {
+      setCloudReady(false);
+      return;
+    }
+    const id = user.id;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const cloud = await loadCloudState(id);
+        if (cancelled) return;
+        if (cloud) setState((s) => ({ ...s, ...cloud }));
+        else await saveCloudState(id, toCloud(stateRef.current));
+      } catch {
+        /* offline or blocked: keep working from this device */
+      }
+      if (!cancelled) setCloudReady(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [hydrated, user?.id]);
+
+  // Keep the cloud in step with changes made on this device.
+  useEffect(() => {
+    if (!cloudReady || !user?.id) return;
+    const id = user.id;
+    const t = setTimeout(() => {
+      void saveCloudState(id, toCloud(state)).catch(() => {});
+    }, 900);
+    return () => clearTimeout(t);
+  }, [state, cloudReady, user?.id]);
+
+  const persona = useMemo<Persona>(() => {
+    const base = PERSONAS.find((x) => x.id === state.personaId) ?? PERSONAS[0]!;
+    const role = (state.role ?? (profile?.role as RoleId | undefined) ?? base.role) as RoleId;
+    if (!profile) return { ...base, role };
+    const name = profile.full_name?.trim() || profile.email?.split("@")[0] || "Member";
+    return {
+      id: profile.id,
+      name,
+      firstName: name.split(" ")[0] ?? name,
+      role,
+      title: profile.headline?.trim() || ROLES.find((r) => r.id === role)?.label || base.title,
+      organisation: profile.organisation?.trim() || base.organisation,
+      location: profile.location?.trim() || base.location,
+      initials: initialsOf(name),
+      statement: profile.bio?.trim() || base.statement,
+      goal: profile.goal?.trim() || base.goal,
+    };
+  }, [state.personaId, state.role, profile]);
 
   const notify = useCallback((text: string, to: string) => {
     setState((s) => ({ ...s, notifications: [{ id: uid(), text, time: "now", read: false, to }, ...s.notifications] }));
