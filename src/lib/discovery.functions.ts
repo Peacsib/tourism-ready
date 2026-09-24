@@ -36,7 +36,7 @@ export const discoverProfessionals = createServerFn({ method: "POST" })
     });
     if (!res.ok) {
       console.error(`Apollo search failed [${res.status}]: ${await res.text()}`);
-      return { people: [], error: res.status === 403 ? "The connected Apollo account can't search people yet." : "Discovery is temporarily unavailable." };
+      return { people: [], error: res.status === 403 ? "Industry discovery needs a paid Apollo plan. Showing platform members only for now." : "Discovery is temporarily unavailable." };
     }
     const body = (await res.json()) as { people?: Record<string, any>[] };
     const people = (body.people ?? []).map((p): DiscoveredPerson => {
