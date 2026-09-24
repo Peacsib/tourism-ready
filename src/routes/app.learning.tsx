@@ -18,7 +18,7 @@ function Learning() {
   const [cat, setCat] = useState("All");
   const list = COURSES.filter((c) => cat === "All" || c.category === cat);
   const prog = (id: string, base: number) => courseProgress[id] ?? base;
-  const current = COURSES[0];
+  const current = COURSES[0]!;
   const cp = prog(current.id, current.progress);
 
   const cont = (id: string, base: number, title: string, modules: number) => {

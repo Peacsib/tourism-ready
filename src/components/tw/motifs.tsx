@@ -100,8 +100,8 @@ export function SkillsConstellation({
               key={n.id + l}
               x1={n.x}
               y1={n.y}
-              x2={byId[l].x}
-              y2={byId[l].y}
+              x2={byId[l]!.x}
+              y2={byId[l]!.y}
               className={cn("stroke-foreground/10 transition-all", (selected === n.id || selected === l) && "stroke-gold/60")}
               strokeWidth={0.25}
             />

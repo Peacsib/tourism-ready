@@ -12,7 +12,7 @@ export const Route = createFileRoute("/app/help")({
   component: Help,
 });
 
-const FAQ = [
+const FAQ: [string, string][] = [
   ["How does a skill become 'Verified'?", "Complete a simulation, review the AI feedback and add it to your Skills Passport. Repeated strong performance moves a skill from Developing → Practising → Demonstrated → Verified."],
   ["Who can see my Skills Passport?", "Your connections and employers you apply to. You can share a link or download a copy at any time."],
   ["Is the AI Tutor always available?", "Yes. The tutor works in every session and adapts to your role, goal and recent simulation results."],

@@ -30,7 +30,7 @@ function Opportunities() {
   const list = useMemo(() => OPPORTUNITIES.filter((o) =>
     (f.type === "all" || o.type === f.type) && (f.location === "all" || o.location === f.location) &&
     (f.skill === "all" || o.skills.includes(f.skill)) && (f.experience === "all" || o.experience === f.experience) &&
-    (f.role === "all" || roleMatch[f.role].test(o.title + " " + o.description)),
+    (f.role === "all" || roleMatch[f.role]!.test(o.title + " " + o.description)),
   ).sort((a, b) => b.match - a.match), [f]);
 
   const active = Object.values(f).some((v) => v !== "all");

@@ -24,7 +24,7 @@ function Simulations() {
   const [cat, setCat] = useState<SimCategory | "All">("All");
   const { attempts } = useApp();
   const list = SIMULATIONS.filter((s) => cat === "All" || s.category === cat);
-  const featured = SIMULATIONS[0];
+  const featured = SIMULATIONS[0]!;
 
   return (
     <div>

@@ -124,7 +124,7 @@ function Overview() {
           </ul>
           <Link to="/app/intelligence" className="mt-6 block rounded-xl border bg-surface-2/50 p-4 transition-colors hover:border-foreground/20">
             <p className="eyebrow">Latest brief</p>
-            <p className="mt-2 text-sm font-medium">{ARTICLES[0].title}</p>
+            <p className="mt-2 text-sm font-medium">{ARTICLES[0]!.title}</p>
           </Link>
         </Panel>
         <Panel>
@@ -153,7 +153,7 @@ function Overview() {
 
 function RoleFocus({ role }: { role: RoleId }) {
   if (role === "employer") {
-    const candidates = PEOPLE.filter((p) => ["Graduate", "Student"].includes(p.type)).concat(PEOPLE[7]);
+    const candidates = PEOPLE.filter((p) => ["Graduate", "Student"].includes(p.type)).concat(PEOPLE[7]!);
     return (
       <Panel>
         <p className="eyebrow">Candidate discovery</p>

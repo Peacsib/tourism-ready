@@ -139,7 +139,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const avg = Math.round(att.scores.reduce((t, x) => t + x.value, 0) / att.scores.length);
         const boost = Math.max(4, Math.round(avg / 8));
         const competencies = s.competencies.map((c) => {
-          if (!att.competencies.some((n) => c.name.toLowerCase().includes(n.toLowerCase().split(" ")[0]))) return c;
+          if (!att.competencies.some((n) => c.name.toLowerCase().includes(n.toLowerCase().split(" ")[0] ?? ""))) return c;
           const level = Math.min(100, c.level + boost);
           return { ...c, level, state: levelToState(level) };
         });

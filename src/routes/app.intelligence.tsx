@@ -14,7 +14,7 @@ export const Route = createFileRoute("/app/intelligence")({
 });
 
 function Intelligence() {
-  const [trend, setTrend] = useState(TRENDS[0].id);
+  const [trend, setTrend] = useState(TRENDS[0]!.id);
   const [open, setOpen] = useState<Article | null>(null);
   const [saved, setSaved] = useState<string[]>([]);
   const t = TRENDS.find((x) => x.id === trend)!;

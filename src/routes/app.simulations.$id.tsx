@@ -61,7 +61,7 @@ function evaluate(s: Scenario, sel: Selections, replyId: string) {
 
 function Workspace() {
   const { id } = Route.useParams();
-  const scenario = SCENARIOS[id];
+  const scenario = SCENARIOS[id]!;
   const { recordAttempt, addAttemptToPassport, attempts } = useApp();
   const [sel, setSel] = useState<Selections>({});
   const [replyId, setReplyId] = useState<string>("");
