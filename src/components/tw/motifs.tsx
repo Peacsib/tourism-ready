@@ -185,7 +185,7 @@ export function PageHeader({ eyebrow, title, subtitle, actions }: { eyebrow?: st
 }
 
 export function Panel({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <section className={cn("rounded-2xl border bg-card p-5 md:p-6", className)}>{children}</section>;
+  return <section className={cn("rounded-2xl border bg-card p-5 shadow-[0_1px_2px_oklch(0.3_0.05_262/6%)] backdrop-blur-sm md:p-6", className)}>{children}</section>;
 }
 
 export function Avatar({ initials, size = "md", tone = "default" }: { initials: string; size?: "sm" | "md" | "lg" | "xl"; tone?: "default" | "gold" }) {
