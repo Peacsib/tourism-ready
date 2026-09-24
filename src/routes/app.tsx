@@ -1,4 +1,5 @@
 import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { ReadinessLoop } from "@/components/tw/readiness-loop";
 import { useEffect, useState } from "react";
 import {
   Bell, BookOpen, Bot, Briefcase, CircleHelp, Compass, IdCard, LayoutGrid, LogOut, MapPin, Menu, Network, Radar, RotateCcw, Search, UserRound, Workflow,
@@ -210,6 +211,7 @@ function AppLayout() {
         </header>
         <main key={loc.pathname} className="fade-up mx-auto w-full max-w-7xl px-4 py-8 md:px-8 md:py-10">
           <Outlet />
+          <ReadinessLoop pathname={loc.pathname} />
         </main>
       </div>
       <CommandPalette open={cmdOpen} onOpenChange={setCmdOpen} />
