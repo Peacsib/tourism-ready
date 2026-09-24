@@ -1,6 +1,7 @@
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, Check, PenLine } from "lucide-react";
+import nyanzviLogo from "@/assets/nyanzvi-logo.png";
 import { Button } from "@/components/ui/button";
 import { isWorkspaceId, WORKSPACES } from "@/lib/workspaces";
 import { newId, upsertThread } from "@/lib/ws-threads";
@@ -51,7 +52,7 @@ function Onboarding() {
             <div className="relative inline-flex">
               <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-cyan/20 [animation-duration:3s]" />
               <span className="relative flex h-20 w-20 items-center justify-center rounded-3xl border bg-background shadow-lg">
-                {w.logo ? <img src={w.logo} alt={`${w.agent} logo`} width={64} height={64} className="h-14 w-14 object-contain" /> : <w.icon className="h-9 w-9 text-foreground" strokeWidth={1.4} />}
+                <img src={w.logo ?? nyanzviLogo} alt={`${w.agent} logo`} width={64} height={64} className="h-14 w-14 object-contain" />
               </span>
             </div>
             <p className="eyebrow mt-6">{w.label}</p>
