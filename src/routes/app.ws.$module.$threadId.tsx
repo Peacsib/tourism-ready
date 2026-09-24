@@ -27,9 +27,9 @@ function WorkspacePage() {
   const w = WORKSPACES[module as keyof typeof WORKSPACES];
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [threads, setThreads] = useState<WsThread[]>([]);
+  const [threads, setThreads] = useState<WsThread[]>(() => (user ? loadThreads(user.id).filter((t) => t.module === w.id) : []));
   const [open, setOpen] = useState(true);
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(() => !!user);
 
   useEffect(() => {
     if (!user) return;
