@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as StartRouteImport } from './routes/start'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppHelpRouteImport } from './routes/app.help'
 import { Route as AppHubsRouteImport } from './routes/app.hubs'
@@ -39,6 +40,11 @@ const AppRoute = AppRouteImport.update({
 const StartRoute = StartRouteImport.update({
   id: '/start',
   path: '/start',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/start': typeof StartRoute
+  '/api/chat': typeof ApiChatRoute
   '/app/help': typeof AppHelpRoute
   '/app/hubs': typeof AppHubsRoute
   '/app/intelligence': typeof AppIntelligenceRoute
@@ -128,6 +135,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/start': typeof StartRoute
+  '/api/chat': typeof ApiChatRoute
   '/app/help': typeof AppHelpRoute
   '/app/hubs': typeof AppHubsRoute
   '/app/intelligence': typeof AppIntelligenceRoute
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/start': typeof StartRoute
+  '/api/chat': typeof ApiChatRoute
   '/app/help': typeof AppHelpRoute
   '/app/hubs': typeof AppHubsRoute
   '/app/intelligence': typeof AppIntelligenceRoute
@@ -167,6 +176,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/start'
+    | '/api/chat'
     | '/app/help'
     | '/app/hubs'
     | '/app/intelligence'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/start'
+    | '/api/chat'
     | '/app/help'
     | '/app/hubs'
     | '/app/intelligence'
@@ -202,6 +213,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/start'
+    | '/api/chat'
     | '/app/help'
     | '/app/hubs'
     | '/app/intelligence'
@@ -221,6 +233,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   StartRoute: typeof StartRoute
+  ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -244,6 +257,13 @@ declare module '@tanstack/react-router' {
       path: '/start'
       fullPath: '/start'
       preLoaderRoute: typeof StartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/': {
@@ -378,6 +398,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   StartRoute: StartRoute,
+  ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
