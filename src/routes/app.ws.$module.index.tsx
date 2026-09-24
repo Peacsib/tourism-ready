@@ -1,5 +1,5 @@
-import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, notFound, useNavigate, useRouter } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { ArrowRight, Check, PenLine } from "lucide-react";
 import nyanzviLogo from "@/assets/nyanzvi-logo.png";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,11 @@ function Onboarding() {
   const { user } = useAuth();
   const { persona } = useApp();
   const navigate = useNavigate();
+  const router = useRouter();
+  // Warm up the chat screen while the user reads the welcome, so Start opens instantly.
+  useEffect(() => {
+    router.preloadRoute({ to: "/app/ws/$module/$threadId", params: { module: w.id, threadId: "warmup" } }).catch(() => {});
+  }, [router, w.id]);
   const [step, setStep] = useState(0);
   const [focus, setFocus] = useState<string | null>(null);
   const [own, setOwn] = useState(false);
