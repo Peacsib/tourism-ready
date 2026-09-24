@@ -123,14 +123,17 @@ function Notifications() {
 
 function AppLayout() {
   const { hydrated, personaId, persona, setRole, signOut, resetDemo } = useApp();
+  const { loading: authLoading, user, profile } = useAuth();
   const navigate = useNavigate();
   const loc = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
 
   useEffect(() => {
-    if (hydrated && !personaId) navigate({ to: "/start" });
-  }, [hydrated, personaId, navigate]);
+    if (authLoading) return;
+    if (!user) navigate({ to: "/auth" });
+    else if (hydrated && !personaId) navigate({ to: "/start" });
+  }, [authLoading, user, hydrated, personaId, navigate]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
