@@ -192,7 +192,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     enter: (personaId, role) =>
       setState((s) => ({ ...s, personaId, role: role ?? PERSONAS.find((p) => p.id === personaId)?.role ?? "student" })),
     setRole: (role) => setState((s) => ({ ...s, role })),
-    signOut: () => setState((s) => ({ ...s, personaId: null, role: null })),
+    signOut: () => {
+      setCloudReady(false);
+      setState({ ...initial });
+      try {
+        localStorage.removeItem(KEY);
+      } catch {
+        /* ignore */
+      }
+      void authSignOut();
+    },
     resetDemo: () => setState({ ...initial }),
     recordAttempt: (a) => {
       const id = uid();
