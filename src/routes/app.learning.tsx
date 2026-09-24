@@ -1,3 +1,5 @@
+import { Link } from "@tanstack/react-router";
+import { simForSkills } from "@/lib/skill-links";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Bot, Check, Clock } from "lucide-react";
@@ -58,6 +60,7 @@ function Learning() {
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {list.map((c) => {
             const p = prog(c.id, c.progress);
+            const sim = simForSkills(c.skills);
             return (
               <div key={c.id} className="lift flex flex-col rounded-2xl border bg-card p-5">
                 <div className="flex items-center justify-between"><Tag>{c.category}</Tag><span className="flex items-center gap-1 font-mono text-xs text-muted-foreground"><Clock className="h-3 w-3" />{c.duration}</span></div>
@@ -69,6 +72,13 @@ function Learning() {
                 <Button className="mt-4" size="sm" variant={p > 0 ? "default" : "outline"} disabled={p >= 100} onClick={() => cont(c.id, c.progress, c.title, c.modules)}>
                   {p >= 100 ? <><Check className="mr-1 h-3.5 w-3.5" /> Completed</> : p > 0 ? "Continue" : "Start"}
                 </Button>
+                {sim && p > 0 && (
+                  <div className="mt-3 rounded-lg border border-cyan/30 bg-cyan/5 p-3 text-xs">
+                    <p className="font-medium">Ready to practise?</p>
+                    <p className="mt-0.5 text-muted-foreground">Apply what you have learned in a realistic workplace scenario.</p>
+                    <Link to="/app/simulations/$id" params={{ id: sim.id }} className="mt-1.5 inline-block font-medium text-cyan hover:underline">Enter Simulation: {sim.title} →</Link>
+                  </div>
+                )}
               </div>
             );
           })}

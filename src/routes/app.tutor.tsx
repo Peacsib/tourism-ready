@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader, Panel, StatePill, Tag } from "@/components/tw/motifs";
 import { AIService, type TutorMode, type TutorReply } from "@/lib/ai-service";
-import { ROLES, SIMULATIONS } from "@/lib/data";
+import { ROLES } from "@/lib/data";
+import { courseForSkill, simForSkills } from "@/lib/skill-links";
 import { useApp } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +27,7 @@ const MODES: { id: TutorMode; hint: string }[] = [
 type Msg = { from: "user" | "ai"; text: string; reply?: TutorReply };
 
 function Tutor() {
-  const { persona, competencies, attempts } = useApp();
+  const { persona, competencies, attempts, courseProgress } = useApp();
   const [mode, setMode] = useState<TutorMode>("Ask");
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
@@ -43,12 +44,24 @@ function Tutor() {
     const key = focus.name.toLowerCase().split(" ")[0] ?? "";
     const ev = attempts.filter((a) => a.competencies.some((n) => n.toLowerCase().includes(key)));
     const avg = ev.length ? Math.round(ev.flatMap((a) => a.scores.map((x) => x.value)).reduce((t, v, _i, arr) => t + v / arr.length, 0)) : null;
-    const sim = SIMULATIONS.find((x) => x.available && x.skills.some((k) => k.toLowerCase().includes(key)));
+    const course = courseForSkill(focus);
+    const cp = course ? courseProgress[course.id] ?? course.progress : 0;
+    const sim = simForSkills([focus.name]);
+    const learnFirst = course && cp < 100 && (focus.level < 60 || !sim);
+    const next = learnFirst
+      ? `Recommended next step: "${course.title}" (${cp}% complete). Strengthen the fundamentals${sim ? ` before attempting "${sim.title}"` : ""}.`
+      : sim
+        ? `Recommended next step: practise it in "${sim.title}", then add the result to your Skills Passport.`
+        : "No dedicated learning resource is currently available for this skill.";
     setMode("Learn");
     setMsgs((m) => [...m, {
       from: "ai",
-      text: `Let's focus on ${focus.name}. You're currently at ${focus.state} (${focus.level}%). Evidence so far: ${ev.length ? `${ev.length} simulation${ev.length > 1 ? "s" : ""}, ${avg}% average performance` : "no simulations yet"}. Recommended next action: ${sim ? `practise it in "${sim.title}", then add the result to your Skills Passport` : "work through a short course in Learning, then ask me for a practice scenario"}.`,
-      reply: { text: "", action: sim ? { label: `Start ${sim.title}`, to: `/app/simulations/${sim.id}` } : { label: "Open Learning", to: "/app/learning" } } as TutorReply,
+      text: `Let's focus on ${focus.name}. You're currently at ${focus.state} (${focus.level}%) against your goal to ${persona.goal.charAt(0).toLowerCase() + persona.goal.slice(1)}. Evidence so far: ${ev.length ? `${ev.length} simulation${ev.length > 1 ? "s" : ""}, ${avg}% average performance` : "no simulations yet"}. ${next}`,
+      reply: {
+        text: "",
+        resources: learnFirst ? [course.title] : undefined,
+        action: learnFirst ? { label: "Start Learning", to: "/app/learning" } : sim ? { label: `Enter ${sim.title}`, to: `/app/simulations/${sim.id}` } : { label: "View Skill", to: "/app/passport" },
+      } as TutorReply,
     }]);
   }, [focus, attempts]);
 
