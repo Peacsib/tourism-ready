@@ -15,6 +15,7 @@ import { Route as StartRouteImport } from './routes/start'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppTutorRouteImport } from './routes/app.tutor'
 import { Route as AppSimulationsIndexRouteImport } from './routes/app.simulations.index'
+import { Route as AppSimulationsIdRouteImport } from './routes/app.simulations.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const AppSimulationsIndexRoute = AppSimulationsIndexRouteImport.update({
   path: '/simulations/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSimulationsIdRoute = AppSimulationsIdRouteImport.update({
+  id: '/simulations/$id',
+  path: '/simulations/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/start': typeof StartRoute
   '/app/tutor': typeof AppTutorRoute
   '/app/': typeof AppIndexRoute
+  '/app/simulations/$id': typeof AppSimulationsIdRoute
   '/app/simulations/': typeof AppSimulationsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/start': typeof StartRoute
   '/app/tutor': typeof AppTutorRoute
   '/app': typeof AppIndexRoute
+  '/app/simulations/$id': typeof AppSimulationsIdRoute
   '/app/simulations': typeof AppSimulationsIndexRoute
 }
 export interface FileRoutesById {
@@ -69,14 +77,27 @@ export interface FileRoutesById {
   '/start': typeof StartRoute
   '/app/tutor': typeof AppTutorRoute
   '/app/': typeof AppIndexRoute
+  '/app/simulations/$id': typeof AppSimulationsIdRoute
   '/app/simulations/': typeof AppSimulationsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/app' | '/start' | '/app/tutor' | '/app/' | '/app/simulations/'
+    | '/'
+    | '/app'
+    | '/start'
+    | '/app/tutor'
+    | '/app/'
+    | '/app/simulations/$id'
+    | '/app/simulations/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/start' | '/app/tutor' | '/app' | '/app/simulations'
+  to:
+    | '/'
+    | '/start'
+    | '/app/tutor'
+    | '/app'
+    | '/app/simulations/$id'
+    | '/app/simulations'
   id:
     | '__root__'
     | '/'
@@ -84,6 +105,7 @@ export interface FileRouteTypes {
     | '/start'
     | '/app/tutor'
     | '/app/'
+    | '/app/simulations/$id'
     | '/app/simulations/'
   fileRoutesById: FileRoutesById
 }
@@ -137,18 +159,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSimulationsIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/simulations/$id': {
+      id: '/app/simulations/$id'
+      path: '/simulations/$id'
+      fullPath: '/app/simulations/$id'
+      preLoaderRoute: typeof AppSimulationsIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
   AppTutorRoute: typeof AppTutorRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppSimulationsIdRoute: typeof AppSimulationsIdRoute
   AppSimulationsIndexRoute: typeof AppSimulationsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppTutorRoute: AppTutorRoute,
   AppIndexRoute: AppIndexRoute,
+  AppSimulationsIdRoute: AppSimulationsIdRoute,
   AppSimulationsIndexRoute: AppSimulationsIndexRoute,
 }
 
