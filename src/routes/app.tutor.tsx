@@ -71,11 +71,36 @@ function Tutor() {
     const t = text.trim();
     if (!t || thinking) return;
     setInput("");
-    setMsgs((m) => [...m, { from: "user", text: t }]);
+    const history = [...msgs, { from: "user" as const, text: t }];
+    setMsgs(history);
     setThinking(true);
-    const reply = await AIService.respond(t, mode);
-    setMsgs((m) => [...m, { from: "ai", text: reply.text, reply }]);
-    setThinking(false);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: history.filter((m) => m.text).map((m) => ({ role: m.from === "user" ? "user" : "assistant", content: m.text })),
+          context: `Mode: ${mode}. Learner: ${persona.firstName}. Goal: ${persona.goal}. Skills: ${competencies.map((c) => `${c.name} ${c.state} ${c.level}%`).join("; ")}`,
+        }),
+      });
+      if (!res.ok || !res.body) throw new Error((await res.text()) || "The AI Tutor couldn't respond right now.");
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let acc = "";
+      setMsgs((m) => [...m, { from: "ai", text: "" }]);
+      setThinking(false);
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        acc += dec.decode(value, { stream: true });
+        const snap = acc;
+        setMsgs((m) => [...m.slice(0, -1), { from: "ai", text: snap }]);
+      }
+    } catch (e) {
+      setMsgs((m) => [...m, { from: "ai", text: `⚠ ${e instanceof Error ? e.message : "Something went wrong."}` }]);
+    } finally {
+      setThinking(false);
+    }
   };
 
   const developing = competencies.filter((c) => c.state === "Developing" || c.state === "Practising").slice(0, 4);
