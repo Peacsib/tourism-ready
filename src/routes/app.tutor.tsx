@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader, Panel, StatePill, Tag } from "@/components/tw/motifs";
 import { AIService, type TutorMode, type TutorReply } from "@/lib/ai-service";
-import { ROLES } from "@/lib/data";
+import { ROLES, SIMULATIONS } from "@/lib/data";
 import { useApp } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/tutor")({
   head: () => ({ meta: [{ title: "AI Smart Tutor — Tourism Workforce 2031" }, { name: "description", content: "Your intelligent learning companion for tourism and hospitality." }] }),
+  validateSearch: (s: Record<string, unknown>): { skill?: string } => (typeof s["skill"] === "string" ? { skill: s["skill"] } : {}),
   component: Tutor,
 });
 
@@ -33,6 +34,23 @@ function Tutor() {
     { from: "ai", text: `Hello ${persona.firstName}. I know your goal is to ${persona.goal.charAt(0).toLowerCase() + persona.goal.slice(1)}. Ask me anything, or try: "I want to improve my hotel front-office skills."` },
   ]);
   const endRef = useRef<HTMLDivElement>(null);
+  const { skill } = Route.useSearch();
+  const focus = skill ? competencies.find((c) => c.id === skill) : undefined;
+  const seeded = useRef<string | null>(null);
+  useEffect(() => {
+    if (!focus || seeded.current === focus.id) return;
+    seeded.current = focus.id;
+    const key = focus.name.toLowerCase().split(" ")[0] ?? "";
+    const ev = attempts.filter((a) => a.competencies.some((n) => n.toLowerCase().includes(key)));
+    const avg = ev.length ? Math.round(ev.flatMap((a) => a.scores.map((x) => x.value)).reduce((t, v, _i, arr) => t + v / arr.length, 0)) : null;
+    const sim = SIMULATIONS.find((x) => x.available && x.skills.some((k) => k.toLowerCase().includes(key)));
+    setMode("Learn");
+    setMsgs((m) => [...m, {
+      from: "ai",
+      text: `Let's focus on ${focus.name}. You're currently at ${focus.state} (${focus.level}%). Evidence so far: ${ev.length ? `${ev.length} simulation${ev.length > 1 ? "s" : ""}, ${avg}% average performance` : "no simulations yet"}. Recommended next action: ${sim ? `practise it in "${sim.title}", then add the result to your Skills Passport` : "work through a short course in Learning, then ask me for a practice scenario"}.`,
+      reply: { text: "", action: sim ? { label: `Start ${sim.title}`, to: `/app/simulations/${sim.id}` } : { label: "Open Learning", to: "/app/learning" } } as TutorReply,
+    }]);
+  }, [focus, attempts]);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }); }, [msgs, thinking]);
 
