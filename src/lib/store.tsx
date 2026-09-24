@@ -89,9 +89,28 @@ const uid = () => Math.random().toString(36).slice(2, 9);
 const levelToState = (n: number): Competency["state"] =>
   n >= 80 ? "Verified" : n >= 65 ? "Demonstrated" : n >= 50 ? "Practising" : "Developing";
 
+const toCloud = (s: State): CloudState => ({
+  competencies: s.competencies,
+  attempts: s.attempts,
+  timeline: s.timeline,
+  connections: s.connections,
+  pending: s.pending,
+  reacted: s.reacted,
+  savedPosts: s.savedPosts,
+  savedOpps: s.savedOpps,
+  applied: s.applied,
+  courseProgress: s.courseProgress,
+  hubRegistrations: s.hubRegistrations,
+  notifications: s.notifications,
+});
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>(initial);
   const [hydrated, setHydrated] = useState(false);
+  const { user, profile, signOut: authSignOut } = useAuth();
+  const [cloudReady, setCloudReady] = useState(false);
+  const stateRef = useRef(state);
+  stateRef.current = state;
 
   useEffect(() => {
     try {
