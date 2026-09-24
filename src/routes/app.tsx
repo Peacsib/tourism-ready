@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tansta
 import { ReadinessLoop } from "@/components/tw/readiness-loop";
 import { useEffect, useState } from "react";
 import {
-  Bell, BookOpen, Bot, Briefcase, CircleHelp, Compass, IdCard, LayoutGrid, LogOut, MapPin, Menu, Network, Radar, RotateCcw, Search, UserRound, Workflow,, MessagesSquare } from "lucide-react";
+  Bell, BookOpen, Bot, Briefcase, CircleHelp, Compass, IdCard, LayoutGrid, LogOut, MapPin, Menu, Network, Radar, RotateCcw, Search, UserRound, Workflow, MessagesSquare } from "lucide-react";
 import { Avatar, Logo } from "@/components/tw/motifs";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
