@@ -35,7 +35,7 @@ const STAGES = [
 
 function Landing() {
   const [stage, setStage] = useState(0);
-  const s = STAGES[stage];
+  const s = STAGES[stage]!;
 
   return (
     <div className="min-h-screen overflow-x-hidden">

@@ -39,7 +39,7 @@ function Start() {
 
   const continueWithRole = () => {
     if (!role) return;
-    const persona = PERSONAS.find((p) => p.role === role) ?? PERSONAS[0];
+    const persona = PERSONAS.find((p) => p.role === role) ?? PERSONAS[0]!;
     go(persona.id, role);
   };
 

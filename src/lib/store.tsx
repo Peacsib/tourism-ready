@@ -106,7 +106,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [state, hydrated]);
 
   const persona = useMemo(() => {
-    const p = PERSONAS.find((x) => x.id === state.personaId) ?? PERSONAS[0];
+    const p = PERSONAS.find((x) => x.id === state.personaId) ?? PERSONAS[0]!;
     return state.role ? { ...p, role: state.role } : p;
   }, [state.personaId, state.role]);
 
