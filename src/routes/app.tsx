@@ -149,7 +149,7 @@ function AppLayout() {
 
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[256px_1fr]">
-      <aside className="sticky top-0 hidden h-screen border-r bg-sidebar lg:block">
+      <aside className="sticky top-0 hidden h-screen border-r glass lg:block">
         <SidebarContent />
       </aside>
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -160,7 +160,7 @@ function AppLayout() {
       </Sheet>
 
       <div className="min-w-0">
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b bg-background/85 px-4 backdrop-blur md:px-6">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b glass px-4 md:px-6">
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(true)} aria-label="Open navigation">
             <Menu className="h-4 w-4" />
           </Button>

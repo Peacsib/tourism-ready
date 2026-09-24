@@ -56,7 +56,7 @@ function Landing() {
         <div className="relative mx-auto max-w-5xl px-6 pb-28 pt-20 text-center md:pt-28">
           <p className="eyebrow fade-up">Zimbabwe · Tourism & Hospitality · Workforce 2031</p>
           <h1 className="fade-up mx-auto mt-6 max-w-4xl text-4xl font-semibold uppercase leading-[1.02] md:text-7xl">
-            The future of tourism workforce <span className="text-gold">readiness</span>
+            The future of tourism workforce <span className="text-gradient">readiness</span>
           </h1>
           <p className="fade-up mt-6 font-display text-lg text-foreground/90 md:text-xl">From classroom knowledge to real-world capability.</p>
           <p className="fade-up mx-auto mt-4 max-w-2xl text-muted-foreground">
@@ -125,7 +125,7 @@ function Landing() {
               ))}
             </ul>
           </div>
-          <div className="relative rounded-3xl border bg-card p-6 shadow-2xl shadow-black/40">
+          <div className="relative rounded-3xl border bg-card p-6 shadow-[var(--shadow-lift)] glass">
             <div className="flex items-start justify-between">
               <div>
                 <p className="eyebrow">Passport · ZW-2031-0417</p>
@@ -226,7 +226,7 @@ function Landing() {
       <section className="border-t">
         <div className="mx-auto max-w-4xl px-6 py-28 text-center">
           <h2 className="text-3xl font-semibold uppercase md:text-5xl">
-            Learn. Practise. Prove. Connect. <span className="text-gold">Stay ahead.</span>
+            Learn. Practise. Prove. Connect. <span className="text-gradient">Stay ahead.</span>
           </h2>
           <Button asChild size="lg" className="mt-10 h-12 px-6">
             <Link to="/start">Explore the Ecosystem <ArrowRight className="ml-1 h-4 w-4" /></Link>
