@@ -2,8 +2,7 @@ import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tansta
 import { ReadinessLoop } from "@/components/tw/readiness-loop";
 import { useEffect, useState } from "react";
 import {
-  Bell, BookOpen, Bot, Briefcase, CircleHelp, Compass, IdCard, LayoutGrid, LogOut, MapPin, Menu, Network, Radar, RotateCcw, Search, UserRound, Workflow,
-} from "lucide-react";
+  Bell, BookOpen, Bot, Briefcase, CircleHelp, Compass, IdCard, LayoutGrid, LogOut, MapPin, Menu, Network, Radar, RotateCcw, Search, UserRound, Workflow,, MessagesSquare } from "lucide-react";
 import { Avatar, Logo } from "@/components/tw/motifs";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -34,8 +33,9 @@ export const NAV = [
   { to: "/app/simulations", label: "Simulations", icon: Workflow, ws: "simulations" },
   { to: "/app/passport", label: "Skills Passport", icon: IdCard, ws: "passport" },
   { to: "/app/intelligence", label: "Industry Intelligence", icon: Radar, ws: "intelligence" },
-  { to: "/app/network", label: "Network", icon: Network, ws: "network" },
-  { to: "/app/opportunities", label: "Opportunities", icon: Briefcase, ws: "opportunities" },
+  { to: "/app/network", label: "Network", icon: Network },
+  { to: "/app/messages", label: "Messages", icon: MessagesSquare },
+  { to: "/app/opportunities", label: "Opportunities", icon: Briefcase },
   { to: "/app/learning", label: "Learning", icon: BookOpen, ws: "learning" },
   { to: "/app/hubs", label: "Field & Innovation Hubs", icon: MapPin, ws: "hubs" },
   { to: "/app/profile", label: "Profile", icon: UserRound },

@@ -4,7 +4,8 @@ import { ArrowUp, AudioLines, Check, Copy, FileText, LayoutGrid, Loader2, Mic, P
 import nyanzviLogo from "@/assets/nyanzvi-logo.png";
 import ReactMarkdown from "react-markdown";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { COURSES, HUBS, OPPORTUNITIES, PEOPLE, SIMULATIONS, TRENDS } from "@/lib/data";
+import { COURSES, HUBS, SIMULATIONS, TRENDS } from "@/lib/data";
+import { displayName, fetchJobs, fetchMembers, ROLE_LABEL, type Job, type Member } from "@/lib/social";
 import { Button } from "@/components/ui/button";
 import { CARD_LABELS, isWorkspaceId, WORKSPACES, type CardKind, type WorkspaceConfig } from "@/lib/workspaces";
 import { deleteThread, loadThreads, newId, upsertThread, type WsMessage, type WsThread } from "@/lib/ws-threads";
@@ -386,18 +387,8 @@ function InlineCard({ kind, onPick, disabled }: { kind: CardKind; onPick: (q: st
             <span className="mt-0.5 block text-xs text-muted-foreground">{c.modules} modules · {c.progress}% done</span>
           </button>
         ))}
-        {kind === "people" && PEOPLE.slice(0, 6).map((p) => (
-          <button key={p.id} disabled={disabled} className={item} onClick={() => onPick(`Help me connect with ${p.name}, ${p.role} at ${p.organisation}. Write a short connection request.`)}>
-            <span className="block text-sm font-medium">{p.name}</span>
-            <span className="mt-0.5 block text-xs text-muted-foreground">{p.role} · {p.organisation}</span>
-          </button>
-        ))}
-        {kind === "jobs" && OPPORTUNITIES.slice(0, 6).map((o) => (
-          <button key={o.id} disabled={disabled} className={item} onClick={() => onPick(`Help me apply for "${o.title}" at ${o.org} (${o.location}). ${o.description} Required skills: ${o.skills.join(", ")}.`)}>
-            <span className="block text-sm font-medium">{o.title} <span className="text-xs text-gold">{o.match}% match</span></span>
-            <span className="mt-0.5 block text-xs text-muted-foreground">{o.org} · {o.type} · closes {o.deadline}</span>
-          </button>
-        ))}
+        {kind === "people" && <RealPeople item={item} onPick={onPick} disabled={disabled} />}
+        {kind === "jobs" && <RealJobs item={item} onPick={onPick} disabled={disabled} />}
         {kind === "hubs" && HUBS.map((h) => (
           <button key={h.id} disabled={disabled} className={item} onClick={() => onPick(`Tell me about the "${h.programme}" in ${h.destination} (${h.focus}) and how to prepare.`)}>
             <span className="block text-sm font-medium">{h.programme}</span>
@@ -415,4 +406,31 @@ type Att = { name: string; type: string; data: string };
 export function AgentMark({ w, size }: { w: WorkspaceConfig; size: "sm" | "lg" }) {
   const box = size === "sm" ? "h-7 w-7" : "h-16 w-16";
   return <img src={w.logo ?? nyanzviLogo} alt={`${w.agent} logo`} width={size === "sm" ? 28 : 64} height={size === "sm" ? 28 : 64} className={cn(box, "shrink-0 object-contain")} />;
+}
+
+function RealPeople({ item, onPick, disabled }: { item: string; onPick: (q: string) => void; disabled: boolean }) {
+  const { user } = useAuth();
+  const [list, setList] = useState<Member[] | null>(null);
+  useEffect(() => { fetchMembers(user?.id).then((m) => setList(m.slice(0, 6))).catch(() => setList([])); }, [user]);
+  if (list === null) return <p className="text-xs text-muted-foreground">Loading members…</p>;
+  if (!list.length) return <p className="text-xs text-muted-foreground">No other members yet. Use Industry discovery on the Network page to find real professionals.</p>;
+  return <>{list.map((p) => (
+    <button key={p.id} disabled={disabled} className={item} onClick={() => onPick(`Help me connect with ${displayName(p)}${p.headline ? `, ${p.headline}` : ""}${p.organisation ? ` at ${p.organisation}` : ""}. Write a short connection request.`)}>
+      <span className="block text-sm font-medium">{displayName(p)}</span>
+      <span className="mt-0.5 block text-xs text-muted-foreground">{p.headline || ROLE_LABEL[p.role] || "Member"}</span>
+    </button>
+  ))}</>;
+}
+
+function RealJobs({ item, onPick, disabled }: { item: string; onPick: (q: string) => void; disabled: boolean }) {
+  const [list, setList] = useState<Job[] | null>(null);
+  useEffect(() => { fetchJobs().then((j) => setList(j.filter((x) => x.active).slice(0, 6))).catch(() => setList([])); }, []);
+  if (list === null) return <p className="text-xs text-muted-foreground">Loading opportunities…</p>;
+  if (!list.length) return <p className="text-xs text-muted-foreground">No employer has posted an opportunity yet. Ask me to help you prepare a CV in the meantime.</p>;
+  return <>{list.map((o) => (
+    <button key={o.id} disabled={disabled} className={item} onClick={() => onPick(`Help me apply for "${o.title}" at ${o.organisation} (${o.location}). ${o.description.slice(0, 600)} Required skills: ${o.skills.join(", ") || "not listed"}.`)}>
+      <span className="block text-sm font-medium">{o.title}</span>
+      <span className="mt-0.5 block text-xs text-muted-foreground">{o.organisation} · {o.job_type}</span>
+    </button>
+  ))}</>;
 }

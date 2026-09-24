@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { BookOpen, Briefcase, CalendarDays, FileText, IdCard, UserRound, Workflow } from "lucide-react";
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { ARTICLES, COMPETENCIES, COURSES, HUBS, OPPORTUNITIES, PEOPLE, SIMULATIONS } from "@/lib/data";
+import { ARTICLES, COMPETENCIES, COURSES, HUBS, SIMULATIONS } from "@/lib/data";
 
 export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const navigate = useNavigate();
@@ -16,13 +16,6 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
           {SIMULATIONS.map((s) => (
             <CommandItem key={s.id} value={`sim ${s.title} ${s.category}`} onSelect={() => go(() => s.available ? navigate({ to: "/app/simulations/$id", params: { id: s.id } }) : navigate({ to: "/app/simulations" }))}>
               <Workflow className="text-gold" /> {s.title}<span className="ml-auto text-xs text-muted-foreground">{s.category}</span>
-            </CommandItem>
-          ))}
-        </CommandGroup>
-        <CommandGroup heading="People">
-          {PEOPLE.map((p) => (
-            <CommandItem key={p.id} value={`person ${p.name} ${p.role} ${p.organisation}`} onSelect={() => go(() => navigate({ to: "/app/people/$id", params: { id: p.id } }))}>
-              <UserRound /> {p.name}<span className="ml-auto truncate text-xs text-muted-foreground">{p.role}</span>
             </CommandItem>
           ))}
         </CommandGroup>
@@ -44,13 +37,6 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
           {ARTICLES.map((a) => (
             <CommandItem key={a.id} value={`report ${a.title} ${a.category}`} onSelect={() => go(() => navigate({ to: "/app/intelligence" }))}>
               <FileText /> <span className="truncate">{a.title}</span>
-            </CommandItem>
-          ))}
-        </CommandGroup>
-        <CommandGroup heading="Opportunities">
-          {OPPORTUNITIES.map((o) => (
-            <CommandItem key={o.id} value={`opportunity ${o.title} ${o.org} ${o.location}`} onSelect={() => go(() => navigate({ to: "/app/opportunities" }))}>
-              <Briefcase /> {o.title}<span className="ml-auto text-xs text-muted-foreground">{o.org}</span>
             </CommandItem>
           ))}
         </CommandGroup>
