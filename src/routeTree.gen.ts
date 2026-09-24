@@ -13,7 +13,16 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as StartRouteImport } from './routes/start'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppHelpRouteImport } from './routes/app.help'
+import { Route as AppHubsRouteImport } from './routes/app.hubs'
+import { Route as AppIntelligenceRouteImport } from './routes/app.intelligence'
+import { Route as AppLearningRouteImport } from './routes/app.learning'
+import { Route as AppNetworkRouteImport } from './routes/app.network'
+import { Route as AppOpportunitiesRouteImport } from './routes/app.opportunities'
+import { Route as AppPassportRouteImport } from './routes/app.passport'
+import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppTutorRouteImport } from './routes/app.tutor'
+import { Route as AppPeopleIdRouteImport } from './routes/app.people.$id'
 import { Route as AppSimulationsIndexRouteImport } from './routes/app.simulations.index'
 import { Route as AppSimulationsIdRouteImport } from './routes/app.simulations.$id'
 
@@ -37,9 +46,54 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppHelpRoute = AppHelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppHubsRoute = AppHubsRouteImport.update({
+  id: '/hubs',
+  path: '/hubs',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppIntelligenceRoute = AppIntelligenceRouteImport.update({
+  id: '/intelligence',
+  path: '/intelligence',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLearningRoute = AppLearningRouteImport.update({
+  id: '/learning',
+  path: '/learning',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNetworkRoute = AppNetworkRouteImport.update({
+  id: '/network',
+  path: '/network',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOpportunitiesRoute = AppOpportunitiesRouteImport.update({
+  id: '/opportunities',
+  path: '/opportunities',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPassportRoute = AppPassportRouteImport.update({
+  id: '/passport',
+  path: '/passport',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTutorRoute = AppTutorRouteImport.update({
   id: '/tutor',
   path: '/tutor',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPeopleIdRoute = AppPeopleIdRouteImport.update({
+  id: '/people/$id',
+  path: '/people/$id',
   getParentRoute: () => AppRoute,
 } as any)
 const AppSimulationsIndexRoute = AppSimulationsIndexRouteImport.update({
@@ -57,16 +111,34 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/start': typeof StartRoute
+  '/app/help': typeof AppHelpRoute
+  '/app/hubs': typeof AppHubsRoute
+  '/app/intelligence': typeof AppIntelligenceRoute
+  '/app/learning': typeof AppLearningRoute
+  '/app/network': typeof AppNetworkRoute
+  '/app/opportunities': typeof AppOpportunitiesRoute
+  '/app/passport': typeof AppPassportRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/tutor': typeof AppTutorRoute
   '/app/': typeof AppIndexRoute
+  '/app/people/$id': typeof AppPeopleIdRoute
   '/app/simulations/$id': typeof AppSimulationsIdRoute
   '/app/simulations/': typeof AppSimulationsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/start': typeof StartRoute
+  '/app/help': typeof AppHelpRoute
+  '/app/hubs': typeof AppHubsRoute
+  '/app/intelligence': typeof AppIntelligenceRoute
+  '/app/learning': typeof AppLearningRoute
+  '/app/network': typeof AppNetworkRoute
+  '/app/opportunities': typeof AppOpportunitiesRoute
+  '/app/passport': typeof AppPassportRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/tutor': typeof AppTutorRoute
   '/app': typeof AppIndexRoute
+  '/app/people/$id': typeof AppPeopleIdRoute
   '/app/simulations/$id': typeof AppSimulationsIdRoute
   '/app/simulations': typeof AppSimulationsIndexRoute
 }
@@ -75,8 +147,17 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/start': typeof StartRoute
+  '/app/help': typeof AppHelpRoute
+  '/app/hubs': typeof AppHubsRoute
+  '/app/intelligence': typeof AppIntelligenceRoute
+  '/app/learning': typeof AppLearningRoute
+  '/app/network': typeof AppNetworkRoute
+  '/app/opportunities': typeof AppOpportunitiesRoute
+  '/app/passport': typeof AppPassportRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/tutor': typeof AppTutorRoute
   '/app/': typeof AppIndexRoute
+  '/app/people/$id': typeof AppPeopleIdRoute
   '/app/simulations/$id': typeof AppSimulationsIdRoute
   '/app/simulations/': typeof AppSimulationsIndexRoute
 }
@@ -86,16 +167,34 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/start'
+    | '/app/help'
+    | '/app/hubs'
+    | '/app/intelligence'
+    | '/app/learning'
+    | '/app/network'
+    | '/app/opportunities'
+    | '/app/passport'
+    | '/app/profile'
     | '/app/tutor'
     | '/app/'
+    | '/app/people/$id'
     | '/app/simulations/$id'
     | '/app/simulations/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/start'
+    | '/app/help'
+    | '/app/hubs'
+    | '/app/intelligence'
+    | '/app/learning'
+    | '/app/network'
+    | '/app/opportunities'
+    | '/app/passport'
+    | '/app/profile'
     | '/app/tutor'
     | '/app'
+    | '/app/people/$id'
     | '/app/simulations/$id'
     | '/app/simulations'
   id:
@@ -103,8 +202,17 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/start'
+    | '/app/help'
+    | '/app/hubs'
+    | '/app/intelligence'
+    | '/app/learning'
+    | '/app/network'
+    | '/app/opportunities'
+    | '/app/passport'
+    | '/app/profile'
     | '/app/tutor'
     | '/app/'
+    | '/app/people/$id'
     | '/app/simulations/$id'
     | '/app/simulations/'
   fileRoutesById: FileRoutesById
@@ -145,11 +253,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/help': {
+      id: '/app/help'
+      path: '/help'
+      fullPath: '/app/help'
+      preLoaderRoute: typeof AppHelpRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/hubs': {
+      id: '/app/hubs'
+      path: '/hubs'
+      fullPath: '/app/hubs'
+      preLoaderRoute: typeof AppHubsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/intelligence': {
+      id: '/app/intelligence'
+      path: '/intelligence'
+      fullPath: '/app/intelligence'
+      preLoaderRoute: typeof AppIntelligenceRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/learning': {
+      id: '/app/learning'
+      path: '/learning'
+      fullPath: '/app/learning'
+      preLoaderRoute: typeof AppLearningRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/network': {
+      id: '/app/network'
+      path: '/network'
+      fullPath: '/app/network'
+      preLoaderRoute: typeof AppNetworkRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/opportunities': {
+      id: '/app/opportunities'
+      path: '/opportunities'
+      fullPath: '/app/opportunities'
+      preLoaderRoute: typeof AppOpportunitiesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/passport': {
+      id: '/app/passport'
+      path: '/passport'
+      fullPath: '/app/passport'
+      preLoaderRoute: typeof AppPassportRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/profile': {
+      id: '/app/profile'
+      path: '/profile'
+      fullPath: '/app/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/tutor': {
       id: '/app/tutor'
       path: '/tutor'
       fullPath: '/app/tutor'
       preLoaderRoute: typeof AppTutorRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/people/$id': {
+      id: '/app/people/$id'
+      path: '/people/$id'
+      fullPath: '/app/people/$id'
+      preLoaderRoute: typeof AppPeopleIdRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/simulations/': {
@@ -170,15 +341,33 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppHelpRoute: typeof AppHelpRoute
+  AppHubsRoute: typeof AppHubsRoute
+  AppIntelligenceRoute: typeof AppIntelligenceRoute
+  AppLearningRoute: typeof AppLearningRoute
+  AppNetworkRoute: typeof AppNetworkRoute
+  AppOpportunitiesRoute: typeof AppOpportunitiesRoute
+  AppPassportRoute: typeof AppPassportRoute
+  AppProfileRoute: typeof AppProfileRoute
   AppTutorRoute: typeof AppTutorRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppPeopleIdRoute: typeof AppPeopleIdRoute
   AppSimulationsIdRoute: typeof AppSimulationsIdRoute
   AppSimulationsIndexRoute: typeof AppSimulationsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppHelpRoute: AppHelpRoute,
+  AppHubsRoute: AppHubsRoute,
+  AppIntelligenceRoute: AppIntelligenceRoute,
+  AppLearningRoute: AppLearningRoute,
+  AppNetworkRoute: AppNetworkRoute,
+  AppOpportunitiesRoute: AppOpportunitiesRoute,
+  AppPassportRoute: AppPassportRoute,
+  AppProfileRoute: AppProfileRoute,
   AppTutorRoute: AppTutorRoute,
   AppIndexRoute: AppIndexRoute,
+  AppPeopleIdRoute: AppPeopleIdRoute,
   AppSimulationsIdRoute: AppSimulationsIdRoute,
   AppSimulationsIndexRoute: AppSimulationsIndexRoute,
 }
