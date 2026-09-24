@@ -14,7 +14,92 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      discovery_cache: {
+        Row: {
+          cache_key: string
+          created_at: string
+          results: Json
+        }
+        Insert: {
+          cache_key: string
+          created_at?: string
+          results: Json
+        }
+        Update: {
+          cache_key?: string
+          created_at?: string
+          results?: Json
+        }
+        Relationships: []
+      }
+      discovery_invitations: {
+        Row: {
+          created_at: string
+          id: string
+          invited_by: string
+          note: string | null
+          professional_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invited_by: string
+          note?: string | null
+          professional_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invited_by?: string
+          note?: string | null
+          professional_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discovery_invitations_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "external_professionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      external_professionals: {
+        Row: {
+          company: string | null
+          headline: string | null
+          id: string
+          last_seen_at: string
+          location: string | null
+          name: string
+          profile_url: string | null
+          role: string | null
+          source: string
+        }
+        Insert: {
+          company?: string | null
+          headline?: string | null
+          id: string
+          last_seen_at?: string
+          location?: string | null
+          name: string
+          profile_url?: string | null
+          role?: string | null
+          source?: string
+        }
+        Update: {
+          company?: string | null
+          headline?: string | null
+          id?: string
+          last_seen_at?: string
+          location?: string | null
+          name?: string
+          profile_url?: string | null
+          role?: string | null
+          source?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
