@@ -20,7 +20,7 @@ function passportMatches(p: DiscoveredPerson, skills: string[]) {
   });
 }
 
-export function IndustryDiscovery({ query, autoQuery }: { query: string; autoQuery?: string }) {
+export function IndustryDiscovery({ query, autoQuery }: { query: string; autoQuery?: string | undefined }) {
   const search = useServerFn(discoverProfessionals);
   const invite = useServerFn(inviteProfessional);
   const { competencies, persona } = useApp();

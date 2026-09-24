@@ -30,9 +30,9 @@ export const importLinkedInProfile = createServerFn({ method: "POST" })
     const res = await fetch(`${GATEWAY}/v2/userinfo`, { headers: keys() });
     if (!res.ok) { const t = await res.text(); console.error("LinkedIn userinfo", res.status, t); return { ok: false as const, error: `LinkedIn said: ${res.status}` }; }
     const u = (await res.json()) as { name?: string; picture?: string; locale?: { country?: string } | string };
-    const update: Record<string, string> = {};
-    if (u.name) update["full_name"] = u.name;
-    if (u.picture) update["avatar_url"] = u.picture;
+    const update: { full_name?: string; avatar_url?: string } = {};
+    if (u.name) update.full_name = u.name;
+    if (u.picture) update.avatar_url = u.picture;
     if (Object.keys(update).length) {
       const { error } = await context.supabase.from("profiles").update(update).eq("id", context.userId);
       if (error) return { ok: false as const, error: error.message };
