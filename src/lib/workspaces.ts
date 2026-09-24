@@ -1,10 +1,15 @@
-import { Bot, IdCard, Radar, Workflow, type LucideIcon } from "lucide-react";
+import { BookOpen, Bot, Briefcase, IdCard, MapPin, Network, Radar, Workflow, type LucideIcon } from "lucide-react";
+import nyanzviLogo from "@/assets/nyanzvi-logo.png";
 
-export type WorkspaceId = "tutor" | "simulations" | "passport" | "intelligence";
+export type WorkspaceId = "tutor" | "simulations" | "passport" | "intelligence" | "network" | "opportunities" | "learning" | "hubs";
 
 export type WorkspaceConfig = {
   id: WorkspaceId;
   label: string;
+  agent: string;
+  tagline: string;
+  capabilities: string[];
+  logo?: string;
   icon: LucideIcon;
   welcomeTitle: string;
   welcomeBody: string;
@@ -12,19 +17,23 @@ export type WorkspaceConfig = {
   chips: string[];
   prompts: string[];
   placeholder: string;
-  classic: "/app/tutor" | "/app/simulations" | "/app/passport" | "/app/intelligence";
+  classic: string;
   classicLabel: string;
   modes: string[];
   cards: CardKind[];
 };
 
-export type CardKind = "skills" | "sims" | "trends" | "courses";
-export const CARD_LABELS: Record<CardKind, string> = { skills: "My skills", sims: "Scenario library", trends: "Industry trends", courses: "Learning courses" };
+export type CardKind = "skills" | "sims" | "trends" | "courses" | "people" | "jobs" | "hubs";
+export const CARD_LABELS: Record<CardKind, string> = { skills: "My skills", sims: "Scenario library", trends: "Industry trends", courses: "Learning courses", people: "People to meet", jobs: "Open opportunities", hubs: "Field hubs" };
 
 export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
   tutor: {
     id: "tutor",
     label: "AI Tutor",
+    agent: "Nyanzvi",
+    tagline: "Your expert in every shift.",
+    capabilities: ["Explains concepts in plain language","Quizzes you and gives instant feedback","Builds study plans around your Skills Passport"],
+    logo: nyanzviLogo,
     icon: Bot,
     welcomeTitle: "Your personal hospitality tutor",
     welcomeBody: "Ask anything, practise answers and get feedback shaped around your goal and Skills Passport.",
@@ -40,6 +49,9 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
   simulations: {
     id: "simulations",
     label: "Simulations",
+    agent: "Nyanzvi Sim",
+    tagline: "Rehearse the moments that matter.",
+    capabilities: ["Plays guests, managers and partners in character","Scores every response against service standards","Debriefs what to do differently next time"],
     icon: Workflow,
     welcomeTitle: "Live role-play simulations",
     welcomeBody: "The AI plays guests, managers and partners. Respond as you would on shift and get scored feedback.",
@@ -55,6 +67,9 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
   passport: {
     id: "passport",
     label: "Skills Passport",
+    agent: "Nyanzvi Passport",
+    tagline: "Turn evidence into opportunity.",
+    capabilities: ["Reads your verified skills and evidence","Finds the gap that matters most","Writes CV lines employers trust"],
     icon: IdCard,
     welcomeTitle: "Talk through your Skills Passport",
     welcomeBody: "Understand your evidence, spot gaps and turn your verified skills into a strong CV story.",
@@ -70,6 +85,9 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
   intelligence: {
     id: "intelligence",
     label: "Industry Intelligence",
+    agent: "Nyanzvi Insight",
+    tagline: "See where tourism is heading.",
+    capabilities: ["Briefs you on trends shaping Zimbabwe","Shows which skills are rising","Connects signals to your career"],
     icon: Radar,
     welcomeTitle: "Tourism industry briefings on demand",
     welcomeBody: "Explore trends shaping Zimbabwe's tourism workforce and what they mean for your career.",
@@ -81,6 +99,78 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
     classicLabel: "Trend dashboard",
     modes: ["Briefing", "Skills demand", "Career impact"],
     cards: ["trends", "courses"],
+  },
+  network: {
+    id: "network",
+    label: "Network",
+    agent: "Nyanzvi Connect",
+    tagline: "Your professional circle, curated.",
+    capabilities: ["Finds mentors and peers who fit your goal", "Drafts warm, professional introductions", "Suggests posts that showcase your progress"],
+    icon: Network,
+    welcomeTitle: "Grow your tourism network",
+    welcomeBody: "Meet mentors, peers and employers, write introductions and share your wins, all through conversation.",
+    chipQuestion: "Who do you want to connect with?",
+    chips: ["Mentors", "Employers & recruiters", "Peers & classmates"],
+    prompts: ["Who should I connect with first?", "Write a connection request", "Draft a post about my progress", "Prepare me for a coffee chat"],
+    placeholder: "Ask about people, introductions or posts…",
+    classic: "/app/network",
+    classicLabel: "Network feed",
+    modes: ["Find people", "Write introduction", "Create post"],
+    cards: ["people", "skills"],
+  },
+  opportunities: {
+    id: "opportunities",
+    label: "Opportunities",
+    agent: "Nyanzvi Careers",
+    tagline: "The right role, at the right moment.",
+    capabilities: ["Matches openings to your verified skills", "Tailors applications and cover letters", "Runs mock interviews for each role"],
+    icon: Briefcase,
+    welcomeTitle: "Find and win your next opportunity",
+    welcomeBody: "Discover internships, placements and jobs, and prepare applications with an AI career partner.",
+    chipQuestion: "What are you looking for?",
+    chips: ["Internships", "Full-time roles", "Mentorship & events"],
+    prompts: ["Which openings fit me best?", "Write my cover letter", "Mock interview for this role", "What's missing from my profile?"],
+    placeholder: "Ask about roles and applications…",
+    classic: "/app/opportunities",
+    classicLabel: "Opportunity board",
+    modes: ["Match me", "Application writer", "Mock interview"],
+    cards: ["jobs", "skills"],
+  },
+  learning: {
+    id: "learning",
+    label: "Learning",
+    agent: "Nyanzvi Learn",
+    tagline: "Lessons that fit between shifts.",
+    capabilities: ["Teaches course lessons conversationally", "Checks understanding with quick questions", "Keeps your learning path on track"],
+    icon: BookOpen,
+    welcomeTitle: "Learn one lesson at a time",
+    welcomeBody: "Work through courses in bite-sized conversations, with questions and examples from real Zimbabwean properties.",
+    chipQuestion: "Pick your learning track",
+    chips: ["Hospitality Operations", "Digital & AI Skills", "Management"],
+    prompts: ["Continue my course", "Teach me today's lesson", "Give me a quick quiz", "Summarise what I've learned"],
+    placeholder: "Ask to learn something…",
+    classic: "/app/learning",
+    classicLabel: "Course catalogue",
+    modes: ["Lesson", "Quiz", "Summary"],
+    cards: ["courses", "skills"],
+  },
+  hubs: {
+    id: "hubs",
+    label: "Field & Innovation Hubs",
+    agent: "Nyanzvi Field",
+    tagline: "Learning where tourism happens.",
+    capabilities: ["Recommends field programmes near you", "Prepares you for community projects", "Helps you reflect on field experience"],
+    icon: MapPin,
+    welcomeTitle: "Explore field & innovation hubs",
+    welcomeBody: "Find hands-on programmes across Zimbabwe's destinations and prepare to make an impact on the ground.",
+    chipQuestion: "Where would you like to go?",
+    chips: ["Victoria Falls & Hwange", "Kariba & Mutoko", "Eastern Highlands"],
+    prompts: ["Which hub suits me?", "Prepare me for a field week", "Ideas for a community project", "Help me write a field reflection"],
+    placeholder: "Ask about hubs and field programmes…",
+    classic: "/app/hubs",
+    classicLabel: "Hub directory",
+    modes: ["Explore", "Prepare", "Reflect"],
+    cards: ["hubs", "people"],
   },
 };
 

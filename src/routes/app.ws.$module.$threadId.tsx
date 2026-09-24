@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUp, Check, Copy, LayoutGrid, PanelLeftClose, PanelLeftOpen, Plus, SlidersHorizontal, Square, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { COURSES, SIMULATIONS, TRENDS } from "@/lib/data";
+import { COURSES, HUBS, OPPORTUNITIES, PEOPLE, SIMULATIONS, TRENDS } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { CARD_LABELS, isWorkspaceId, WORKSPACES, type CardKind, type WorkspaceConfig } from "@/lib/workspaces";
 import { deleteThread, loadThreads, newId, upsertThread, type WsMessage, type WsThread } from "@/lib/ws-threads";
@@ -166,7 +166,7 @@ function ChatCanvas({ w, thread, onChange, sidebarOpen, openSidebar }: { w: Work
       <div className="flex items-center gap-2 border-b px-4 py-2.5">
         {!sidebarOpen && <button aria-label="Show history" onClick={openSidebar} className="rounded-md p-1.5 text-muted-foreground hover:bg-accent"><PanelLeftOpen className="h-4 w-4" /></button>}
         <w.icon className="h-4 w-4 text-gold" strokeWidth={1.6} />
-        <span className="truncate text-sm font-medium">{thread.title}</span>
+        <span className="truncate text-sm font-medium"><span className="text-muted-foreground">{w.agent} · </span>{thread.title}</span>
         <span className="ml-auto rounded-full border border-gold/40 bg-gold/10 px-2.5 py-0.5 text-xs">{mode}</span>
         <span className="rounded-full border px-2.5 py-0.5 text-xs text-muted-foreground">{thread.focus}</span>
       </div>
@@ -175,8 +175,9 @@ function ChatCanvas({ w, thread, onChange, sidebarOpen, openSidebar }: { w: Work
         <div className="mx-auto w-full max-w-3xl px-4 py-8">
           {empty ? (
             <div className="pt-[12vh] text-center">
-              <w.icon className="mx-auto h-10 w-10 text-gold" strokeWidth={1.3} />
-              <h2 className="mt-4 font-display text-2xl font-semibold">How can I help with {thread.focus}?</h2>
+              <div className="flex justify-center"><AgentMark w={w} size="lg" /></div>
+              <p className="eyebrow mt-4">{w.agent}</p>
+              <h2 className="mt-2 font-display text-2xl font-semibold">How can I help with {thread.focus}?</h2>
               <p className="mt-2 text-sm text-muted-foreground">{w.welcomeBody}</p>
             </div>
           ) : (
@@ -187,7 +188,7 @@ function ChatCanvas({ w, thread, onChange, sidebarOpen, openSidebar }: { w: Work
                 </div>
               ) : (
                 <div key={m.id} className="group flex gap-3">
-                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan/20 to-gold/20"><w.icon className="h-3.5 w-3.5" /></span>
+                  <AgentMark w={w} size="sm" />
                   <div className="min-w-0 flex-1 text-sm leading-relaxed text-foreground">
                     {m.card ? <InlineCard kind={m.card} onPick={send} disabled={busy} /> : m.content ? (
                       <>
@@ -286,8 +287,32 @@ function InlineCard({ kind, onPick, disabled }: { kind: CardKind; onPick: (q: st
             <span className="mt-0.5 block text-xs text-muted-foreground">{c.modules} modules · {c.progress}% done</span>
           </button>
         ))}
+        {kind === "people" && PEOPLE.slice(0, 6).map((p) => (
+          <button key={p.id} disabled={disabled} className={item} onClick={() => onPick(`Help me connect with ${p.name}, ${p.role} at ${p.organisation}. Write a short connection request.`)}>
+            <span className="block text-sm font-medium">{p.name}</span>
+            <span className="mt-0.5 block text-xs text-muted-foreground">{p.role} · {p.organisation}</span>
+          </button>
+        ))}
+        {kind === "jobs" && OPPORTUNITIES.slice(0, 6).map((o) => (
+          <button key={o.id} disabled={disabled} className={item} onClick={() => onPick(`Help me apply for "${o.title}" at ${o.org} (${o.location}). ${o.description} Required skills: ${o.skills.join(", ")}.`)}>
+            <span className="block text-sm font-medium">{o.title} <span className="text-xs text-gold">{o.match}% match</span></span>
+            <span className="mt-0.5 block text-xs text-muted-foreground">{o.org} · {o.type} · closes {o.deadline}</span>
+          </button>
+        ))}
+        {kind === "hubs" && HUBS.map((h) => (
+          <button key={h.id} disabled={disabled} className={item} onClick={() => onPick(`Tell me about the "${h.programme}" in ${h.destination} (${h.focus}) and how to prepare.`)}>
+            <span className="block text-sm font-medium">{h.programme}</span>
+            <span className="mt-0.5 block text-xs text-muted-foreground">{h.destination} · {h.status} · next {h.next}</span>
+          </button>
+        ))}
       </div>
       <p className="mt-2 text-xs text-muted-foreground">Tap any item to continue in chat.</p>
     </div>
   );
+}
+
+export function AgentMark({ w, size }: { w: WorkspaceConfig; size: "sm" | "lg" }) {
+  const box = size === "sm" ? "h-7 w-7" : "h-16 w-16";
+  if (w.logo) return <img src={w.logo} alt={`${w.agent} logo`} width={size === "sm" ? 28 : 64} height={size === "sm" ? 28 : 64} className={cn(box, "shrink-0 object-contain")} />;
+  return <span className={cn(box, "mt-0.5 flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan/20 to-gold/20")}><w.icon className={size === "sm" ? "h-3.5 w-3.5" : "h-7 w-7"} /></span>;
 }
