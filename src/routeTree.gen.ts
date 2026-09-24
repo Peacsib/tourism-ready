@@ -14,6 +14,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as StartRouteImport } from './routes/start'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppHelpRouteImport } from './routes/app.help'
 import { Route as AppHubsRouteImport } from './routes/app.hubs'
@@ -53,6 +54,11 @@ const StartRoute = StartRouteImport.update({
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTranscribeRoute = ApiTranscribeRouteImport.update({
+  id: '/api/transcribe',
+  path: '/api/transcribe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/start': typeof StartRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/transcribe': typeof ApiTranscribeRoute
   '/app/help': typeof AppHelpRoute
   '/app/hubs': typeof AppHubsRoute
   '/app/intelligence': typeof AppIntelligenceRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/start': typeof StartRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/transcribe': typeof ApiTranscribeRoute
   '/app/help': typeof AppHelpRoute
   '/app/hubs': typeof AppHubsRoute
   '/app/intelligence': typeof AppIntelligenceRoute
@@ -181,6 +189,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/start': typeof StartRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/transcribe': typeof ApiTranscribeRoute
   '/app/help': typeof AppHelpRoute
   '/app/hubs': typeof AppHubsRoute
   '/app/intelligence': typeof AppIntelligenceRoute
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/start'
     | '/api/chat'
+    | '/api/transcribe'
     | '/app/help'
     | '/app/hubs'
     | '/app/intelligence'
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/start'
     | '/api/chat'
+    | '/api/transcribe'
     | '/app/help'
     | '/app/hubs'
     | '/app/intelligence'
@@ -248,6 +259,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/start'
     | '/api/chat'
+    | '/api/transcribe'
     | '/app/help'
     | '/app/hubs'
     | '/app/intelligence'
@@ -271,6 +283,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   StartRoute: typeof StartRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiTranscribeRoute: typeof ApiTranscribeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -308,6 +321,13 @@ declare module '@tanstack/react-router' {
       path: '/api/chat'
       fullPath: '/api/chat'
       preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/transcribe': {
+      id: '/api/transcribe'
+      path: '/api/transcribe'
+      fullPath: '/api/transcribe'
+      preLoaderRoute: typeof ApiTranscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/': {
@@ -462,6 +482,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   StartRoute: StartRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiTranscribeRoute: ApiTranscribeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
