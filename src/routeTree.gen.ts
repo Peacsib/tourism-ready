@@ -28,6 +28,7 @@ import { Route as AppPeopleIdRouteImport } from './routes/app.people.$id'
 import { Route as AppSimulationsIndexRouteImport } from './routes/app.simulations.index'
 import { Route as AppSimulationsIdRouteImport } from './routes/app.simulations.$id'
 import { Route as AppWsModuleIndexRouteImport } from './routes/app.ws.$module.index'
+import { Route as AppWsModuleThreadIdRouteImport } from './routes/app.ws.$module.$threadId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -124,6 +125,11 @@ const AppWsModuleIndexRoute = AppWsModuleIndexRouteImport.update({
   path: '/ws/$module/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppWsModuleThreadIdRoute = AppWsModuleThreadIdRouteImport.update({
+  id: '/ws/$module/$threadId',
+  path: '/ws/$module/$threadId',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/app/people/$id': typeof AppPeopleIdRoute
   '/app/simulations/$id': typeof AppSimulationsIdRoute
   '/app/simulations/': typeof AppSimulationsIndexRoute
+  '/app/ws/$module/$threadId': typeof AppWsModuleThreadIdRoute
   '/app/ws/$module/': typeof AppWsModuleIndexRoute
 }
 export interface FileRoutesByTo {
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/app/people/$id': typeof AppPeopleIdRoute
   '/app/simulations/$id': typeof AppSimulationsIdRoute
   '/app/simulations': typeof AppSimulationsIndexRoute
+  '/app/ws/$module/$threadId': typeof AppWsModuleThreadIdRoute
   '/app/ws/$module': typeof AppWsModuleIndexRoute
 }
 export interface FileRoutesById {
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/app/people/$id': typeof AppPeopleIdRoute
   '/app/simulations/$id': typeof AppSimulationsIdRoute
   '/app/simulations/': typeof AppSimulationsIndexRoute
+  '/app/ws/$module/$threadId': typeof AppWsModuleThreadIdRoute
   '/app/ws/$module/': typeof AppWsModuleIndexRoute
 }
 export interface FileRouteTypes {
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/app/people/$id'
     | '/app/simulations/$id'
     | '/app/simulations/'
+    | '/app/ws/$module/$threadId'
     | '/app/ws/$module/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/app/people/$id'
     | '/app/simulations/$id'
     | '/app/simulations'
+    | '/app/ws/$module/$threadId'
     | '/app/ws/$module'
   id:
     | '__root__'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '/app/people/$id'
     | '/app/simulations/$id'
     | '/app/simulations/'
+    | '/app/ws/$module/$threadId'
     | '/app/ws/$module/'
   fileRoutesById: FileRoutesById
 }
@@ -396,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppWsModuleIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/ws/$module/$threadId': {
+      id: '/app/ws/$module/$threadId'
+      path: '/ws/$module/$threadId'
+      fullPath: '/app/ws/$module/$threadId'
+      preLoaderRoute: typeof AppWsModuleThreadIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -413,6 +432,7 @@ interface AppRouteChildren {
   AppPeopleIdRoute: typeof AppPeopleIdRoute
   AppSimulationsIdRoute: typeof AppSimulationsIdRoute
   AppSimulationsIndexRoute: typeof AppSimulationsIndexRoute
+  AppWsModuleThreadIdRoute: typeof AppWsModuleThreadIdRoute
   AppWsModuleIndexRoute: typeof AppWsModuleIndexRoute
 }
 
@@ -430,6 +450,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPeopleIdRoute: AppPeopleIdRoute,
   AppSimulationsIdRoute: AppSimulationsIdRoute,
   AppSimulationsIndexRoute: AppSimulationsIndexRoute,
+  AppWsModuleThreadIdRoute: AppWsModuleThreadIdRoute,
   AppWsModuleIndexRoute: AppWsModuleIndexRoute,
 }
 

@@ -30,10 +30,10 @@ export const Route = createFileRoute("/app")({
 
 export const NAV = [
   { to: "/app", label: "Overview", icon: LayoutGrid, exact: true },
-  { to: "/app/tutor", label: "AI Tutor", icon: Bot },
-  { to: "/app/simulations", label: "Simulations", icon: Workflow },
-  { to: "/app/passport", label: "Skills Passport", icon: IdCard },
-  { to: "/app/intelligence", label: "Industry Intelligence", icon: Radar },
+  { to: "/app/tutor", label: "AI Tutor", icon: Bot, ws: "tutor" },
+  { to: "/app/simulations", label: "Simulations", icon: Workflow, ws: "simulations" },
+  { to: "/app/passport", label: "Skills Passport", icon: IdCard, ws: "passport" },
+  { to: "/app/intelligence", label: "Industry Intelligence", icon: Radar, ws: "intelligence" },
   { to: "/app/network", label: "Network", icon: Network },
   { to: "/app/opportunities", label: "Opportunities", icon: Briefcase },
   { to: "/app/learning", label: "Learning", icon: BookOpen },
@@ -51,11 +51,13 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       </div>
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3" aria-label="Main">
         {NAV.map((n) => {
-          const active = "exact" in n ? loc.pathname === n.to || loc.pathname === n.to + "/" : loc.pathname.startsWith(n.to);
+          const ws = "ws" in n ? n.ws : null;
+          const active = "exact" in n ? loc.pathname === n.to || loc.pathname === n.to + "/" : loc.pathname.startsWith(n.to) || (!!ws && loc.pathname.startsWith(`/app/ws/${ws}`));
+          const linkProps = ws ? ({ to: "/app/ws/$module", params: { module: ws } } as const) : ({ to: n.to } as const);
           return (
             <Link
               key={n.to}
-              to={n.to}
+              {...linkProps}
               onClick={onNavigate}
               className={cn(
                 "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
@@ -215,7 +217,7 @@ function AppLayout() {
         </header>
         <main key={loc.pathname} className="fade-up mx-auto w-full max-w-7xl px-4 py-8 md:px-8 md:py-10">
           <Outlet />
-          <ReadinessLoop pathname={loc.pathname} />
+          {!loc.pathname.startsWith("/app/ws/") && <ReadinessLoop pathname={loc.pathname} />}
         </main>
       </div>
       <CommandPalette open={cmdOpen} onOpenChange={setCmdOpen} />
