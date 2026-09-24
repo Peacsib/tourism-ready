@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, ExternalLink, Loader2, Sparkles, UserPlus } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { discoverProfessionals, inviteProfessional, type DiscoveredPerson } from "@/lib/discovery.functions";
@@ -20,7 +20,7 @@ function passportMatches(p: DiscoveredPerson, skills: string[]) {
   });
 }
 
-export function IndustryDiscovery({ query }: { query: string }) {
+export function IndustryDiscovery({ query, autoQuery }: { query: string; autoQuery?: string }) {
   const search = useServerFn(discoverProfessionals);
   const invite = useServerFn(inviteProfessional);
   const { competencies, persona } = useApp();
@@ -40,6 +40,8 @@ export function IndustryDiscovery({ query }: { query: string }) {
     } catch { setResults([]); setError("External discovery is temporarily unavailable. Showing Tourism Workforce members."); }
     finally { setLoading(false); }
   };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { if (autoQuery) run(autoQuery); }, [autoQuery]);
   const doInvite = async (p: DiscoveredPerson) => {
     try {
       const r = await invite({ data: { person: { id: p.id, name: p.name, headline: p.headline, role: p.role, company: p.company, location: p.location, profileUrl: p.profileUrl }, invitedBy: persona.name } });
