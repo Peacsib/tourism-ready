@@ -11,3 +11,5 @@
 
 - [x] Chat-first workspaces for all main sections (Tutor, Sims, Passport, Intelligence, Network, Opportunities, Learning, Hubs)
 - [x] Nyanzvi AI Tutor logo + premium onboarding
+- [x] Nyanzvi as intelligence layer: real pages restored in menu, "Ask Nyanzvi" bar on each page, chat recommends only real resources with links
+- [ ] Learning progress/lessons and Hubs moved to database (still sample data)
