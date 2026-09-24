@@ -37,7 +37,7 @@ function Onboarding() {
 
   return (
     <div className="relative -mx-4 -my-8 flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden px-4 py-10 md:-mx-8 md:-my-10">
-      <div aria-hidden className="gradient-hero pointer-events-none absolute inset-0 opacity-70" />
+      <div aria-hidden className="hero-glow pointer-events-none absolute inset-0 opacity-70" />
       <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan/20" />
       <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[760px] w-[760px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-gold/10" />
 
@@ -52,7 +52,7 @@ function Onboarding() {
               </span>
             </div>
             <p className="eyebrow mt-6">{w.label}</p>
-            <h1 className="mt-1 font-display text-4xl font-semibold tracking-tight md:text-5xl"><span className="gradient-text">{w.agent}</span></h1>
+            <h1 className="mt-1 font-display text-4xl font-semibold tracking-tight md:text-5xl"><span className="text-gradient">{w.agent}</span></h1>
             <p className="mt-3 text-lg text-muted-foreground">{w.tagline}</p>
           </div>
           <ul className="space-y-3">
