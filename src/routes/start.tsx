@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, Briefcase, GraduationCap, Lightbulb, Presentation, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, Logo } from "@/components/tw/motifs";
@@ -100,11 +100,11 @@ function Start() {
               <p className="eyebrow text-cyan">Demo mode</p>
               <h2 className="mt-2 text-xl font-semibold">Enter instantly as a sample persona</h2>
             </div>
-            <p className="text-sm text-muted-foreground">No account needed. Progress is saved on this device.</p>
+            <p className="text-sm text-muted-foreground">Sample starting points. Your own name and progress stay on your account.</p>
           </div>
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {PERSONAS.slice(0, 4).map((p) => (
-              <button key={p.id} onClick={() => go(p.id)} className="lift flex items-center gap-3 rounded-xl border bg-background p-4 text-left">
+              <button key={p.id} onClick={() => void go(p.id)} className="lift flex items-center gap-3 rounded-xl border bg-background p-4 text-left">
                 <Avatar initials={p.initials} tone="gold" />
                 <span className="min-w-0">
                   <span className="block truncate font-medium">{p.name}</span>
