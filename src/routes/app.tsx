@@ -14,6 +14,7 @@ import {
 import { CommandPalette } from "@/components/tw/command-palette";
 import { ROLES, type RoleId } from "@/lib/data";
 import { useApp } from "@/lib/store";
+import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app")({

@@ -28,19 +28,29 @@ const ICONS: Record<RoleId, typeof GraduationCap> = {
 };
 
 function Start() {
-  const [role, setRole] = useState<RoleId | null>(null);
   const { enter } = useApp();
+  const { loading, user, profile, setProfileRole } = useAuth();
+  const [role, setRole] = useState<RoleId | null>(null);
   const navigate = useNavigate();
 
-  const go = (personaId: string, r?: RoleId) => {
+  useEffect(() => {
+    if (!loading && !user) navigate({ to: "/auth" });
+  }, [loading, user, navigate]);
+
+  useEffect(() => {
+    if (profile?.role) setRole(profile.role as RoleId);
+  }, [profile?.role]);
+
+  const go = async (personaId: string, r?: RoleId) => {
     enter(personaId, r);
+    if (r) await setProfileRole(r);
     navigate({ to: "/app" });
   };
 
   const continueWithRole = () => {
     if (!role) return;
     const persona = PERSONAS.find((p) => p.role === role) ?? PERSONAS[0]!;
-    go(persona.id, role);
+    void go(persona.id, role);
   };
 
   return (
