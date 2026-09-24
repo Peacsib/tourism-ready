@@ -34,7 +34,7 @@ const PLATFORM_CATALOGUE = [
 ].join("\n");
 
 const MD_COMPONENTS = {
-  a: ({ href, children }: { href?: string; children?: ReactNode }) =>
+  a: ({ href, children }: { href?: string | undefined; children?: ReactNode }) =>
     href?.startsWith("/app")
       ? <a href={href} onClick={(e) => { e.preventDefault(); window.dispatchEvent(new CustomEvent("tw-nav", { detail: href })); }} className="inline-flex items-center gap-1 rounded-full border border-gold/40 bg-gold/10 px-2.5 py-0.5 text-xs font-medium text-foreground no-underline hover:bg-gold/20">{children} →</a>
       : <a href={href} target="_blank" rel="noreferrer">{children}</a>,
