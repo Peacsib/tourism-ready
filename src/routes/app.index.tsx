@@ -1,8 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, Bot, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, Meter, Panel, ReadinessPath, Signal, StatePill, Tag } from "@/components/tw/motifs";
-import { ARTICLES, COURSES, OPPORTUNITIES, PEOPLE, TRENDS, type RoleId } from "@/lib/data";
+import { ARTICLES, COURSES, TRENDS, type RoleId } from "@/lib/data";
+import { displayName, fetchJobs, fetchMembers, type Job, type Member } from "@/lib/social";
+import { MemberAvatar } from "@/components/tw/member-avatar";
+import { useAuth } from "@/lib/auth";
 import { useApp } from "@/lib/store";
 
 export const Route = createFileRoute("/app/")({
@@ -132,19 +136,7 @@ function Overview() {
             <p className="eyebrow">Matched opportunities</p>
             <Link to="/app/opportunities" className="text-xs text-muted-foreground hover:text-foreground">All →</Link>
           </div>
-          <ul className="mt-5 divide-y">
-            {[...OPPORTUNITIES].sort((a, b) => b.match - a.match).slice(0, 4).map((o) => (
-              <li key={o.id}>
-                <Link to="/app/opportunities" className="flex items-center justify-between gap-3 py-3 hover:text-gold">
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm font-medium">{o.title}</span>
-                    <span className="block truncate text-xs text-muted-foreground">{o.org} · {o.location}</span>
-                  </span>
-                  <span className="font-mono text-xs text-gold">{o.match}%</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <RealJobsList />
         </Panel>
       </div>
     </div>
@@ -153,24 +145,10 @@ function Overview() {
 
 function RoleFocus({ role }: { role: RoleId }) {
   if (role === "employer") {
-    const candidates = PEOPLE.filter((p) => ["Graduate", "Student"].includes(p.type)).concat(PEOPLE[7]!);
-    return (
+        return (
       <Panel>
         <p className="eyebrow">Candidate discovery</p>
-        <ul className="mt-5 space-y-3">
-          {candidates.map((p) => (
-            <li key={p.id}>
-              <Link to="/app/people/$id" params={{ id: p.id }} className="flex items-center gap-3 rounded-xl p-2 hover:bg-accent">
-                <Avatar initials={p.initials} size="sm" />
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-medium">{p.name}</span>
-                  <span className="block truncate text-xs text-muted-foreground">{p.skills.slice(0, 2).join(" · ")}</span>
-                </span>
-                <Tag tone="gold">Verified</Tag>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <RealCandidates />
         <p className="mt-5 eyebrow">Team training needs</p>
         <div className="mt-3 space-y-3 text-sm">
           {[["Booking systems", 64], ["AI-assisted service", 71], ["Service recovery", 38]].map(([k, v]) => (
@@ -228,5 +206,44 @@ function RoleFocus({ role }: { role: RoleId }) {
         ))}
       </ul>
     </Panel>
+  );
+}
+
+function RealJobsList() {
+  const [jobs, setJobs] = useState<Job[] | null>(null);
+  useEffect(() => { fetchJobs().then((j) => setJobs(j.filter((x) => x.active).slice(0, 4))).catch(() => setJobs([])); }, []);
+  if (jobs === null) return <p className="mt-5 text-sm text-muted-foreground">Loading…</p>;
+  if (!jobs.length) return <p className="mt-5 text-sm text-muted-foreground">No employer has posted yet. New roles appear here as soon as they're published.</p>;
+  return (
+    <ul className="mt-5 divide-y">
+      {jobs.map((o) => (
+        <li key={o.id}>
+          <Link to="/app/opportunities" className="flex items-center justify-between gap-3 py-3 hover:text-gold">
+            <span className="min-w-0"><span className="block truncate text-sm font-medium">{o.title}</span><span className="block truncate text-xs text-muted-foreground">{o.organisation} · {o.location}</span></span>
+            <span className="text-xs text-muted-foreground">{o.job_type}</span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function RealCandidates() {
+  const { user } = useAuth();
+  const [list, setList] = useState<Member[] | null>(null);
+  useEffect(() => { fetchMembers(user?.id).then((m) => setList(m.filter((x) => x.role === "student" || x.role === "professional").slice(0, 5))).catch(() => setList([])); }, [user]);
+  if (list === null) return <p className="mt-5 text-sm text-muted-foreground">Loading…</p>;
+  if (!list.length) return <p className="mt-5 text-sm text-muted-foreground">No candidates have joined yet. Post an opportunity to attract applicants.</p>;
+  return (
+    <ul className="mt-5 space-y-3">
+      {list.map((p) => (
+        <li key={p.id}>
+          <Link to="/app/people/$id" params={{ id: p.id }} className="flex items-center gap-3 rounded-xl p-2 hover:bg-accent">
+            <MemberAvatar m={p} size="sm" />
+            <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{displayName(p)}</span><span className="block truncate text-xs text-muted-foreground">{p.headline || p.location || "Member"}</span></span>
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }

@@ -20,6 +20,8 @@ import { Route as AppHelpRouteImport } from './routes/app.help'
 import { Route as AppHubsRouteImport } from './routes/app.hubs'
 import { Route as AppIntelligenceRouteImport } from './routes/app.intelligence'
 import { Route as AppLearningRouteImport } from './routes/app.learning'
+import { Route as AppMessagesRouteImport } from './routes/app.messages'
+import { Route as AppMyNetworkRouteImport } from './routes/app.my-network'
 import { Route as AppNetworkRouteImport } from './routes/app.network'
 import { Route as AppOpportunitiesRouteImport } from './routes/app.opportunities'
 import { Route as AppPassportRouteImport } from './routes/app.passport'
@@ -86,6 +88,16 @@ const AppLearningRoute = AppLearningRouteImport.update({
   path: '/learning',
   getParentRoute: () => AppRoute,
 } as any)
+const AppMessagesRoute = AppMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMyNetworkRoute = AppMyNetworkRouteImport.update({
+  id: '/my-network',
+  path: '/my-network',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppNetworkRoute = AppNetworkRouteImport.update({
   id: '/network',
   path: '/network',
@@ -148,6 +160,8 @@ export interface FileRoutesByFullPath {
   '/app/hubs': typeof AppHubsRoute
   '/app/intelligence': typeof AppIntelligenceRoute
   '/app/learning': typeof AppLearningRoute
+  '/app/messages': typeof AppMessagesRoute
+  '/app/my-network': typeof AppMyNetworkRoute
   '/app/network': typeof AppNetworkRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/passport': typeof AppPassportRoute
@@ -170,6 +184,8 @@ export interface FileRoutesByTo {
   '/app/hubs': typeof AppHubsRoute
   '/app/intelligence': typeof AppIntelligenceRoute
   '/app/learning': typeof AppLearningRoute
+  '/app/messages': typeof AppMessagesRoute
+  '/app/my-network': typeof AppMyNetworkRoute
   '/app/network': typeof AppNetworkRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/passport': typeof AppPassportRoute
@@ -194,6 +210,8 @@ export interface FileRoutesById {
   '/app/hubs': typeof AppHubsRoute
   '/app/intelligence': typeof AppIntelligenceRoute
   '/app/learning': typeof AppLearningRoute
+  '/app/messages': typeof AppMessagesRoute
+  '/app/my-network': typeof AppMyNetworkRoute
   '/app/network': typeof AppNetworkRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/passport': typeof AppPassportRoute
@@ -219,6 +237,8 @@ export interface FileRouteTypes {
     | '/app/hubs'
     | '/app/intelligence'
     | '/app/learning'
+    | '/app/messages'
+    | '/app/my-network'
     | '/app/network'
     | '/app/opportunities'
     | '/app/passport'
@@ -241,6 +261,8 @@ export interface FileRouteTypes {
     | '/app/hubs'
     | '/app/intelligence'
     | '/app/learning'
+    | '/app/messages'
+    | '/app/my-network'
     | '/app/network'
     | '/app/opportunities'
     | '/app/passport'
@@ -264,6 +286,8 @@ export interface FileRouteTypes {
     | '/app/hubs'
     | '/app/intelligence'
     | '/app/learning'
+    | '/app/messages'
+    | '/app/my-network'
     | '/app/network'
     | '/app/opportunities'
     | '/app/passport'
@@ -365,6 +389,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLearningRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/messages': {
+      id: '/app/messages'
+      path: '/messages'
+      fullPath: '/app/messages'
+      preLoaderRoute: typeof AppMessagesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/my-network': {
+      id: '/app/my-network'
+      path: '/my-network'
+      fullPath: '/app/my-network'
+      preLoaderRoute: typeof AppMyNetworkRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/network': {
       id: '/app/network'
       path: '/network'
@@ -443,6 +481,8 @@ interface AppRouteChildren {
   AppHubsRoute: typeof AppHubsRoute
   AppIntelligenceRoute: typeof AppIntelligenceRoute
   AppLearningRoute: typeof AppLearningRoute
+  AppMessagesRoute: typeof AppMessagesRoute
+  AppMyNetworkRoute: typeof AppMyNetworkRoute
   AppNetworkRoute: typeof AppNetworkRoute
   AppOpportunitiesRoute: typeof AppOpportunitiesRoute
   AppPassportRoute: typeof AppPassportRoute
@@ -461,6 +501,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppHubsRoute: AppHubsRoute,
   AppIntelligenceRoute: AppIntelligenceRoute,
   AppLearningRoute: AppLearningRoute,
+  AppMessagesRoute: AppMessagesRoute,
+  AppMyNetworkRoute: AppMyNetworkRoute,
   AppNetworkRoute: AppNetworkRoute,
   AppOpportunitiesRoute: AppOpportunitiesRoute,
   AppPassportRoute: AppPassportRoute,

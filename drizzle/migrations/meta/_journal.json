@@ -15,6 +15,13 @@
       "when": 1790289851433,
       "tag": "0001_auth_profiles_and_passport",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790292688439,
+      "tag": "0002_network_feed_connections_jobs",
+      "breakpoints": true
     }
   ]
 }
