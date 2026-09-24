@@ -34,10 +34,10 @@ export const NAV = [
   { to: "/app/simulations", label: "Simulations", icon: Workflow, ws: "simulations" },
   { to: "/app/passport", label: "Skills Passport", icon: IdCard, ws: "passport" },
   { to: "/app/intelligence", label: "Industry Intelligence", icon: Radar, ws: "intelligence" },
-  { to: "/app/network", label: "Network", icon: Network },
-  { to: "/app/opportunities", label: "Opportunities", icon: Briefcase },
-  { to: "/app/learning", label: "Learning", icon: BookOpen },
-  { to: "/app/hubs", label: "Field & Innovation Hubs", icon: MapPin },
+  { to: "/app/network", label: "Network", icon: Network, ws: "network" },
+  { to: "/app/opportunities", label: "Opportunities", icon: Briefcase, ws: "opportunities" },
+  { to: "/app/learning", label: "Learning", icon: BookOpen, ws: "learning" },
+  { to: "/app/hubs", label: "Field & Innovation Hubs", icon: MapPin, ws: "hubs" },
   { to: "/app/profile", label: "Profile", icon: UserRound },
 ] as const;
 

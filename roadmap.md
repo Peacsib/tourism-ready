@@ -8,3 +8,6 @@
 
 ## Next
 - Public verification page for a passport (/verify/:id) and employer candidate search.
+
+- [x] Chat-first workspaces for all main sections (Tutor, Sims, Passport, Intelligence, Network, Opportunities, Learning, Hubs)
+- [x] Nyanzvi AI Tutor logo + premium onboarding
