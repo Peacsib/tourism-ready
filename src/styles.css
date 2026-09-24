@@ -203,3 +203,11 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+.ws-md > * + * { margin-top: 0.6rem; }
+.ws-md ul { list-style: disc; padding-left: 1.25rem; }
+.ws-md ol { list-style: decimal; padding-left: 1.25rem; }
+.ws-md li + li { margin-top: 0.2rem; }
+.ws-md strong { font-weight: 600; }
+.ws-md h1, .ws-md h2, .ws-md h3 { font-weight: 600; font-size: 1rem; }
+.ws-md code { background: var(--muted); border-radius: 0.25rem; padding: 0 0.25rem; }
