@@ -103,7 +103,6 @@ function NetworkPage() {
             <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">No member has posted yet. Share a win from your shift, a question for managers, or a tip for newcomers. Meanwhile, here are real tourism professionals in Zimbabwe you can invite.</p>
           </div>
         ) : feed.map((p) => <PostCard key={p.id} post={p} me={user.id} net={net} onChange={loadFeed} />)}
-        {feed !== null && <IndustryDiscovery query={q} autoQuery={feed.length === 0 ? "Hotel Manager" : undefined} />}
       </main>
 
       {/* Right: people */}
@@ -196,6 +195,9 @@ function Composer({ liEnabled, onPosted }: { liEnabled: boolean; onPosted: () =>
           </label>
         )}
         <Button className="ml-auto" size="sm" onClick={submit} disabled={posting || (!text.trim() && !photo)}>{posting && <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />} Post</Button>
+      </div>
+      <div className="lg:col-span-2 xl:col-span-3">
+          {feed !== null && <IndustryDiscovery query={q} autoQuery={feed.length === 0 ? "Hotel Manager" : undefined} />}
       </div>
     </div>
   );

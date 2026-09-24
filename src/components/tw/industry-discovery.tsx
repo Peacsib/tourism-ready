@@ -82,7 +82,7 @@ export function IndustryDiscovery({ query, autoQuery }: { query: string; autoQue
                   </div>
                   <Tag tone="cyan">External Professional</Tag>
                 </div>
-                {p.skills.length > 0 && <div className="mt-3 flex flex-wrap gap-1.5">{p.skills.map((s) => <Tag key={s}>{s}</Tag>)}</div>}
+                {p.skills.length > 0 && <div className="mt-3 flex flex-wrap gap-1.5">{p.skills.map((s) => s.replace(/[\[\]"]/g, "").trim()).filter(Boolean).slice(0, 6).map((s) => <Tag key={s}>{s}</Tag>)}</div>}
                 {(p.jobLevel || p.jobFunction || p.industry) && <p className="mt-3 text-xs text-muted-foreground">{[p.jobLevel, p.jobFunction, p.industry].filter(Boolean).join(" · ")}</p>}
                 {matches.length > 0 && (
                   <div className="mt-3 rounded-xl bg-gold/10 px-3 py-2 text-xs">
