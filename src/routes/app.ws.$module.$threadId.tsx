@@ -23,11 +23,33 @@ export const Route = createFileRoute("/app/ws/$module/$threadId")({
   component: WorkspacePage,
 });
 
+const PLATFORM_CATALOGUE = [
+  "EXISTING PLATFORM RESOURCES (recommend only these; never invent courses, simulations, hubs, jobs or people). Link each recommendation with a markdown link to its real page:",
+  `Courses → [Start Learning](/app/learning): ${COURSES.map((c) => `${c.title} (${c.skills.join(", ")})`).join("; ")}`,
+  `Simulations → [Practise](/app/simulations/<id>): ${SIMULATIONS.filter((s) => s.available).map((s) => `${s.id}: ${s.title}`).join("; ")}`,
+  `Hubs → [Explore Hub](/app/hubs): ${HUBS.map((h) => `${h.programme}, ${h.destination}, ${h.next}`).join("; ")}`,
+  `Industry trends → [View trend](/app/intelligence): ${TRENDS.map((t) => t.name).join("; ")}`,
+  "Skills → [View Skill](/app/passport). Jobs → [Browse opportunities](/app/opportunities). People → [Find professionals](/app/network) or [My network](/app/my-network). Messages → [Messages](/app/messages).",
+  "If nothing on the platform fits the user's topic, say so plainly instead of inventing a resource.",
+].join("\n");
+
+const MD_COMPONENTS = {
+  a: ({ href, children }: { href?: string; children?: React.ReactNode }) =>
+    href?.startsWith("/app")
+      ? <a href={href} onClick={(e) => { e.preventDefault(); window.dispatchEvent(new CustomEvent("tw-nav", { detail: href })); }} className="inline-flex items-center gap-1 rounded-full border border-gold/40 bg-gold/10 px-2.5 py-0.5 text-xs font-medium text-foreground no-underline hover:bg-gold/20">{children} →</a>
+      : <a href={href} target="_blank" rel="noreferrer">{children}</a>,
+};
+
 function WorkspacePage() {
   const { module, threadId } = Route.useParams();
   const w = WORKSPACES[module as keyof typeof WORKSPACES];
   const { user } = useAuth();
   const navigate = useNavigate();
+  useEffect(() => {
+    const go = (e: Event) => navigate({ href: (e as CustomEvent<string>).detail });
+    window.addEventListener("tw-nav", go);
+    return () => window.removeEventListener("tw-nav", go);
+  }, [navigate]);
   const [threads, setThreads] = useState<WsThread[]>(() => (user ? loadThreads(user.id).filter((t) => t.module === w.id) : []));
   const [open, setOpen] = useState(true);
   const [ready, setReady] = useState(() => !!user);
@@ -174,6 +196,7 @@ function ChatCanvas({ w, thread, onChange, sidebarOpen, openSidebar }: { w: Work
     `Workspace: ${w.label}. ${thread.focus === "Open topic" ? "No preset focus — the user brings their own topic; follow their lead." : `Session focus chosen during onboarding: ${thread.focus}.`} Active mode: ${mode}.`,
     `Learner: ${persona.name} (${persona.role}). Goal: ${persona.goal}.`,
     `Skills: ${competencies.map((c) => `${c.name} ${c.state} ${c.level}%`).join("; ")}`,
+    PLATFORM_CATALOGUE,
   ].join("\n");
 
   const send = async (text: string) => {
@@ -267,7 +290,7 @@ function ChatCanvas({ w, thread, onChange, sidebarOpen, openSidebar }: { w: Work
                   <div className="min-w-0 flex-1 text-sm leading-relaxed text-foreground">
                     {m.card ? <InlineCard kind={m.card} onPick={send} disabled={busy} /> : m.content ? (
                       <>
-                        <div className="ws-md"><ReactMarkdown>{m.content}</ReactMarkdown></div>
+                        <div className="ws-md"><ReactMarkdown components={MD_COMPONENTS}>{m.content}</ReactMarkdown></div>
                         <button onClick={() => copy(m)} className="mt-1 flex items-center gap-1 text-xs text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100">
                           {copied === m.id ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />} {copied === m.id ? "Copied" : "Copy"}
                         </button>

@@ -25,7 +25,7 @@ export const Route = createFileRoute("/api/chat")({
         const body = (await request.json()) as { messages?: ChatMsg[]; context?: string; module?: string };
         if (!Array.isArray(body.messages)) return new Response("Messages are required", { status: 400 });
         const messages = [
-          { role: "system", content: `${MODULE_SYSTEM[String(body.module)] ?? SYSTEM}\nContext gathered from the learner:\n${String(body.context ?? "").slice(0, 2000)}` },
+          { role: "system", content: `${MODULE_SYSTEM[String(body.module)] ?? SYSTEM}\nContext gathered from the learner:\n${String(body.context ?? "").slice(0, 7000)}` },
           ...body.messages.slice(-30).map((m) => {
             const role = m.role === "assistant" ? "assistant" : "user";
             const text = String(m.content).slice(0, 4000);
