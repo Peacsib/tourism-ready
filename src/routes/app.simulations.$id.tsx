@@ -201,6 +201,7 @@ function Workspace() {
 }
 
 function Review({ scenario, result, added, onAdd, onRetry }: { scenario: Scenario; result: { scores: { label: string; value: number }[]; well: string[]; improve: string[] }; added: boolean; onAdd: () => void; onRetry: () => void }) {
+  const { competencies: passportComps } = useApp();
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -232,7 +233,14 @@ function Review({ scenario, result, added, onAdd, onRetry }: { scenario: Scenari
           <div className="mt-8 rounded-xl border border-gold/30 bg-gold/5 p-4">
             {added ? (
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-gold" /> Added to your Tourism Skills Passport.</p>
+                <div>
+                  <p className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-gold" /> Added to your Tourism Skills Passport.</p>
+                  <ul className="mt-3 space-y-1.5">
+                    {passportComps.filter((c) => scenario.competencies.some((n) => c.name.toLowerCase().includes(n.toLowerCase().split(" ")[0] ?? ""))).map((c) => (
+                      <li key={c.id} className="flex items-center gap-3 text-sm"><span className="font-medium">{c.name}</span><span className="font-mono text-[11px] uppercase tracking-wider text-gold">{c.state}</span><span className="font-mono text-xs text-muted-foreground">{c.level}%</span></li>
+                    ))}
+                  </ul>
+                </div>
                 <Button asChild size="sm" variant="outline"><Link to="/app/passport">View Skills Passport</Link></Button>
               </div>
             ) : (
