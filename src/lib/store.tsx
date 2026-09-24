@@ -151,6 +151,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
   }, [hydrated, user?.id]);
 
+  // A returning member on a new device is already onboarded: their role is on their account.
+  useEffect(() => {
+    if (!hydrated || !user?.id || !profile?.role) return;
+    setState((s) => {
+      if (s.personaId) return s;
+      const role = profile.role as RoleId;
+      const base = PERSONAS.find((p) => p.role === role) ?? PERSONAS[0]!;
+      return { ...s, personaId: base.id, role };
+    });
+  }, [hydrated, user?.id, profile?.role]);
+
   // Keep the cloud in step with changes made on this device.
   useEffect(() => {
     if (!cloudReady || !user?.id) return;
