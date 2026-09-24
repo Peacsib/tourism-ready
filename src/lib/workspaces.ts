@@ -14,7 +14,12 @@ export type WorkspaceConfig = {
   placeholder: string;
   classic: "/app/tutor" | "/app/simulations" | "/app/passport" | "/app/intelligence";
   classicLabel: string;
+  modes: string[];
+  cards: CardKind[];
 };
+
+export type CardKind = "skills" | "sims" | "trends" | "courses";
+export const CARD_LABELS: Record<CardKind, string> = { skills: "My skills", sims: "Scenario library", trends: "Industry trends", courses: "Learning courses" };
 
 export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
   tutor: {
@@ -29,6 +34,8 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
     placeholder: "Ask your tutor anything…",
     classic: "/app/tutor",
     classicLabel: "Guided tutor",
+    modes: ["Explain", "Quiz me", "Interview coach", "Study plan", "Feedback on my answer"],
+    cards: ["skills", "courses"],
   },
   simulations: {
     id: "simulations",
@@ -42,6 +49,8 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
     placeholder: "Respond to the scenario…",
     classic: "/app/simulations",
     classicLabel: "Scenario library",
+    modes: ["Role-play", "Score my response", "Debrief"],
+    cards: ["sims", "skills"],
   },
   passport: {
     id: "passport",
@@ -55,6 +64,8 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
     placeholder: "Ask about your skills and evidence…",
     classic: "/app/passport",
     classicLabel: "Passport view",
+    modes: ["Gap analysis", "CV writer", "Verification plan"],
+    cards: ["skills", "courses"],
   },
   intelligence: {
     id: "intelligence",
@@ -68,6 +79,8 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
     placeholder: "Ask about tourism trends…",
     classic: "/app/intelligence",
     classicLabel: "Trend dashboard",
+    modes: ["Briefing", "Skills demand", "Career impact"],
+    cards: ["trends", "courses"],
   },
 };
 

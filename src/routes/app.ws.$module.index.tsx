@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -68,7 +68,6 @@ function Onboarding() {
         <div className="mt-6 flex justify-center gap-1.5">
           {[0, 1].map((i) => <span key={i} className={cn("h-1.5 rounded-full transition-all", i === step ? "w-6 bg-gold" : "w-1.5 bg-border")} />)}
         </div>
-        <Link to={w.classic} className="mt-6 inline-block text-xs text-muted-foreground hover:text-foreground">Or open the {w.classicLabel.toLowerCase()} →</Link>
       </div>
     </div>
   );
