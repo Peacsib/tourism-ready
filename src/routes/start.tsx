@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, Logo } from "@/components/tw/motifs";
 import { PERSONAS, ROLES, type RoleId } from "@/lib/data";
 import { useApp } from "@/lib/store";
+import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/start")({
