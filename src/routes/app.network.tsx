@@ -125,6 +125,9 @@ function NetworkPage() {
           </ul>
         </div>
       </aside>
+      <div className="lg:col-span-2 xl:col-span-3">
+        {feed !== null && <IndustryDiscovery query={q} autoQuery={feed.length === 0 ? "Hotel Manager" : undefined} />}
+      </div>
     </div>
   );
 }
