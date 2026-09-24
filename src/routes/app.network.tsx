@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Bookmark, BookmarkCheck, Check, Clock, Heart, MessageCircle, MessageSquare, Search, UserPlus } from "lucide-react";
+import { Bookmark, BookmarkCheck, Check, Clock, ExternalLink, Heart, Loader2, MessageCircle, MessageSquare, Search, Sparkles, UserPlus } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { discoverProfessionals, type DiscoveredPerson } from "@/lib/discovery.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -48,6 +50,7 @@ function NetworkPage() {
             {TYPES.map((t) => <button key={t} onClick={() => setType(t)} className={cn("shrink-0 rounded-full border px-3 py-1 text-xs transition-colors", type === t ? "border-gold/50 bg-gold/10 text-gold" : "text-muted-foreground hover:text-foreground")}>{t}</button>)}
           </div>
           {people.length === 0 && <Panel className="text-center text-sm text-muted-foreground">No one matches that search yet. Try a skill like "Reservations".</Panel>}
+          <IndustryDiscovery query={q} />
           <div className="grid gap-3 md:grid-cols-2">
             {people.map((p) => (
               <div key={p.id} className="lift flex flex-col rounded-2xl border bg-card p-5">
@@ -114,5 +117,51 @@ function NetworkPage() {
       </div>
       <MessageDialog person={msgTo} onClose={() => setMsgTo(null)} />
     </div>
+  );
+}
+
+function IndustryDiscovery({ query }: { query: string }) {
+  const search = useServerFn(discoverProfessionals);
+  const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState<DiscoveredPerson[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [location, setLocation] = useState("Zimbabwe");
+  const run = async () => {
+    if (query.trim().length < 2) { toast.message("Type who you're looking for first, e.g. \"Hotel managers\"."); return; }
+    setLoading(true); setError(null);
+    try {
+      const r = await search({ data: { query: query.trim(), location } });
+      setResults(r.people); setError(r.error ?? null);
+    } catch { setError("Discovery is temporarily unavailable."); }
+    finally { setLoading(false); }
+  };
+  return (
+    <Panel className="mb-5 mt-1">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex-1">
+          <p className="eyebrow text-cyan">Industry discovery</p>
+          <p className="mt-1 text-sm text-muted-foreground">Find real tourism professionals beyond the platform, matching your search.</p>
+        </div>
+        <Input value={location} onChange={(e) => setLocation(e.target.value)} className="bg-surface sm:w-40" placeholder="Location" maxLength={80} />
+        <Button size="sm" onClick={run} disabled={loading}>{loading ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <Sparkles className="mr-1 h-3.5 w-3.5" />} Discover</Button>
+      </div>
+      {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
+      {results && results.length === 0 && !error && <p className="mt-3 text-sm text-muted-foreground">No industry matches. Try a broader role or location.</p>}
+      {results && results.length > 0 && (
+        <div className="mt-4 grid gap-2 md:grid-cols-2">
+          {results.map((p) => (
+            <div key={p.id} className="flex items-start gap-3 rounded-xl border bg-background p-3">
+              {p.photoUrl ? <img src={p.photoUrl} alt="" className="h-9 w-9 rounded-full object-cover" /> : <Avatar initials={p.name.split(" ").map((w) => w[0]).join("").slice(0, 2)} size="sm" />}
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">{p.name}</p>
+                <p className="truncate text-xs text-muted-foreground">{[p.role, p.company].filter(Boolean).join(" · ")}</p>
+                {p.location && <p className="truncate font-mono text-xs text-muted-foreground">{p.location}</p>}
+              </div>
+              {p.profileUrl && <a href={p.profileUrl} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-foreground" aria-label="Open profile"><ExternalLink className="h-4 w-4" /></a>}
+            </div>
+          ))}
+        </div>
+      )}
+    </Panel>
   );
 }
