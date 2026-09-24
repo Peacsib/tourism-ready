@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { simForSkills } from "@/lib/skill-links";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
