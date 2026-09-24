@@ -196,9 +196,6 @@ function Composer({ liEnabled, onPosted }: { liEnabled: boolean; onPosted: () =>
         )}
         <Button className="ml-auto" size="sm" onClick={submit} disabled={posting || (!text.trim() && !photo)}>{posting && <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />} Post</Button>
       </div>
-      <div className="lg:col-span-2 xl:col-span-3">
-          {feed !== null && <IndustryDiscovery query={q} autoQuery={feed.length === 0 ? "Hotel Manager" : undefined} />}
-      </div>
     </div>
   );
 }
