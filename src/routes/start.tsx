@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, Briefcase, GraduationCap, Lightbulb, Presentation, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, Logo } from "@/components/tw/motifs";
 import { PERSONAS, ROLES, type RoleId } from "@/lib/data";
 import { useApp } from "@/lib/store";
+import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/start")({
@@ -28,19 +29,29 @@ const ICONS: Record<RoleId, typeof GraduationCap> = {
 };
 
 function Start() {
-  const [role, setRole] = useState<RoleId | null>(null);
   const { enter } = useApp();
+  const { loading, user, profile, setProfileRole } = useAuth();
+  const [role, setRole] = useState<RoleId | null>(null);
   const navigate = useNavigate();
 
-  const go = (personaId: string, r?: RoleId) => {
+  useEffect(() => {
+    if (!loading && !user) navigate({ to: "/auth" });
+  }, [loading, user, navigate]);
+
+  useEffect(() => {
+    if (profile?.role) setRole(profile.role as RoleId);
+  }, [profile?.role]);
+
+  const go = async (personaId: string, r?: RoleId) => {
     enter(personaId, r);
+    if (r) await setProfileRole(r);
     navigate({ to: "/app" });
   };
 
   const continueWithRole = () => {
     if (!role) return;
     const persona = PERSONAS.find((p) => p.role === role) ?? PERSONAS[0]!;
-    go(persona.id, role);
+    void go(persona.id, role);
   };
 
   return (
@@ -87,14 +98,14 @@ function Start() {
         <div className="mt-20 rounded-3xl border bg-card/60 p-6 md:p-8">
           <div className="flex flex-col justify-between gap-2 md:flex-row md:items-end">
             <div>
-              <p className="eyebrow text-cyan">Demo mode</p>
+              <p className="eyebrow text-cyan">Quick start</p>
               <h2 className="mt-2 text-xl font-semibold">Enter instantly as a sample persona</h2>
             </div>
-            <p className="text-sm text-muted-foreground">No account needed. Progress is saved on this device.</p>
+            <p className="text-sm text-muted-foreground">Sample starting points. Your own name and progress stay on your account.</p>
           </div>
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {PERSONAS.slice(0, 4).map((p) => (
-              <button key={p.id} onClick={() => go(p.id)} className="lift flex items-center gap-3 rounded-xl border bg-background p-4 text-left">
+              <button key={p.id} onClick={() => void go(p.id)} className="lift flex items-center gap-3 rounded-xl border bg-background p-4 text-left">
                 <Avatar initials={p.initials} tone="gold" />
                 <span className="min-w-0">
                   <span className="block truncate font-medium">{p.name}</span>

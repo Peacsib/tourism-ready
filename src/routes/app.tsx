@@ -14,6 +14,7 @@ import {
 import { CommandPalette } from "@/components/tw/command-palette";
 import { ROLES, type RoleId } from "@/lib/data";
 import { useApp } from "@/lib/store";
+import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app")({
@@ -123,14 +124,17 @@ function Notifications() {
 
 function AppLayout() {
   const { hydrated, personaId, persona, setRole, signOut, resetDemo } = useApp();
+  const { loading: authLoading, user, profile } = useAuth();
   const navigate = useNavigate();
   const loc = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
 
   useEffect(() => {
-    if (hydrated && !personaId) navigate({ to: "/start" });
-  }, [hydrated, personaId, navigate]);
+    if (authLoading) return;
+    if (!user) navigate({ to: "/auth" });
+    else if (hydrated && !personaId) navigate({ to: "/start" });
+  }, [authLoading, user, hydrated, personaId, navigate]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -143,7 +147,7 @@ function AppLayout() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  if (!hydrated || !personaId) {
+  if (authLoading || !user || !hydrated || !personaId) {
     return <div className="flex min-h-screen items-center justify-center"><Logo className="animate-pulse" /></div>;
   }
 
@@ -197,11 +201,11 @@ function AppLayout() {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>
                   <p className="font-medium">{persona.name}</p>
-                  <p className="text-xs font-normal text-muted-foreground">{persona.title}</p>
+                  <p className="text-xs font-normal text-muted-foreground">{profile?.email ?? persona.title}</p>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={() => navigate({ to: "/app/profile" })}><UserRound className="mr-2 h-4 w-4" /> Profile</DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => navigate({ to: "/start" })}><Compass className="mr-2 h-4 w-4" /> Switch persona</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => navigate({ to: "/start" })}><Compass className="mr-2 h-4 w-4" /> Change my role</DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => { resetDemo(); navigate({ to: "/start" }); }}><RotateCcw className="mr-2 h-4 w-4" /> Reset demo data</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={() => { signOut(); navigate({ to: "/" }); }}><LogOut className="mr-2 h-4 w-4" /> Sign out</DropdownMenuItem>

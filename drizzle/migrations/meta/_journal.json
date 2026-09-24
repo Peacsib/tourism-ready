@@ -8,6 +8,13 @@
       "when": 1790284413866,
       "tag": "0000_discovery_cache_and_invitations",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790289851433,
+      "tag": "0001_auth_profiles_and_passport",
+      "breakpoints": true
     }
   ]
 }

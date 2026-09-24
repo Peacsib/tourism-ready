@@ -1,5 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { COMPETENCIES, PERSONAS, POSTS, TIMELINE_SEED, type Competency, type Persona, type Post, type RoleId } from "./data";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { COMPETENCIES, PERSONAS, POSTS, ROLES, TIMELINE_SEED, type Competency, type Persona, type Post, type RoleId } from "./data";
+import { initialsOf, useAuth } from "./auth";
+import { loadCloudState, saveCloudState, type CloudState } from "./cloud-sync";
 
 export type Notification = { id: string; text: string; time: string; read: boolean; to: string };
 export type TimelineEntry = { id: string; type: string; title: string; detail: string; date: string; fresh?: boolean };
@@ -87,9 +89,28 @@ const uid = () => Math.random().toString(36).slice(2, 9);
 const levelToState = (n: number): Competency["state"] =>
   n >= 80 ? "Verified" : n >= 65 ? "Demonstrated" : n >= 50 ? "Practising" : "Developing";
 
+const toCloud = (s: State): CloudState => ({
+  competencies: s.competencies,
+  attempts: s.attempts,
+  timeline: s.timeline,
+  connections: s.connections,
+  pending: s.pending,
+  reacted: s.reacted,
+  savedPosts: s.savedPosts,
+  savedOpps: s.savedOpps,
+  applied: s.applied,
+  courseProgress: s.courseProgress,
+  hubRegistrations: s.hubRegistrations,
+  notifications: s.notifications,
+});
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>(initial);
   const [hydrated, setHydrated] = useState(false);
+  const { user, profile, signOut: authSignOut } = useAuth();
+  const [cloudReady, setCloudReady] = useState(false);
+  const stateRef = useRef(state);
+  stateRef.current = state;
 
   useEffect(() => {
     try {
@@ -105,10 +126,70 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (hydrated) localStorage.setItem(KEY, JSON.stringify(state));
   }, [state, hydrated]);
 
-  const persona = useMemo(() => {
-    const p = PERSONAS.find((x) => x.id === state.personaId) ?? PERSONAS[0]!;
-    return state.role ? { ...p, role: state.role } : p;
-  }, [state.personaId, state.role]);
+  // Load this member's passport from the cloud, or seed the cloud on first sign-in.
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!user?.id) {
+      setCloudReady(false);
+      return;
+    }
+    const id = user.id;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const cloud = await loadCloudState(id);
+        if (cancelled) return;
+        if (cloud) setState((s) => ({ ...s, ...cloud }));
+        else await saveCloudState(id, toCloud(stateRef.current));
+      } catch {
+        /* offline or blocked: keep working from this device */
+      }
+      if (!cancelled) setCloudReady(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [hydrated, user?.id]);
+
+  // A returning member on a new device is already onboarded: their role is on their account.
+  useEffect(() => {
+    if (!hydrated || !user?.id || !profile?.role) return;
+    setState((s) => {
+      if (s.personaId) return s;
+      const role = profile.role as RoleId;
+      const base = PERSONAS.find((p) => p.role === role) ?? PERSONAS[0]!;
+      return { ...s, personaId: base.id, role };
+    });
+  }, [hydrated, user?.id, profile?.role]);
+
+  // Keep the cloud in step with changes made on this device.
+  useEffect(() => {
+    if (!cloudReady || !user?.id) return;
+    const id = user.id;
+    const t = setTimeout(() => {
+      void saveCloudState(id, toCloud(state)).catch(() => {});
+    }, 900);
+    return () => clearTimeout(t);
+  }, [state, cloudReady, user?.id]);
+
+  const persona = useMemo<Persona>(() => {
+    const base = PERSONAS.find((x) => x.id === state.personaId) ?? PERSONAS[0]!;
+    const role = (state.role ?? (profile?.role as RoleId | undefined) ?? base.role) as RoleId;
+    if (!profile) return { ...base, role };
+    const name = profile.full_name?.trim() || profile.email?.split("@")[0] || "Member";
+    return {
+      id: profile.id,
+      name,
+      firstName: name.split(" ")[0] ?? name,
+      role,
+      title: profile.headline?.trim() || ROLES.find((r) => r.id === role)?.label || base.title,
+      organisation: profile.organisation?.trim() || base.organisation,
+      location: profile.location?.trim() || base.location,
+      initials: initialsOf(name),
+      statement: profile.bio?.trim() || base.statement,
+      goal: profile.goal?.trim() || base.goal,
+    };
+  }, [state.personaId, state.role, profile]);
 
   const notify = useCallback((text: string, to: string) => {
     setState((s) => ({ ...s, notifications: [{ id: uid(), text, time: "now", read: false, to }, ...s.notifications] }));
@@ -122,7 +203,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     enter: (personaId, role) =>
       setState((s) => ({ ...s, personaId, role: role ?? PERSONAS.find((p) => p.id === personaId)?.role ?? "student" })),
     setRole: (role) => setState((s) => ({ ...s, role })),
-    signOut: () => setState((s) => ({ ...s, personaId: null, role: null })),
+    signOut: () => {
+      setCloudReady(false);
+      setState({ ...initial });
+      try {
+        localStorage.removeItem(KEY);
+      } catch {
+        /* ignore */
+      }
+      void authSignOut();
+    },
     resetDemo: () => setState({ ...initial }),
     recordAttempt: (a) => {
       const id = uid();
