@@ -1,4 +1,5 @@
 import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import nyanzviLogo from "@/assets/nyanzvi-logo.png";
 import { ReadinessLoop } from "@/components/tw/readiness-loop";
 import { useEffect, useState } from "react";
 import {
@@ -30,14 +31,14 @@ export const Route = createFileRoute("/app")({
 export const NAV = [
   { to: "/app", label: "Overview", icon: LayoutGrid, exact: true },
   { to: "/app/tutor", label: "AI Tutor", icon: Bot, ws: "tutor" },
-  { to: "/app/simulations", label: "Simulations", icon: Workflow, ws: "simulations" },
-  { to: "/app/passport", label: "Skills Passport", icon: IdCard, ws: "passport" },
-  { to: "/app/intelligence", label: "Industry Intelligence", icon: Radar, ws: "intelligence" },
-  { to: "/app/network", label: "Network", icon: Network },
+  { to: "/app/simulations", label: "Simulations", icon: Workflow, assist: "simulations" },
+  { to: "/app/passport", label: "Skills Passport", icon: IdCard, assist: "passport" },
+  { to: "/app/intelligence", label: "Industry Intelligence", icon: Radar, assist: "intelligence" },
+  { to: "/app/network", label: "Network", icon: Network, assist: "network" },
   { to: "/app/messages", label: "Messages", icon: MessagesSquare },
-  { to: "/app/opportunities", label: "Opportunities", icon: Briefcase },
-  { to: "/app/learning", label: "Learning", icon: BookOpen, ws: "learning" },
-  { to: "/app/hubs", label: "Field & Innovation Hubs", icon: MapPin, ws: "hubs" },
+  { to: "/app/opportunities", label: "Opportunities", icon: Briefcase, assist: "opportunities" },
+  { to: "/app/learning", label: "Learning", icon: BookOpen, assist: "learning" },
+  { to: "/app/hubs", label: "Field & Innovation Hubs", icon: MapPin, assist: "hubs" },
   { to: "/app/profile", label: "Profile", icon: UserRound },
 ] as const;
 
@@ -52,7 +53,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3" aria-label="Main">
         {NAV.map((n) => {
           const ws = "ws" in n ? n.ws : null;
-          const active = "exact" in n ? loc.pathname === n.to || loc.pathname === n.to + "/" : loc.pathname.startsWith(n.to) || (!!ws && loc.pathname.startsWith(`/app/ws/${ws}`));
+          const assist = "assist" in n ? n.assist : null;
+          const active = "exact" in n ? loc.pathname === n.to || loc.pathname === n.to + "/" : loc.pathname.startsWith(n.to) || (!!(ws ?? assist) && loc.pathname.startsWith(`/app/ws/${ws ?? assist}`));
           const linkProps = ws ? ({ to: "/app/ws/$module", params: { module: ws } } as const) : ({ to: n.to } as const);
           return (
             <Link
@@ -121,6 +123,29 @@ function Notifications() {
         </ul>
       </PopoverContent>
     </Popover>
+  );
+}
+
+const ASSIST: { prefix: string; module: string; agent: string; prompt: string }[] = [
+  { prefix: "/app/simulations", module: "simulations", agent: "Nyanzvi Sim", prompt: "Explain my performance or rehearse a scenario" },
+  { prefix: "/app/passport", module: "passport", agent: "Nyanzvi Passport", prompt: "How can I improve this skill?" },
+  { prefix: "/app/intelligence", module: "intelligence", agent: "Nyanzvi Insight", prompt: "What does this mean for my career?" },
+  { prefix: "/app/network", module: "network", agent: "Nyanzvi Connect", prompt: "Who should I connect with?" },
+  { prefix: "/app/my-network", module: "network", agent: "Nyanzvi Connect", prompt: "Who should I connect with?" },
+  { prefix: "/app/opportunities", module: "opportunities", agent: "Nyanzvi Careers", prompt: "Prepare for an application" },
+  { prefix: "/app/learning", module: "learning", agent: "Nyanzvi Learn", prompt: "Need help with this topic?" },
+  { prefix: "/app/hubs", module: "hubs", agent: "Nyanzvi Field", prompt: "Which programme suits me?" },
+];
+
+function AssistBar({ pathname }: { pathname: string }) {
+  const a = ASSIST.find((x) => pathname.startsWith(x.prefix));
+  if (!a) return null;
+  return (
+    <Link to="/app/ws/$module" params={{ module: a.module }} className="group mb-6 flex items-center gap-3 rounded-xl border border-cyan/30 bg-cyan/5 px-4 py-2.5 text-sm transition-colors hover:bg-cyan/10">
+      <img src={nyanzviLogo} alt="" className="h-6 w-6" />
+      <span className="min-w-0 flex-1 truncate"><span className="font-medium">{a.prompt}</span> <span className="text-muted-foreground">· Ask {a.agent}</span></span>
+      <span className="text-xs font-medium text-cyan group-hover:translate-x-0.5 transition-transform">Open →</span>
+    </Link>
   );
 }
 
@@ -216,6 +241,7 @@ function AppLayout() {
           </div>
         </header>
         <main key={loc.pathname} className="fade-up mx-auto w-full max-w-7xl px-4 py-8 md:px-8 md:py-10">
+          <AssistBar pathname={loc.pathname} />
           <Outlet />
           {!loc.pathname.startsWith("/app/ws/") && <ReadinessLoop pathname={loc.pathname} />}
         </main>
