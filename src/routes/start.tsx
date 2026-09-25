@@ -96,26 +96,6 @@ function Start() {
           </Button>
         </div>
 
-        <div className="mt-20 rounded-3xl border bg-card/60 p-6 md:p-8">
-          <div className="flex flex-col justify-between gap-2 md:flex-row md:items-end">
-            <div>
-              <p className="eyebrow text-cyan">Quick start</p>
-              <h2 className="mt-2 text-xl font-semibold">Enter instantly as a sample persona</h2>
-            </div>
-            <p className="text-sm text-muted-foreground">Sample starting points. Your own name and progress stay on your account.</p>
-          </div>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {PERSONAS.slice(0, 4).map((p) => (
-              <button key={p.id} onClick={() => void go(p.id)} className="lift flex items-center gap-3 rounded-xl border bg-background p-4 text-left">
-                <Avatar initials={p.initials} tone="gold" />
-                <span className="min-w-0">
-                  <span className="block truncate font-medium">{p.name}</span>
-                  <span className="block truncate text-xs text-muted-foreground">{p.title}</span>
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );
