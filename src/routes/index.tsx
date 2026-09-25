@@ -2,9 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, BookOpen, Bot, Check, Network, Radar, Workflow } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Logo, SkillsConstellation, Signal, Tag } from "@/components/tw/motifs";
-import { COMPETENCIES, TRENDS } from "@/lib/data";
+import { Logo, Signal, Tag } from "@/components/tw/motifs";
+import { TRENDS } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import passportImg from "@/assets/passport-confidential.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -127,24 +128,8 @@ function Landing() {
               ))}
             </ul>
           </div>
-          <div className="relative rounded-3xl border bg-card p-6 shadow-[var(--shadow-lift)] glass">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="eyebrow">Passport · ZW-2031-0417</p>
-                <p className="mt-2 font-display text-2xl font-semibold">Alex Moyo</p>
-                <p className="text-sm text-muted-foreground">Tourism & Hospitality Learner · Zimbabwe</p>
-              </div>
-              <Tag tone="gold">Verified</Tag>
-            </div>
-            <div className="my-4 h-64">
-              <SkillsConstellation competencies={COMPETENCIES} />
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Tag tone="gold">Guest Communication</Tag>
-              <Tag tone="gold">Guest Check-in</Tag>
-              <Tag tone="cyan">Reservation Management</Tag>
-              <Tag>AI-assisted Service</Tag>
-            </div>
+          <div className="relative overflow-hidden rounded-3xl border bg-card shadow-[var(--shadow-lift)]">
+            <img src={passportImg} alt="A private, verified Tourism Skills Passport card with a gold seal and locked identity details" width={1024} height={1024} loading="lazy" className="h-full w-full object-cover" />
           </div>
         </div>
       </section>
