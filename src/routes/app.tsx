@@ -16,6 +16,9 @@ import { ROLES, type RoleId } from "@/lib/data";
 import { useApp } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { acceptConnection, displayName, fetchNotifications, markAllNotificationsRead, markNotificationRead, removeConnection, timeAgo, type AppNotification } from "@/lib/social";
 
 export const Route = createFileRoute("/app")({
   head: () => ({
@@ -91,8 +94,34 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
 function Notifications() {
   const { notifications, markAllRead, markRead } = useApp();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const unread = notifications.filter((n) => !n.read).length;
+  const [real, setReal] = useState<AppNotification[]>([]);
+  const [busy, setBusy] = useState<string | null>(null);
+  useEffect(() => {
+    if (!user) return;
+    const load = () => fetchNotifications().then(setReal).catch(() => {});
+    void load();
+    const ch = supabase.channel(`notif-${user.id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` }, () => { void load(); })
+      .subscribe();
+    return () => { void supabase.removeChannel(ch); };
+  }, [user]);
+  const reload = () => fetchNotifications().then(setReal).catch(() => {});
+  const unread = notifications.filter((n) => !n.read).length + real.filter((n) => !n.read_at).length;
+  const openProfile = async (n: AppNotification) => {
+    await markNotificationRead(n.id); void reload();
+    if (n.actor) navigate({ to: "/app/people/$id", params: { id: n.actor.id } });
+  };
+  const act = async (n: AppNotification, accept: boolean) => {
+    if (!n.connection_id) return;
+    setBusy(n.id);
+    try {
+      if (accept) { await acceptConnection(n.connection_id); toast.success(`You're now connected with ${displayName(n.actor)}`); }
+      else { await removeConnection(n.connection_id); toast("Request ignored"); }
+      await markNotificationRead(n.id); await reload();
+    } catch (e) { toast.error((e as Error).message); } finally { setBusy(null); }
+  };
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -104,10 +133,32 @@ function Notifications() {
       <PopoverContent align="end" className="w-[min(92vw,380px)] p-0">
         <div className="flex items-center justify-between border-b px-4 py-3">
           <p className="font-display text-sm font-semibold">Notifications</p>
-          <button onClick={markAllRead} className="text-xs text-muted-foreground hover:text-foreground disabled:opacity-40" disabled={!unread}>Mark all read</button>
+          <button onClick={async () => { markAllRead(); if (user) { await markAllNotificationsRead(user.id); void reload(); } }} className="text-xs text-muted-foreground hover:text-foreground disabled:opacity-40" disabled={!unread}>Mark all read</button>
         </div>
         <ul className="max-h-96 overflow-y-auto">
-          {notifications.length === 0 && <li className="px-4 py-8 text-center text-sm text-muted-foreground">You're all caught up.</li>}
+          {notifications.length === 0 && real.length === 0 && <li className="px-4 py-8 text-center text-sm text-muted-foreground">You're all caught up.</li>}
+          {real.map((n) => {
+            const name = displayName(n.actor);
+            const pending = n.kind === "connection_request" && n.connection_status === "pending";
+            return (
+              <li key={n.id} className="flex gap-3 border-b px-4 py-3">
+                <span className={cn("mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full", n.read_at ? "bg-transparent" : "bg-gold")} />
+                <div className="flex-1">
+                  <button onClick={() => openProfile(n)} className="text-left text-sm hover:underline">
+                    <strong>{name}</strong> {n.kind === "connection_request" ? "wants to connect with you." : "accepted your connection request."}
+                  </button>
+                  {n.body && n.kind === "connection_request" && <p className="mt-1 line-clamp-3 text-xs text-muted-foreground">“{n.body}”</p>}
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    <Button size="sm" variant="ghost" onClick={() => openProfile(n)}>View profile</Button>
+                    {pending && <Button size="sm" disabled={busy === n.id} onClick={() => act(n, true)}>Accept</Button>}
+                    {pending && <Button size="sm" variant="outline" disabled={busy === n.id} onClick={() => act(n, false)}>Ignore</Button>}
+                    {n.kind === "connection_request" && n.connection_status === "accepted" && <span className="self-center text-xs text-muted-foreground">Connected</span>}
+                  </div>
+                </div>
+                <span className="shrink-0 font-mono text-[11px] text-muted-foreground">{timeAgo(n.created_at)}</span>
+              </li>
+            );
+          })}
           {notifications.slice(0, 12).map((n) => (
             <li key={n.id}>
               <button

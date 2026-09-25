@@ -5,7 +5,8 @@ import nyanzviLogo from "@/assets/nyanzvi-logo.png";
 import ReactMarkdown from "react-markdown";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { COURSES, HUBS, SIMULATIONS, TRENDS } from "@/lib/data";
-import { displayName, fetchJobs, fetchMembers, ROLE_LABEL, type Job, type Member } from "@/lib/social";
+import { displayName, fetchJobs, fetchMembers, removeConnection, requestConnection, ROLE_LABEL, type Job, type Member } from "@/lib/social";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { CARD_LABELS, isWorkspaceId, WORKSPACES, type CardKind, type WorkspaceConfig } from "@/lib/workspaces";
 import { deleteThread, loadThreads, newId, upsertThread, type WsMessage, type WsThread } from "@/lib/ws-threads";
@@ -432,11 +433,42 @@ export function AgentMark({ w, size }: { w: WorkspaceConfig; size: "sm" | "lg" }
   return <img src={w.logo ?? nyanzviLogo} alt={`${w.agent} logo`} width={size === "sm" ? 28 : 64} height={size === "sm" ? 28 : 64} className={cn(box, "shrink-0 object-contain")} />;
 }
 
-function RealPeople({ item, onPick, disabled }: { item: string; onPick: (q: string) => void; disabled: boolean }) {
+function RealPeople({ item, disabled }: { item: string; onPick: (q: string) => void; disabled: boolean }) {
   const { user } = useAuth();
+  const { persona, competencies } = useApp();
   const net = useMyConnections();
   const [list, setList] = useState<Member[] | null>(null);
+  const [draftFor, setDraftFor] = useState<string | null>(null);
+  const [draft, setDraft] = useState("");
+  const [drafting, setDrafting] = useState(false);
+  const [sending, setSending] = useState(false);
   useEffect(() => { fetchMembers(user?.id).then((m) => setList(m.slice(0, 6))).catch(() => setList([])); }, [user]);
+  const makeDraft = async (p: Member) => {
+    setDraftFor(p.id); setDraft(""); setDrafting(true);
+    const top = competencies.filter((c) => c.level >= 50).slice(0, 3).map((c) => c.name).join(", ");
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ module: "network", context: `Me: ${persona.name}, ${persona.title}. Goal: ${persona.goal}. Strong skills: ${top || "developing"}.`,
+          messages: [{ role: "user", content: `Write ONLY the text of a warm, professional connection request (max 60 words, no subject, no quotes, no placeholders) from me to ${displayName(p)}${p.headline ? `, ${p.headline}` : ""}${p.organisation ? ` at ${p.organisation}` : ""}. Use only facts given.` }] }),
+      });
+      if (!res.ok || !res.body) throw new Error(await res.text());
+      const reader = res.body.getReader(); const dec = new TextDecoder(); let acc = "";
+      for (;;) { const { done, value } = await reader.read(); if (done) break; acc += dec.decode(value, { stream: true }); setDraft(acc); }
+    } catch { setDraft(`Hi ${displayName(p).split(" ")[0]}, I'm ${persona.name}, working towards ${persona.goal.toLowerCase()}. I'd be glad to connect and learn from your experience.`); }
+    finally { setDrafting(false); }
+  };
+  const send = async (p: Member) => {
+    if (!user) return;
+    setSending(true);
+    try { await requestConnection(user.id, p.id, draft); toast.success("Connection request sent."); setDraftFor(null); await net.reload(); }
+    catch (e) { toast.error((e as Error).message); await net.reload(); } finally { setSending(false); }
+  };
+  const withdraw = async (p: Member) => {
+    const c = net.conns.find((x) => x.addressee_id === p.id && x.status === "pending");
+    if (!c) return;
+    try { await removeConnection(c.id); toast("Request withdrawn"); await net.reload(); } catch (e) { toast.error((e as Error).message); }
+  };
   if (list === null) return <p className="text-xs text-muted-foreground">Loading members…</p>;
   if (!list.length) return <p className="text-xs text-muted-foreground">No other members yet. Use Industry discovery on the Network page to find real professionals.</p>;
   return <>{list.map((p) => {
@@ -448,9 +480,21 @@ function RealPeople({ item, onPick, disabled }: { item: string; onPick: (q: stri
         <div className="mt-2 flex flex-wrap gap-1.5">
           <Button size="sm" variant="ghost" asChild><Link to="/app/people/$id" params={{ id: p.id }}>View profile</Link></Button>
           <ConnectButton personId={p.id} name={displayName(p)} net={net} />
+          {st === "sent" && <Button size="sm" variant="ghost" onClick={() => withdraw(p)}>Withdraw</Button>}
           {st === "connected" && <Button size="sm" variant="outline" asChild><Link to="/app/messages" search={{ to: p.id }}>Message</Link></Button>}
-          {st !== "connected" && <Button size="sm" variant="ghost" disabled={disabled} onClick={() => onPick(`Help me connect with ${displayName(p)}${p.headline ? `, ${p.headline}` : ""}${p.organisation ? ` at ${p.organisation}` : ""}. Write a short connection request based only on what's known about us.`)}>Draft intro</Button>}
+          {st === "none" && draftFor !== p.id && <Button size="sm" variant="ghost" disabled={disabled} onClick={() => makeDraft(p)}>Draft intro</Button>}
         </div>
+        {draftFor === p.id && st === "none" && (
+          <div className="mt-3 space-y-2">
+            <label className="text-xs font-medium text-muted-foreground">Edit your introduction</label>
+            <textarea value={draft} onChange={(e) => setDraft(e.target.value.slice(0, 1000))} rows={4} disabled={drafting}
+              className="w-full rounded-md border bg-background p-2 text-sm" placeholder={drafting ? "Nyanzvi is drafting…" : ""} />
+            <div className="flex gap-1.5">
+              <Button size="sm" disabled={drafting || sending || !draft.trim()} onClick={() => send(p)}>{sending ? "Sending…" : "Send Connection Request"}</Button>
+              <Button size="sm" variant="ghost" onClick={() => setDraftFor(null)}>Cancel</Button>
+            </div>
+          </div>
+        )}
       </div>
     );
   })}</>;

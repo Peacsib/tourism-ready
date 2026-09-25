@@ -19,6 +19,7 @@ export type Database = {
           addressee_id: string
           created_at: string
           id: string
+          intro_message: string | null
           requester_id: string
           status: string
         }
@@ -26,6 +27,7 @@ export type Database = {
           addressee_id: string
           created_at?: string
           id?: string
+          intro_message?: string | null
           requester_id: string
           status?: string
         }
@@ -33,6 +35,7 @@ export type Database = {
           addressee_id?: string
           created_at?: string
           id?: string
+          intro_message?: string | null
           requester_id?: string
           status?: string
         }
@@ -270,6 +273,61 @@ export type Database = {
           {
             foreignKeyName: "jobs_employer_id_fkey"
             columns: ["employer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          actor_id: string | null
+          body: string | null
+          connection_id: string | null
+          created_at: string
+          id: string
+          kind: string
+          read_at: string | null
+          user_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          body?: string | null
+          connection_id?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          read_at?: string | null
+          user_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          body?: string | null
+          connection_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          read_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
