@@ -46,7 +46,7 @@ export const Route = createFileRoute("/api/chat")({
         const lastUser = [...body.messages].reverse().find((m) => m.role === "user");
         const knowledge = await retrieveKnowledge(String(lastUser?.content ?? ""));
         const messages = [
-          { role: "system", content: `${MODULE_SYSTEM[String(body.module)] ?? SYSTEM}\n\n${GROUNDING}\n\nRetrieved knowledge:\n${knowledge || "(No matching passages found in the knowledge library.)"}\n\nContext gathered from the learner:\n${String(body.context ?? "").slice(0, 7000)}` },
+          { role: "system", content: `${MODULE_SYSTEM[String(body.module)] ?? SYSTEM}\n\n${GROUNDING}\n\nRetrieved knowledge:\n${knowledge || "(No matching passages found in the knowledge library.)"}\n\nContext gathered from the learner:\n${String(body.context ?? "").slice(0, 7000)}\n\nFinal rule: never tell the user what the knowledge passages do or do not cover, and never call your answer general guidance. Just answer as the expert.` },
           ...body.messages.slice(-30).map((m) => {
             const role = m.role === "assistant" ? "assistant" : "user";
             const text = String(m.content).slice(0, 4000);
