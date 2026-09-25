@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, BookOpen, Bot, Check, Network, Radar, Workflow } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo, Signal, Tag } from "@/components/tw/motifs";
@@ -41,8 +41,17 @@ const STAGES = [
   { name: "Opportunity", example: "Discover relevant career or industry opportunities.", detail: "Your verified capability is matched to internships, placements, mentors and roles across Zimbabwe.", visual: ["Internships matched to your passport", "Mentors from the member network", "Roles posted by verified employers"] },
 ];
 
+const HERO_WORDS = ["readiness", "excellence", "confidence", "careers"];
+
 function Landing() {
   const [stage, setStage] = useState(0);
+  const [word, setWord] = useState(0);
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    const a = setInterval(() => setWord((w) => (w + 1) % HERO_WORDS.length), 2600);
+    const b = setInterval(() => setStep((s) => (s + 1) % 5), 1400);
+    return () => { clearInterval(a); clearInterval(b); };
+  }, []);
   const s = STAGES[stage]!;
 
   return (
@@ -65,8 +74,13 @@ function Landing() {
         <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(60%_60%_at_50%_30%,black,transparent)]" />
         <div className="relative mx-auto max-w-5xl px-6 pb-28 pt-20 text-center md:pt-28">
           <p className="eyebrow fade-up">Zimbabwe · Tourism & Hospitality · Workforce 2031</p>
-          <h1 className="fade-up mx-auto mt-6 max-w-4xl text-4xl font-semibold uppercase leading-[1.02] md:text-7xl">
-            The future of tourism workforce <span className="text-gradient">readiness</span>
+          <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-semibold uppercase leading-[1.02] md:text-7xl">
+            {"The future of tourism workforce".split(" ").map((w, i) => (
+              <span key={i} className="hero-word" style={{ animationDelay: `${i * 90}ms` }}>{w}&nbsp;</span>
+            ))}
+            <span className="relative inline-block overflow-hidden align-bottom">
+              <span key={word} className="hero-swap text-gradient inline-block">{HERO_WORDS[word]}</span>
+            </span>
           </h1>
           <p className="fade-up mt-6 font-display text-lg text-foreground/90 md:text-xl">From classroom knowledge to real-world capability.</p>
           <p className="fade-up mx-auto mt-4 max-w-2xl text-muted-foreground">
@@ -85,8 +99,8 @@ function Landing() {
           <div className="mx-auto mt-16 flex max-w-xl items-center gap-3">
             {["Learn", "Practise", "Prove", "Connect", "Discover"].map((w, i) => (
               <div key={w} className="flex flex-1 items-center gap-3">
-                <span className={cn("eyebrow", i === 2 && "text-gold")}>{w}</span>
-                {i < 4 && <span className="flow-line h-px flex-1 opacity-60" />}
+                <span className={cn("eyebrow transition-all duration-500", i === step ? "scale-110 text-gold" : "")}>{w}</span>
+                {i < 4 && <span className={cn("flow-line h-px flex-1 transition-opacity duration-500", i < step ? "opacity-100" : "opacity-30")} />}
               </div>
             ))}
           </div>

@@ -32,6 +32,7 @@ import { Route as AppEventsIdRouteImport } from './routes/app.events.$id'
 import { Route as AppPeopleIdRouteImport } from './routes/app.people.$id'
 import { Route as AppSimulationsIndexRouteImport } from './routes/app.simulations.index'
 import { Route as AppSimulationsIdRouteImport } from './routes/app.simulations.$id'
+import { Route as ApiPublicHooksRefreshEventsRouteImport } from './routes/api/public/hooks/refresh-events'
 import { Route as AppWsModuleIndexRouteImport } from './routes/app.ws.$module.index'
 import { Route as AppWsModuleThreadIdRouteImport } from './routes/app.ws.$module.$threadId'
 
@@ -150,6 +151,12 @@ const AppSimulationsIdRoute = AppSimulationsIdRouteImport.update({
   path: '/simulations/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const ApiPublicHooksRefreshEventsRoute =
+  ApiPublicHooksRefreshEventsRouteImport.update({
+    id: '/api/public/hooks/refresh-events',
+    path: '/api/public/hooks/refresh-events',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppWsModuleIndexRoute = AppWsModuleIndexRouteImport.update({
   id: '/ws/$module/',
   path: '/ws/$module/',
@@ -185,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/app/simulations/$id': typeof AppSimulationsIdRoute
   '/app/events/': typeof AppEventsIndexRoute
   '/app/simulations/': typeof AppSimulationsIndexRoute
+  '/api/public/hooks/refresh-events': typeof ApiPublicHooksRefreshEventsRoute
   '/app/ws/$module/$threadId': typeof AppWsModuleThreadIdRoute
   '/app/ws/$module/': typeof AppWsModuleIndexRoute
 }
@@ -211,6 +219,7 @@ export interface FileRoutesByTo {
   '/app/simulations/$id': typeof AppSimulationsIdRoute
   '/app/events': typeof AppEventsIndexRoute
   '/app/simulations': typeof AppSimulationsIndexRoute
+  '/api/public/hooks/refresh-events': typeof ApiPublicHooksRefreshEventsRoute
   '/app/ws/$module/$threadId': typeof AppWsModuleThreadIdRoute
   '/app/ws/$module': typeof AppWsModuleIndexRoute
 }
@@ -239,6 +248,7 @@ export interface FileRoutesById {
   '/app/simulations/$id': typeof AppSimulationsIdRoute
   '/app/events/': typeof AppEventsIndexRoute
   '/app/simulations/': typeof AppSimulationsIndexRoute
+  '/api/public/hooks/refresh-events': typeof ApiPublicHooksRefreshEventsRoute
   '/app/ws/$module/$threadId': typeof AppWsModuleThreadIdRoute
   '/app/ws/$module/': typeof AppWsModuleIndexRoute
 }
@@ -268,6 +278,7 @@ export interface FileRouteTypes {
     | '/app/simulations/$id'
     | '/app/events/'
     | '/app/simulations/'
+    | '/api/public/hooks/refresh-events'
     | '/app/ws/$module/$threadId'
     | '/app/ws/$module/'
   fileRoutesByTo: FileRoutesByTo
@@ -294,6 +305,7 @@ export interface FileRouteTypes {
     | '/app/simulations/$id'
     | '/app/events'
     | '/app/simulations'
+    | '/api/public/hooks/refresh-events'
     | '/app/ws/$module/$threadId'
     | '/app/ws/$module'
   id:
@@ -321,6 +333,7 @@ export interface FileRouteTypes {
     | '/app/simulations/$id'
     | '/app/events/'
     | '/app/simulations/'
+    | '/api/public/hooks/refresh-events'
     | '/app/ws/$module/$threadId'
     | '/app/ws/$module/'
   fileRoutesById: FileRoutesById
@@ -332,6 +345,7 @@ export interface RootRouteChildren {
   StartRoute: typeof StartRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiTranscribeRoute: typeof ApiTranscribeRoute
+  ApiPublicHooksRefreshEventsRoute: typeof ApiPublicHooksRefreshEventsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -497,6 +511,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSimulationsIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/api/public/hooks/refresh-events': {
+      id: '/api/public/hooks/refresh-events'
+      path: '/api/public/hooks/refresh-events'
+      fullPath: '/api/public/hooks/refresh-events'
+      preLoaderRoute: typeof ApiPublicHooksRefreshEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/ws/$module/': {
       id: '/app/ws/$module/'
       path: '/ws/$module'
@@ -567,6 +588,7 @@ const rootRouteChildren: RootRouteChildren = {
   StartRoute: StartRoute,
   ApiChatRoute: ApiChatRoute,
   ApiTranscribeRoute: ApiTranscribeRoute,
+  ApiPublicHooksRefreshEventsRoute: ApiPublicHooksRefreshEventsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

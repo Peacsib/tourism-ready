@@ -211,3 +211,19 @@
 .ws-md strong { font-weight: 600; }
 .ws-md h1, .ws-md h2, .ws-md h3 { font-weight: 600; font-size: 1rem; }
 .ws-md code { background: var(--muted); border-radius: 0.25rem; padding: 0 0.25rem; }
+
+@utility hero-word {
+  display: inline-block;
+  animation: heroWord 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@utility hero-swap {
+  animation: heroSwap 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes heroWord {
+  from { opacity: 0; transform: translateY(0.4em); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes heroSwap {
+  from { opacity: 0; transform: translateY(0.6em); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
