@@ -3,7 +3,7 @@ import nyanzviLogo from "@/assets/nyanzvi-logo.png";
 import { ReadinessLoop } from "@/components/tw/readiness-loop";
 import { useEffect, useState } from "react";
 import {
-  Bell, BookOpen, Bot, Briefcase, CalendarDays, CircleHelp, Compass, IdCard, LayoutGrid, LogOut, MapPin, Menu, Network, Radar, RotateCcw, Search, UserRound, Workflow, MessagesSquare } from "lucide-react";
+  Bell, BookOpen, Bot, Briefcase, CalendarDays, CircleHelp, Compass, IdCard, LayoutGrid, LogOut, MapPin, Menu, Network, PanelLeft, PanelLeftClose, Radar, RotateCcw, Search, UserRound, Workflow, MessagesSquare } from "lucide-react";
 import { Avatar, Logo } from "@/components/tw/motifs";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -209,6 +209,15 @@ function AppLayout() {
   const loc = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
+  const isFocusView = loc.pathname.startsWith("/app/simulations") || loc.pathname.startsWith("/app/tutor") || loc.pathname.startsWith("/app/ws");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(isFocusView);
+
+  // Automatically close sidebar when entering a simulation, AI tutor, or workspace for full view
+  useEffect(() => {
+    if (isFocusView) {
+      setSidebarCollapsed(true);
+    }
+  }, [loc.pathname, isFocusView]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -234,10 +243,12 @@ function AppLayout() {
   const roleLabel = ROLES.find((r) => r.id === persona.role)?.label ?? "";
 
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[256px_1fr]">
-      <aside className="sticky top-0 hidden h-screen border-r glass lg:block">
-        <SidebarContent />
-      </aside>
+    <div className={cn("min-h-screen transition-all duration-300", sidebarCollapsed ? "flex flex-col" : "lg:grid lg:grid-cols-[256px_1fr]")}>
+      {!sidebarCollapsed && (
+        <aside className="sticky top-0 hidden h-screen border-r glass lg:block">
+          <SidebarContent />
+        </aside>
+      )}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent side="left" className="w-72 border-r bg-background p-0 shadow-2xl">
           <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-cyan/10 to-transparent" />
@@ -246,10 +257,19 @@ function AppLayout() {
         </SheetContent>
       </Sheet>
 
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b glass px-4 md:px-6">
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(true)} aria-label="Open navigation">
             <Menu className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="hidden lg:flex text-muted-foreground hover:text-foreground"
+            title={sidebarCollapsed ? "Open sidebar" : "Collapse sidebar (Full view)"}
+          >
+            {sidebarCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
           </Button>
           <button
             onClick={() => setCmdOpen(true)}
@@ -293,10 +313,15 @@ function AppLayout() {
             </DropdownMenu>
           </div>
         </header>
-        <main key={loc.pathname} className="fade-up mx-auto w-full max-w-7xl px-4 py-8 md:px-8 md:py-10">
-          <AssistBar pathname={loc.pathname} />
+        <main key={loc.pathname} className={cn(
+          "fade-up mx-auto w-full px-4 py-6 md:px-8 md:py-8",
+          isFocusView ? "max-w-none px-2 sm:px-4 md:px-6 py-2" : "max-w-7xl"
+        )}>
+          {!loc.pathname.startsWith("/app/network") && !loc.pathname.startsWith("/app/simulations") && (
+            <AssistBar pathname={loc.pathname} />
+          )}
           <Outlet />
-          {!loc.pathname.startsWith("/app/ws/") && <ReadinessLoop pathname={loc.pathname} />}
+          {!loc.pathname.startsWith("/app/ws/") && !loc.pathname.startsWith("/app/simulations/") && <ReadinessLoop pathname={loc.pathname} />}
         </main>
       </div>
       <CommandPalette open={cmdOpen} onOpenChange={setCmdOpen} />
