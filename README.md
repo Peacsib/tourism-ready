@@ -24,7 +24,7 @@ All schema, policies, functions and triggers live in `drizzle/migrations/` (appl
 Storage bucket: `post-images` (private, 5 MB).
 
 ## Secrets (server-only)
-`OPENAI_API_KEY`, `STRIPE_LIVE_API_KEY` (holds the Enrich key), `LOVABLE_API_KEY`, connector-managed `LINKEDIN_API_KEY` / `APOLLO_API_KEY`. None are exposed to the browser.
+`OPENAI_API_KEY`, `ENRICH_API_KEY`, `LOVABLE_API_KEY`, connector-managed `LINKEDIN_API_KEY` / `APOLLO_API_KEY`. None are exposed to the browser.
 
 ## SEO
 Public: `/` (indexed, listed in `public/sitemap.xml`). Private: `/app`, `/auth`, `/start`, `/api` — `noindex` and disallowed in `public/robots.txt`. Update the sitemap/robots domain after publishing to a custom domain.

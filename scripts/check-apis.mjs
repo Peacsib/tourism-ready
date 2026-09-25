@@ -22,7 +22,7 @@ const SUPABASE_SVC_KEY  = vars.SUPABASE_SERVICE_ROLE_KEY;
 const OPENAI_KEY        = vars.OPENAI_API_KEY;
 const SERPAPI_KEY       = vars.SERPAPI_API_KEY;       // events.server.ts
 const SERPAPI_KEY2      = vars.SERPAPI_JOBS_API_KEY;  // jobs.server.ts
-const ENRICH_KEY        = vars.ENRICH_API_KEY || vars.STRIPE_LIVE_API_KEY;
+const ENRICH_KEY        = vars.ENRICH_API_KEY;
 
 function tick(ok, label, detail = '') {
   const icon = ok ? '✅' : '❌';
