@@ -60,8 +60,8 @@ function Landing() {
       {/* HERO */}
       <section className="relative">
         <video className="pointer-events-none absolute inset-0 h-full w-full object-cover" src={heroVideo.url} autoPlay muted loop playsInline aria-hidden="true" />
-        <div className="pointer-events-none absolute inset-0 bg-background/75" />
-        <div className="hero-glow pointer-events-none absolute inset-0" />
+        <div className="pointer-events-none absolute inset-0 bg-background/55" />
+        <div className="hero-glow pointer-events-none absolute inset-0 opacity-50" />
         <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(60%_60%_at_50%_30%,black,transparent)]" />
         <div className="relative mx-auto max-w-5xl px-6 pb-28 pt-20 text-center md:pt-28">
           <p className="eyebrow fade-up">Zimbabwe · Tourism & Hospitality · Workforce 2031</p>
