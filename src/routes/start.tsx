@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/start")({
   head: () => ({
     meta: [
+      { name: "robots", content: "noindex" },
       { title: "Welcome to your workforce journey — Tourism Workforce 2031" },
       { name: "description", content: "Choose your role or a demo persona to enter the Tourism Workforce 2031 ecosystem." },
       { property: "og:title", content: "Welcome to your workforce journey" },
