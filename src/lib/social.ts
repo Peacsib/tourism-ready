@@ -111,7 +111,28 @@ export async function countConnections(userId: string) {
   return count ?? 0;
 }
 
-export async function requestConnection(from: string, to: string) { const { error } = await supabase.from("connections").insert({ requester_id: from, addressee_id: to }); fail(error); }
+export async function requestConnection(from: string, to: string, intro?: string) {
+  if (from === to) throw new Error("You can't connect with yourself.");
+  const member = await fetchMember(to);
+  if (!member) throw new Error("That member is no longer on Tourism Workforce.");
+  const { data: existing } = await supabase.from("connections").select("id, status")
+    .or(`and(requester_id.eq.${from},addressee_id.eq.${to}),and(requester_id.eq.${to},addressee_id.eq.${from})`).maybeSingle();
+  if (existing) throw new Error(existing.status === "accepted" ? "You're already connected." : "A request is already pending.");
+  const { error } = await supabase.from("connections").insert({ requester_id: from, addressee_id: to, intro_message: intro?.trim().slice(0, 1000) || null });
+  if (error?.code === "23505") throw new Error("A request is already pending.");
+  fail(error);
+}
+
+export type AppNotification = { id: string; kind: "connection_request" | "connection_accepted" | string; connection_id: string | null; body: string | null; read_at: string | null; created_at: string; actor: Member | null; connection_status: string | null };
+export async function fetchNotifications(): Promise<AppNotification[]> {
+  const { data, error } = await supabase.from("notifications")
+    .select(`id, kind, connection_id, body, read_at, created_at, actor:profiles!notifications_actor_id_fkey(${MEMBER_COLS}), connection:connections(status)`)
+    .order("created_at", { ascending: false }).limit(30);
+  fail(error);
+  return ((data ?? []) as any[]).map((n) => ({ ...n, connection_status: n.connection?.status ?? null }));
+}
+export async function markNotificationRead(id: string) { await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id).is("read_at", null); }
+export async function markAllNotificationsRead(userId: string) { await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("user_id", userId).is("read_at", null); }
 export async function acceptConnection(id: string) { const { error } = await supabase.from("connections").update({ status: "accepted" }).eq("id", id); fail(error); }
 export async function removeConnection(id: string) { const { error } = await supabase.from("connections").delete().eq("id", id); fail(error); }
 

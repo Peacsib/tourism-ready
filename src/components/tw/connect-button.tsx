@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { acceptConnection, fetchMyConnections, requestConnection, type Conn } from "@/lib/social";
+import { supabase } from "@/integrations/supabase/client";
 
 export function useMyConnections() {
   const { user } = useAuth();
@@ -14,6 +15,13 @@ export function useMyConnections() {
     try { setConns(await fetchMyConnections(user.id)); } catch (e) { console.error(e); } finally { setLoaded(true); }
   }, [user]);
   useEffect(() => { reload(); }, [reload]);
+  useEffect(() => {
+    if (!user) return;
+    const ch = supabase.channel(`conns-${user.id}-${Math.random().toString(36).slice(2)}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "connections" }, () => { void reload(); })
+      .subscribe();
+    return () => { void supabase.removeChannel(ch); };
+  }, [user, reload]);
   const statusWith = (id: string): "self" | "connected" | "sent" | "received" | "none" => {
     if (id === user?.id) return "self";
     const c = conns.find((x) => x.requester_id === id || x.addressee_id === id);
