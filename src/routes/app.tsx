@@ -3,7 +3,7 @@ import nyanzviLogo from "@/assets/nyanzvi-logo.png";
 import { ReadinessLoop } from "@/components/tw/readiness-loop";
 import { useEffect, useState } from "react";
 import {
-  Bell, BookOpen, Bot, Briefcase, CircleHelp, Compass, IdCard, LayoutGrid, LogOut, MapPin, Menu, Network, Radar, RotateCcw, Search, UserRound, Workflow, MessagesSquare } from "lucide-react";
+  Bell, BookOpen, Bot, Briefcase, CalendarDays, CircleHelp, Compass, IdCard, LayoutGrid, LogOut, MapPin, Menu, Network, Radar, RotateCcw, Search, UserRound, Workflow, MessagesSquare } from "lucide-react";
 import { Avatar, Logo } from "@/components/tw/motifs";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -40,6 +40,7 @@ export const NAV = [
   { to: "/app/network", label: "Network", icon: Network, assist: "network" },
   { to: "/app/messages", label: "Messages", icon: MessagesSquare },
   { to: "/app/opportunities", label: "Opportunities", icon: Briefcase, assist: "opportunities" },
+  { to: "/app/events", label: "Events", icon: CalendarDays },
   { to: "/app/learning", label: "Learning", icon: BookOpen, assist: "learning" },
   { to: "/app/hubs", label: "Field & Innovation Hubs", icon: MapPin, assist: "hubs" },
   { to: "/app/profile", label: "Profile", icon: UserRound },
@@ -184,6 +185,7 @@ const ASSIST: { prefix: string; module: string; agent: string; prompt: string }[
   { prefix: "/app/network", module: "network", agent: "Nyanzvi Connect", prompt: "Who should I connect with?" },
   { prefix: "/app/my-network", module: "network", agent: "Nyanzvi Connect", prompt: "Who should I connect with?" },
   { prefix: "/app/opportunities", module: "opportunities", agent: "Nyanzvi Careers", prompt: "Prepare for an application" },
+  { prefix: "/app/events", module: "intelligence", agent: "Nyanzvi Insight", prompt: "Which events are relevant to me?" },
   { prefix: "/app/learning", module: "learning", agent: "Nyanzvi Learn", prompt: "Need help with this topic?" },
   { prefix: "/app/hubs", module: "hubs", agent: "Nyanzvi Field", prompt: "Which programme suits me?" },
 ];

@@ -27,6 +27,8 @@ import { Route as AppOpportunitiesRouteImport } from './routes/app.opportunities
 import { Route as AppPassportRouteImport } from './routes/app.passport'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppTutorRouteImport } from './routes/app.tutor'
+import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
+import { Route as AppEventsIdRouteImport } from './routes/app.events.$id'
 import { Route as AppPeopleIdRouteImport } from './routes/app.people.$id'
 import { Route as AppSimulationsIndexRouteImport } from './routes/app.simulations.index'
 import { Route as AppSimulationsIdRouteImport } from './routes/app.simulations.$id'
@@ -123,6 +125,16 @@ const AppTutorRoute = AppTutorRouteImport.update({
   path: '/tutor',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEventsIndexRoute = AppEventsIndexRouteImport.update({
+  id: '/events/',
+  path: '/events/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEventsIdRoute = AppEventsIdRouteImport.update({
+  id: '/events/$id',
+  path: '/events/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPeopleIdRoute = AppPeopleIdRouteImport.update({
   id: '/people/$id',
   path: '/people/$id',
@@ -168,8 +180,10 @@ export interface FileRoutesByFullPath {
   '/app/profile': typeof AppProfileRoute
   '/app/tutor': typeof AppTutorRoute
   '/app/': typeof AppIndexRoute
+  '/app/events/$id': typeof AppEventsIdRoute
   '/app/people/$id': typeof AppPeopleIdRoute
   '/app/simulations/$id': typeof AppSimulationsIdRoute
+  '/app/events/': typeof AppEventsIndexRoute
   '/app/simulations/': typeof AppSimulationsIndexRoute
   '/app/ws/$module/$threadId': typeof AppWsModuleThreadIdRoute
   '/app/ws/$module/': typeof AppWsModuleIndexRoute
@@ -192,8 +206,10 @@ export interface FileRoutesByTo {
   '/app/profile': typeof AppProfileRoute
   '/app/tutor': typeof AppTutorRoute
   '/app': typeof AppIndexRoute
+  '/app/events/$id': typeof AppEventsIdRoute
   '/app/people/$id': typeof AppPeopleIdRoute
   '/app/simulations/$id': typeof AppSimulationsIdRoute
+  '/app/events': typeof AppEventsIndexRoute
   '/app/simulations': typeof AppSimulationsIndexRoute
   '/app/ws/$module/$threadId': typeof AppWsModuleThreadIdRoute
   '/app/ws/$module': typeof AppWsModuleIndexRoute
@@ -218,8 +234,10 @@ export interface FileRoutesById {
   '/app/profile': typeof AppProfileRoute
   '/app/tutor': typeof AppTutorRoute
   '/app/': typeof AppIndexRoute
+  '/app/events/$id': typeof AppEventsIdRoute
   '/app/people/$id': typeof AppPeopleIdRoute
   '/app/simulations/$id': typeof AppSimulationsIdRoute
+  '/app/events/': typeof AppEventsIndexRoute
   '/app/simulations/': typeof AppSimulationsIndexRoute
   '/app/ws/$module/$threadId': typeof AppWsModuleThreadIdRoute
   '/app/ws/$module/': typeof AppWsModuleIndexRoute
@@ -245,8 +263,10 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/tutor'
     | '/app/'
+    | '/app/events/$id'
     | '/app/people/$id'
     | '/app/simulations/$id'
+    | '/app/events/'
     | '/app/simulations/'
     | '/app/ws/$module/$threadId'
     | '/app/ws/$module/'
@@ -269,8 +289,10 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/tutor'
     | '/app'
+    | '/app/events/$id'
     | '/app/people/$id'
     | '/app/simulations/$id'
+    | '/app/events'
     | '/app/simulations'
     | '/app/ws/$module/$threadId'
     | '/app/ws/$module'
@@ -294,8 +316,10 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/tutor'
     | '/app/'
+    | '/app/events/$id'
     | '/app/people/$id'
     | '/app/simulations/$id'
+    | '/app/events/'
     | '/app/simulations/'
     | '/app/ws/$module/$threadId'
     | '/app/ws/$module/'
@@ -438,6 +462,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTutorRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/events/': {
+      id: '/app/events/'
+      path: '/events'
+      fullPath: '/app/events/'
+      preLoaderRoute: typeof AppEventsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/events/$id': {
+      id: '/app/events/$id'
+      path: '/events/$id'
+      fullPath: '/app/events/$id'
+      preLoaderRoute: typeof AppEventsIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/people/$id': {
       id: '/app/people/$id'
       path: '/people/$id'
@@ -489,8 +527,10 @@ interface AppRouteChildren {
   AppProfileRoute: typeof AppProfileRoute
   AppTutorRoute: typeof AppTutorRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppEventsIdRoute: typeof AppEventsIdRoute
   AppPeopleIdRoute: typeof AppPeopleIdRoute
   AppSimulationsIdRoute: typeof AppSimulationsIdRoute
+  AppEventsIndexRoute: typeof AppEventsIndexRoute
   AppSimulationsIndexRoute: typeof AppSimulationsIndexRoute
   AppWsModuleThreadIdRoute: typeof AppWsModuleThreadIdRoute
   AppWsModuleIndexRoute: typeof AppWsModuleIndexRoute
@@ -509,8 +549,10 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRoute,
   AppTutorRoute: AppTutorRoute,
   AppIndexRoute: AppIndexRoute,
+  AppEventsIdRoute: AppEventsIdRoute,
   AppPeopleIdRoute: AppPeopleIdRoute,
   AppSimulationsIdRoute: AppSimulationsIdRoute,
+  AppEventsIndexRoute: AppEventsIndexRoute,
   AppSimulationsIndexRoute: AppSimulationsIndexRoute,
   AppWsModuleThreadIdRoute: AppWsModuleThreadIdRoute,
   AppWsModuleIndexRoute: AppWsModuleIndexRoute,
