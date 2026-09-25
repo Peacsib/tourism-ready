@@ -6,6 +6,7 @@ import { Logo, Signal, Tag } from "@/components/tw/motifs";
 import { TRENDS } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import passportImg from "@/assets/passport-confidential.jpg";
+import heroVideo from "@/assets/hero-live.mp4.asset.json";
 import imgTutor from "@/assets/pillar-tutor.jpg";
 import imgSim from "@/assets/pillar-sim.jpg";
 import imgIntel from "@/assets/pillar-intel.jpg";
@@ -67,7 +68,9 @@ function Landing() {
 
       {/* HERO */}
       <section className="relative">
-        <div className="hero-glow pointer-events-none absolute inset-0" />
+        <video className="pointer-events-none absolute inset-0 h-full w-full object-cover" src={heroVideo.url} autoPlay muted loop playsInline aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-0 bg-background/55" />
+        <div className="hero-glow pointer-events-none absolute inset-0 opacity-50" />
         <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(60%_60%_at_50%_30%,black,transparent)]" />
         <div className="relative mx-auto max-w-5xl px-6 pb-28 pt-20 text-center md:pt-28">
           <p className="eyebrow fade-up">Zimbabwe · Tourism & Hospitality · Workforce 2031</p>
