@@ -23,13 +23,50 @@ export type Scenario = {
   reasoning: string;
   competencies: string[];
   next: { title: string; id: string };
+  duration?: string;
+  attempts?: string;
+  scenarioText?: string;
+  userRole?: string;
+  partnerRole?: string;
+  partnerAvatar?: string;
+  goals?: string[];
+  course?: {
+    title: string;
+    code: string;
+    image: string;
+    instructor: string;
+    instructorAvatar: string;
+  };
+  initialMessage?: string;
+  systemPrompt?: string;
 };
 
 export const SCENARIOS: Record<string, Scenario> = {
   "reservation-desk": {
     id: "reservation-desk",
-    app: "Hotel Reservation Desk",
+    app: "Explaining Hotel Reservation Options & Rate Policies",
     brief: "A guest needs a room for three nights. Standard rooms are unavailable, but a premium room is available. The guest has requested flexible cancellation.",
+    duration: "10 mins",
+    attempts: "Unlimited",
+    scenarioText: "You are a Reservations & Guest Relations Specialist at Zambezi Grand Hotel in Victoria Falls. In this meeting, you are talking to Mrs. Ruvimbo Chikwanha, a corporate conference coordinator who is unfamiliar with hotel rate restrictions but needs to secure accommodation for an upcoming regional tourism forum. Standard rooms are currently sold out, but a premium room with an ergonomic work desk is available. Mrs. Chikwanha needs flexibility because her delegation's travel schedule may shift. Your goal is to clearly explain these room and rate options using simple, hospitable language so she can make an informed decision without feeling pressured.",
+    userRole: "Reservations & Guest Relations Specialist (You)",
+    partnerRole: "Mrs. Ruvimbo Chikwanha · Corporate Conference Delegate",
+    partnerAvatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80",
+    goals: [
+      "Acknowledge the conference dates and listen attentively to the guest's need for flexibility.",
+      "Clearly explain why the standard room is sold out and propose the Premium King as a value-aligned alternative.",
+      "Outline the terms of the flexible rate versus non-refundable rate in plain, transparent language.",
+      "Confirm all booking conditions in writing while acknowledging her returning guest status."
+    ],
+    course: {
+      title: "[NEW] Tourism Workforce: Front Office & Hospitality Role Play",
+      code: "ZIM-HOSP-2031",
+      image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+      instructor: "Nyanzvi AI Mentor",
+      instructorAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
+    },
+    initialMessage: "Hi, thanks for taking the time to speak with me. I need a room from the 12th to the 15th for an upcoming conference. My flight plans might change depending on the committee, so I need to be able to cancel or adjust. What room options and rates do you have available?",
+    systemPrompt: "You are roleplaying as Mrs. Ruvimbo Chikwanha, a professional Zimbabwean corporate conference delegate speaking to a hotel reservations agent at Zambezi Grand Hotel. You are polite, organized, but firm about needing flexible cancellation because flight arrangements are tentative. Respond naturally in 1-3 conversational sentences. Acknowledge good service warmly if the agent offers a helpful solution.",
     guest: {
       name: "Mrs. Ruvimbo Chikwanha",
       detail: [["Stay", "12 – 15 Oct 2031 · 3 nights"], ["Guests", "1 adult"], ["Channel", "Direct · WhatsApp"], ["Loyalty", "Returning guest (2 stays)"], ["Note", "Travelling for a conference; needs a desk"]],
@@ -87,8 +124,29 @@ export const SCENARIOS: Record<string, Scenario> = {
   },
   overbooking: {
     id: "overbooking",
-    app: "Front Office · Arrivals",
+    app: "Resolving Front Office Overbooking & Walking a Guest",
     brief: "It's 21:40. A guest with a confirmed, prepaid booking arrives, but the hotel is overbooked by one room. No rooms are free tonight.",
+    duration: "10 mins",
+    attempts: "Unlimited",
+    scenarioText: "You are the Front Office Duty Supervisor on the evening shift at Elephant Hills Resort in Victoria Falls. At 21:40, Mr. Themba Ndlovu arrives after an exhausting six-hour drive from Harare with a prepaid, confirmed booking voucher from an online travel agent. Due to an unexpected system overbooking, no standard or deluxe rooms are currently available tonight. Mr. Ndlovu is visibly tired and frustrated. Your goal is to de-escalate the tension, apply standard hotel 'walk' recovery procedures with a partner luxury resort, and turn a critical service breakdown into an exceptional display of hospitality.",
+    userRole: "Front Office Duty Supervisor (You)",
+    partnerRole: "Mr. Themba Ndlovu · Confirmed OTA Guest (Arriving 21:40)",
+    partnerAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
+    goals: [
+      "Acknowledge the situation with immediate empathy, sincere apology, and full ownership.",
+      "Explain the 'walk' recovery solution: partner luxury resort covered by the hotel, private transfer, and guaranteed return room tomorrow.",
+      "De-escalate frustration without making defensive excuses or blaming third-party booking channels.",
+      "Ensure all operational steps (duty manager alert, transport booking, PMS guarantee) are confirmed."
+    ],
+    course: {
+      title: "[NEW] Tourism Workforce: Front Office & Hospitality Role Play",
+      code: "ZIM-HOSP-2031",
+      image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
+      instructor: "Nyanzvi AI Mentor",
+      instructorAvatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
+    },
+    initialMessage: "I booked and paid for this room three weeks ago. I've just driven six hours from Harare in the rain with my family, and you're telling me there is no room? What do you mean there's no room?",
+    systemPrompt: "You are roleplaying as Mr. Themba Ndlovu, a tired and frustrated Zimbabwean guest arriving at Elephant Hills Resort at 21:40 with a confirmed prepaid booking, only to find the hotel is overbooked. You demand an immediate explanation. If the supervisor apologizes sincerely, takes ownership, and offers a premium alternative resort with free transport, gradually calm down and accept the solution. Respond in 1-3 realistic, emotionally genuine sentences.",
     guest: {
       name: "Mr. Themba Ndlovu",
       detail: [["Booking", "Confirmed · prepaid · 2 nights"], ["Arrived", "21:40 after a 6-hour drive"], ["Channel", "Online travel agent"], ["Mood", "Tired, becoming frustrated"], ["Tomorrow", "1 room frees at 11:00"]],
