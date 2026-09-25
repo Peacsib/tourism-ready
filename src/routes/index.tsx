@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, BookOpen, Bot, Check, Network, Radar, Workflow } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo, Signal, Tag } from "@/components/tw/motifs";
@@ -41,8 +41,17 @@ const STAGES = [
   { name: "Opportunity", example: "Discover relevant career or industry opportunities.", detail: "Your verified capability is matched to internships, placements, mentors and roles across Zimbabwe.", visual: ["Internships matched to your passport", "Mentors from the member network", "Roles posted by verified employers"] },
 ];
 
+const HERO_WORDS = ["readiness", "excellence", "confidence", "careers"];
+
 function Landing() {
   const [stage, setStage] = useState(0);
+  const [word, setWord] = useState(0);
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    const a = setInterval(() => setWord((w) => (w + 1) % HERO_WORDS.length), 2600);
+    const b = setInterval(() => setStep((s) => (s + 1) % 5), 1400);
+    return () => { clearInterval(a); clearInterval(b); };
+  }, []);
   const s = STAGES[stage]!;
 
   return (
