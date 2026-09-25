@@ -53,7 +53,7 @@ function WorkspacePage() {
     return () => window.removeEventListener("tw-nav", go);
   }, [navigate]);
   const [threads, setThreads] = useState<WsThread[]>(() => (user ? loadThreads(user.id).filter((t) => t.module === w.id) : []));
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(() => (typeof window !== "undefined" ? window.innerWidth >= 768 : false));
   const [ready, setReady] = useState(() => !!user);
 
   useEffect(() => {
@@ -85,35 +85,115 @@ function WorkspacePage() {
   };
 
   return (
-    <div className="fade-up -mx-4 -my-8 flex h-[calc(100vh-4rem)] overflow-hidden border-t md:-mx-8 md:-my-10">
-      <aside className={cn("shrink-0 flex-col border-r bg-surface/60 transition-all", open ? "flex w-64" : "hidden w-0")}>
-        <div className="flex items-center justify-between p-3">
+    <div className="fade-up -mx-2 -my-2 sm:-mx-4 sm:-my-4 md:-mx-6 md:-my-6 flex h-[calc(100svh-4rem)] overflow-hidden border-t relative">
+      {/* Mobile Drawer Backdrop */}
+      {open && (
+        <div
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs md:hidden"
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* History Sidebar: Slide-out drawer on mobile, static on desktop */}
+      <aside
+        className={cn(
+          "flex-col transition-all duration-300 z-50",
+          "fixed inset-y-0 left-0 w-72 bg-card border-r shadow-2xl md:shadow-none",
+          "md:static md:z-0 md:bg-surface/60 md:shrink-0",
+          open
+            ? "flex translate-x-0 md:w-64"
+            : "-translate-x-full md:translate-x-0 md:hidden md:w-0"
+        )}
+      >
+        <div className="flex items-center justify-between p-3 border-b">
           <span className="eyebrow">{w.label} history</span>
-          <button aria-label="Hide history" onClick={() => setOpen(false)} className="rounded-md p-1.5 text-muted-foreground hover:bg-accent"><PanelLeftClose className="h-4 w-4" /></button>
+          <button
+            aria-label="Hide history"
+            onClick={() => setOpen(false)}
+            className="rounded-md p-1.5 text-muted-foreground hover:bg-accent"
+          >
+            <PanelLeftClose className="h-4 w-4" />
+          </button>
         </div>
-        <div className="px-3 pb-2">
-          <Button asChild variant="outline" size="sm" className="w-full justify-start">
-            <Link to="/app/ws/$module" params={{ module: w.id }}><Plus className="mr-1 h-4 w-4" /> New chat</Link>
+        <div className="p-3">
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="w-full justify-start"
+            onClick={() => {
+              if (typeof window !== "undefined" && window.innerWidth < 768) setOpen(false);
+            }}
+          >
+            <Link to="/app/ws/$module" params={{ module: w.id }}>
+              <Plus className="mr-1 h-4 w-4" /> New chat
+            </Link>
           </Button>
         </div>
         <nav className="flex-1 space-y-0.5 overflow-y-auto px-2 pb-3">
           {[...threads].sort((a, b) => b.updatedAt - a.updatedAt).map((t) => (
-            <div key={t.id} className={cn("group flex items-center rounded-lg", t.id === threadId ? "bg-sidebar-accent" : "hover:bg-sidebar-accent/60")}>
-              <Link to="/app/ws/$module/$threadId" params={{ module: w.id, threadId: t.id }} className="min-w-0 flex-1 px-3 py-2">
-                <span className={cn("block truncate text-sm", t.id === threadId && "font-medium")}>{t.title}</span>
+            <div
+              key={t.id}
+              className={cn(
+                "group flex items-center rounded-lg",
+                t.id === threadId ? "bg-sidebar-accent" : "hover:bg-sidebar-accent/60"
+              )}
+            >
+              <Link
+                to="/app/ws/$module/$threadId"
+                params={{ module: w.id, threadId: t.id }}
+                onClick={() => {
+                  if (typeof window !== "undefined" && window.innerWidth < 768) setOpen(false);
+                }}
+                className="min-w-0 flex-1 px-3 py-2"
+              >
+                <span className={cn("block truncate text-sm", t.id === threadId && "font-medium")}>
+                  {t.title}
+                </span>
                 <span className="block truncate text-xs text-muted-foreground">{t.focus}</span>
               </Link>
-              <button aria-label="Delete chat" onClick={() => remove(t.id)} className="mr-1 rounded p-1.5 text-muted-foreground opacity-0 hover:text-destructive group-hover:opacity-100"><Trash2 className="h-3.5 w-3.5" /></button>
+              <button
+                aria-label="Delete chat"
+                onClick={() => remove(t.id)}
+                className="mr-1 rounded p-1.5 text-muted-foreground opacity-0 hover:text-destructive group-hover:opacity-100"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
             </div>
           ))}
         </nav>
       </aside>
-      {thread ? <ChatCanvas key={thread.id} w={w} thread={thread} onChange={onChange} sidebarOpen={open} openSidebar={() => setOpen(true)} /> : <div className="flex-1" />}
+
+      {thread ? (
+        <ChatCanvas
+          key={thread.id}
+          w={w}
+          thread={thread}
+          onChange={onChange}
+          sidebarOpen={open}
+          toggleSidebar={() => setOpen((prev) => !prev)}
+        />
+      ) : (
+        <div className="flex-1" />
+      )}
     </div>
   );
 }
 
-function ChatCanvas({ w, thread, onChange, sidebarOpen, openSidebar }: { w: WorkspaceConfig; thread: WsThread; onChange: (t: WsThread) => void; sidebarOpen: boolean; openSidebar: () => void }) {
+function ChatCanvas({
+  w,
+  thread,
+  onChange,
+  sidebarOpen,
+  toggleSidebar,
+}: {
+  w: WorkspaceConfig;
+  thread: WsThread;
+  onChange: (t: WsThread) => void;
+  sidebarOpen: boolean;
+  toggleSidebar: () => void;
+}) {
   const { persona, competencies } = useApp();
   const [messages, setMessages] = useState<WsMessage[]>(thread.messages);
   const [input, setInput] = useState("");
@@ -259,35 +339,48 @@ function ChatCanvas({ w, thread, onChange, sidebarOpen, openSidebar }: { w: Work
   const empty = messages.length === 0;
 
   return (
-    <section className="flex min-w-0 flex-1 flex-col">
-      <div className="flex items-center gap-2 border-b px-4 py-2.5">
-        {!sidebarOpen && <button aria-label="Show history" onClick={openSidebar} className="rounded-md p-1.5 text-muted-foreground hover:bg-accent"><PanelLeftOpen className="h-4 w-4" /></button>}
-        <img src={nyanzviLogo} alt="" width={20} height={20} className="h-5 w-5 object-contain" />
-        <span className="truncate text-sm font-medium"><span className="text-muted-foreground">{w.agent} · </span>{thread.title}</span>
-        <span className="ml-auto rounded-full border border-gold/40 bg-gold/10 px-2.5 py-0.5 text-xs">{mode}</span>
-        <span className="rounded-full border px-2.5 py-0.5 text-xs text-muted-foreground">{thread.focus}</span>
+    <section className="flex min-w-0 flex-1 flex-col h-full overflow-hidden">
+      <div className="flex items-center gap-2 border-b px-3 sm:px-4 py-2 sm:py-2.5 shrink-0 bg-background/50">
+        <button
+          aria-label={sidebarOpen ? "Hide history" : "Show history"}
+          onClick={toggleSidebar}
+          className="rounded-md p-1.5 text-muted-foreground hover:bg-accent shrink-0"
+        >
+          <PanelLeft className="h-4 w-4" />
+        </button>
+        <img src={nyanzviLogo} alt="" width={20} height={20} className="h-5 w-5 object-contain shrink-0" />
+        <span className="truncate text-xs sm:text-sm font-medium">
+          <span className="text-muted-foreground hidden xs:inline">{w.agent} · </span>
+          {thread.title}
+        </span>
+        <span className="ml-auto shrink-0 rounded-full border border-gold/40 bg-gold/10 px-2 py-0.5 text-[11px] sm:text-xs font-medium">
+          {mode}
+        </span>
+        <span className="hidden sm:inline-block shrink-0 rounded-full border px-2.5 py-0.5 text-xs text-muted-foreground">
+          {thread.focus}
+        </span>
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-3xl px-4 py-8">
+        <div className="mx-auto w-full max-w-3xl px-3 sm:px-4 py-4 sm:py-8">
           {empty ? (
-            <div className="pt-[12vh] text-center">
+            <div className="pt-[4vh] sm:pt-[10vh] text-center px-2">
               <div className="flex justify-center"><AgentMark w={w} size="lg" /></div>
-              <p className="eyebrow mt-4">{w.agent}</p>
-              <h2 className="mt-2 font-display text-2xl font-semibold">{thread.focus === "Open topic" ? "What would you like to explore?" : `How can I help with ${thread.focus}?`}</h2>
-              <p className="mt-2 text-sm text-muted-foreground">{w.welcomeBody}</p>
+              <p className="eyebrow mt-3 sm:mt-4">{w.agent}</p>
+              <h2 className="mt-2 font-display text-xl sm:text-2xl font-semibold">{thread.focus === "Open topic" ? "What would you like to explore?" : `How can I help with ${thread.focus}?`}</h2>
+              <p className="mt-2 text-xs sm:text-sm text-muted-foreground max-w-md mx-auto">{w.welcomeBody}</p>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {messages.map((m) => m.role === "user" ? (
                 <div key={m.id} className="flex justify-end">
-                  <div className="max-w-[80%] whitespace-pre-wrap rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-sm text-primary-foreground">
+                  <div className="max-w-[85%] sm:max-w-[80%] whitespace-pre-wrap rounded-2xl rounded-br-md bg-primary px-3.5 py-2.5 text-sm text-primary-foreground">
                     {m.files?.length ? <div className="mb-1.5 flex flex-wrap gap-1.5">{m.files.map((f) => <span key={f} className="flex items-center gap-1 rounded-md bg-primary-foreground/15 px-2 py-0.5 text-xs"><FileText className="h-3 w-3" />{f}</span>)}</div> : null}
                     {m.files?.length ? m.content.split("\n\n[Attached file:")[0] : m.content}
                   </div>
                 </div>
               ) : (
-                <div key={m.id} className="group flex gap-3">
+                <div key={m.id} className="group flex gap-2.5 sm:gap-3">
                   <AgentMark w={w} size="sm" />
                   <div className="min-w-0 flex-1 text-sm leading-relaxed text-foreground">
                     {m.card ? <InlineCard kind={m.card} onPick={send} disabled={busy} /> : m.content ? (
@@ -308,19 +401,26 @@ function ChatCanvas({ w, thread, onChange, sidebarOpen, openSidebar }: { w: Work
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-3xl px-4 pb-5">
-        <div className="mb-3 flex flex-wrap gap-2">
+      <div className="mx-auto w-full max-w-3xl px-2 sm:px-4 pb-2 sm:pb-4 shrink-0">
+        <div className="mb-2 flex gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar sm:flex-wrap pb-1">
           {w.prompts.map((p) => (
-            <button key={p} disabled={busy} onClick={() => send(p)} className="rounded-full border bg-background px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-gold/60 hover:text-foreground disabled:opacity-50">{p}</button>
+            <button
+              key={p}
+              disabled={busy}
+              onClick={() => send(p)}
+              className="shrink-0 rounded-full border bg-background px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-gold/60 hover:text-foreground disabled:opacity-50 whitespace-nowrap"
+            >
+              {p}
+            </button>
           ))}
         </div>
-        <form onSubmit={(e) => { e.preventDefault(); send(input); }} className="glass rounded-2xl border p-2 shadow-lg">
+        <form onSubmit={(e) => { e.preventDefault(); send(input); }} className="glass rounded-2xl border p-1.5 sm:p-2 shadow-lg">
           {files.length > 0 && (
             <div className="flex flex-wrap gap-2 px-1 pb-2">
               {files.map((f, i) => (
                 <span key={f.name + i} className="flex items-center gap-2 rounded-xl border bg-background px-2 py-1 text-xs">
                   {f.type.startsWith("image/") ? <img src={f.data} alt="" className="h-8 w-8 rounded object-cover" /> : <FileText className="h-4 w-4 text-cyan" />}
-                  <span className="max-w-[140px] truncate">{f.name}</span>
+                  <span className="max-w-[120px] truncate">{f.name}</span>
                   <button type="button" aria-label={`Remove ${f.name}`} onClick={() => setFiles((p) => p.filter((_, j) => j !== i))} className="text-muted-foreground hover:text-foreground"><X className="h-3 w-3" /></button>
                 </span>
               ))}
@@ -333,45 +433,55 @@ function ChatCanvas({ w, thread, onChange, sidebarOpen, openSidebar }: { w: Work
             </p>
           )}
           <div className="flex items-end gap-1">
-          <Popover open={toolsOpen} onOpenChange={setToolsOpen}>
-            <PopoverTrigger asChild>
-              <Button type="button" size="icon" variant="ghost" aria-label="Tools"><SlidersHorizontal className="h-4 w-4" /></Button>
-            </PopoverTrigger>
-            <PopoverContent align="start" side="top" className="w-64 p-2">
-              <p className="px-2 pb-1 pt-1 text-xs font-medium text-muted-foreground">Mode</p>
-              {w.modes.map((m) => (
-                <button key={m} type="button" onClick={() => pickMode(m)} className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-sm hover:bg-accent">
-                  {m} {mode === m && <Check className="h-3.5 w-3.5 text-gold" />}
-                </button>
-              ))}
-              <p className="mt-2 border-t px-2 pb-1 pt-2 text-xs font-medium text-muted-foreground">Show in chat</p>
-              {w.cards.map((c) => (
-                <button key={c} type="button" onClick={() => insertCard(c)} className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent">
-                  <LayoutGrid className="h-3.5 w-3.5 text-muted-foreground" /> {CARD_LABELS[c]}
-                </button>
-              ))}
-            </PopoverContent>
-          </Popover>
-          <textarea
-            ref={taRef}
-            rows={1}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(input); } }}
-            placeholder={w.placeholder}
-            className="max-h-40 min-h-[44px] flex-1 resize-none bg-transparent px-3 py-2.5 text-sm outline-none placeholder:text-muted-foreground"
-          />
-          <input ref={fileRef} type="file" multiple hidden accept="image/*,application/pdf,.txt,.md,.csv,.json" onChange={(e) => addFiles(e.target.files)} />
-          <Button type="button" size="icon" variant="ghost" aria-label="Upload a file" title="Upload photo, PDF or text file" disabled={busy || files.length >= 5} onClick={() => fileRef.current?.click()}><Paperclip className="h-4 w-4" /></Button>
-          <Button type="button" size="icon" variant={listening ? "secondary" : "ghost"} aria-label={listening ? "Stop live speech" : "Live speech"} title="Live speech — talk and see your words" disabled={busy || recording} onClick={toggleSpeech} className={cn(listening && "text-destructive")}><Mic className="h-4 w-4" /></Button>
-          <Button type="button" size="icon" variant={recording ? "secondary" : "ghost"} aria-label={recording ? "Stop recording" : "Record a voice note"} title="Record a voice note" disabled={busy || listening || transcribing} onClick={toggleRecording} className={cn(recording && "text-destructive")}>
-            {transcribing ? <Loader2 className="h-4 w-4 animate-spin" /> : recording ? <Square className="h-4 w-4" /> : <AudioLines className="h-4 w-4" />}
-          </Button>
-          {busy ? (
-            <Button type="button" size="icon" variant="outline" aria-label="Stop" onClick={() => abortRef.current?.abort()}><Square className="h-4 w-4" /></Button>
-          ) : (
-            <Button type="submit" size="icon" aria-label="Send" disabled={!input.trim() && !files.length}><ArrowUp className="h-4 w-4" /></Button>
-          )}
+            <Popover open={toolsOpen} onOpenChange={setToolsOpen}>
+              <PopoverTrigger asChild>
+                <Button type="button" size="icon" variant="ghost" aria-label="Tools" className="h-8 w-8 sm:h-9 sm:w-9 shrink-0">
+                  <SlidersHorizontal className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="start" side="top" className="w-64 p-2">
+                <p className="px-2 pb-1 pt-1 text-xs font-medium text-muted-foreground">Mode</p>
+                {w.modes.map((m) => (
+                  <button key={m} type="button" onClick={() => pickMode(m)} className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-sm hover:bg-accent">
+                    {m} {mode === m && <Check className="h-3.5 w-3.5 text-gold" />}
+                  </button>
+                ))}
+                <p className="mt-2 border-t px-2 pb-1 pt-2 text-xs font-medium text-muted-foreground">Show in chat</p>
+                {w.cards.map((c) => (
+                  <button key={c} type="button" onClick={() => insertCard(c)} className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent">
+                    <LayoutGrid className="h-3.5 w-3.5 text-muted-foreground" /> {CARD_LABELS[c]}
+                  </button>
+                ))}
+              </PopoverContent>
+            </Popover>
+            <textarea
+              ref={taRef}
+              rows={1}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(input); } }}
+              placeholder={w.placeholder}
+              className="max-h-36 min-h-[38px] sm:min-h-[44px] flex-1 resize-none bg-transparent px-2.5 sm:px-3 py-2 text-sm outline-none placeholder:text-muted-foreground"
+            />
+            <input ref={fileRef} type="file" multiple hidden accept="image/*,application/pdf,.txt,.md,.csv,.json" onChange={(e) => addFiles(e.target.files)} />
+            <Button type="button" size="icon" variant="ghost" aria-label="Upload a file" title="Upload photo, PDF or text file" disabled={busy || files.length >= 5} onClick={() => fileRef.current?.click()} className="h-8 w-8 sm:h-9 sm:w-9 shrink-0">
+              <Paperclip className="h-4 w-4" />
+            </Button>
+            <Button type="button" size="icon" variant={listening ? "secondary" : "ghost"} aria-label={listening ? "Stop live speech" : "Live speech"} title="Live speech" disabled={busy || recording} onClick={toggleSpeech} className={cn("h-8 w-8 sm:h-9 sm:w-9 shrink-0", listening && "text-destructive")}>
+              <Mic className="h-4 w-4" />
+            </Button>
+            <Button type="button" size="icon" variant={recording ? "secondary" : "ghost"} aria-label={recording ? "Stop recording" : "Record a voice note"} title="Record a voice note" disabled={busy || listening || transcribing} onClick={toggleRecording} className={cn("h-8 w-8 sm:h-9 sm:w-9 shrink-0", recording && "text-destructive")}>
+              {transcribing ? <Loader2 className="h-4 w-4 animate-spin" /> : recording ? <Square className="h-4 w-4" /> : <AudioLines className="h-4 w-4" />}
+            </Button>
+            {busy ? (
+              <Button type="button" size="icon" variant="outline" aria-label="Stop" onClick={() => abortRef.current?.abort()} className="h-8 w-8 sm:h-9 sm:w-9 shrink-0">
+                <Square className="h-4 w-4" />
+              </Button>
+            ) : (
+              <Button type="submit" size="icon" aria-label="Send" disabled={!input.trim() && !files.length} className="h-8 w-8 sm:h-9 sm:w-9 shrink-0 bg-gold text-charcoal hover:bg-gold/90 font-medium">
+                <ArrowUp className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </form>
       </div>

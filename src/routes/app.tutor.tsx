@@ -110,8 +110,8 @@ function Tutor() {
     <div>
       <PageHeader eyebrow="Learn · Practise" title="AI Smart Tutor" subtitle="Your intelligent learning companion for tourism and hospitality." />
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <Panel className="flex h-[calc(100vh-15rem)] min-h-[520px] flex-col p-0 md:p-0">
-          <div className="flex gap-1 overflow-x-auto border-b p-2" role="tablist">
+        <Panel className="flex h-[calc(100svh-12rem)] min-h-[440px] flex-col p-0 md:p-0">
+          <div className="flex gap-1 overflow-x-auto no-scrollbar border-b p-2" role="tablist">
             {MODES.map((m) => (
               <button
                 key={m.id}
@@ -125,11 +125,11 @@ function Tutor() {
               </button>
             ))}
           </div>
-          <div className="flex-1 space-y-5 overflow-y-auto p-5 md:p-6">
+          <div className="flex-1 space-y-4 sm:space-y-5 overflow-y-auto p-3.5 sm:p-5 md:p-6">
             {msgs.map((m, i) => (
-              <div key={i} className={cn("fade-up flex gap-3", m.from === "user" && "justify-end")}>
+              <div key={i} className={cn("fade-up flex gap-2.5 sm:gap-3", m.from === "user" && "justify-end")}>
                 {m.from === "ai" && <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-cyan/40 bg-cyan/10"><Bot className="h-3.5 w-3.5 text-cyan" /></span>}
-                <div className={cn("max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed", m.from === "user" ? "bg-surface-2" : "")}>
+                <div className={cn("max-w-[88%] sm:max-w-[85%] rounded-2xl px-3.5 sm:px-4 py-2.5 sm:py-3 text-sm leading-relaxed", m.from === "user" ? "bg-surface-2" : "")}>
                   <p>{m.text}</p>
                   {m.reply?.pathway && (
                     <div className="mt-4 rounded-xl border bg-surface p-4">
@@ -158,24 +158,24 @@ function Tutor() {
             )}
             <div ref={endRef} />
           </div>
-          <div className="border-t p-3 md:p-4">
-            <div className="mb-3 flex flex-wrap gap-2">
+          <div className="border-t p-2.5 sm:p-4">
+            <div className="mb-2 sm:mb-3 flex overflow-x-auto no-scrollbar gap-1.5 sm:flex-wrap sm:gap-2 pb-1">
               {AIService.suggestions[mode].map((s) => (
-                <button key={s} onClick={() => send(s)} disabled={thinking} className="rounded-full border px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground disabled:opacity-50">{s}</button>
+                <button key={s} onClick={() => send(s)} disabled={thinking} className="shrink-0 whitespace-nowrap rounded-full border px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground disabled:opacity-50">{s}</button>
               ))}
             </div>
-            <form onSubmit={(e) => { e.preventDefault(); send(input); }} className="flex items-end gap-2">
+            <form onSubmit={(e) => { e.preventDefault(); send(input); }} className="flex items-end gap-1.5 sm:gap-2">
               <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(input); } }}
                 placeholder={`${mode}: ${MODES.find((m) => m.id === mode)?.hint}…`}
-                className="max-h-32 min-h-11 resize-none bg-surface"
+                className="max-h-32 min-h-10 sm:min-h-11 resize-none bg-surface text-sm"
                 rows={1}
                 maxLength={1000}
                 aria-label="Message the AI Tutor"
               />
-              <Button type="submit" size="icon" className="h-11 w-11 shrink-0" disabled={!input.trim() || thinking} aria-label="Send"><ArrowUp className="h-4 w-4" /></Button>
+              <Button type="submit" size="icon" className="h-10 w-10 sm:h-11 sm:w-11 shrink-0 bg-gold text-charcoal hover:bg-gold/90 font-medium" disabled={!input.trim() || thinking} aria-label="Send"><ArrowUp className="h-4 w-4" /></Button>
             </form>
           </div>
         </Panel>
