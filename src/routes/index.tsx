@@ -13,6 +13,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "An AI-powered ecosystem where Zimbabwe's tourism and hospitality workforce learns, practises real industry scenarios, proves skills and connects with industry." },
       { property: "og:title", content: "Tourism Workforce 2031" },
       { property: "og:description", content: "From classroom knowledge to real-world capability. Learn, practise, prove, connect." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Landing,
@@ -27,10 +29,10 @@ const PILLARS = [
 
 const STAGES = [
   { name: "Knowledge", example: "Learn hotel operations.", detail: "Structured modules and an AI tutor explain front-office operations, reservation logic and guest communication.", visual: ["Hotel Operations Fundamentals", "Module 5 · Cancellation policies", "AI Tutor: 'Why do flexible rates cost more?'"] },
-  { name: "Practice", example: "Handle a simulated reservation request.", detail: "A realistic reservation workspace: guest profile, live room availability, policies and a guest message thread.", visual: ["Guest: Mrs. R. Chikwanha · 3 nights", "Standard rooms: sold out", "Premium King · available · flexible"] },
+  { name: "Practice", example: "Handle a simulated reservation request.", detail: "A realistic reservation workspace: guest profile, live room availability, policies and a guest message thread.", visual: ["Guest profile · 3-night stay", "Standard rooms: sold out", "Premium King · available · flexible"] },
   { name: "Feedback", example: "AI identifies strengths and gaps.", detail: "Instead of a score, you receive an industry-reasoned performance profile with specific next steps.", visual: ["Customer communication · strong", "Policy explanation · improve", "Next: confirm terms before options"] },
-  { name: "Competency", example: "Skill added to your Tourism Skills Passport.", detail: "Demonstrated skills become verifiable entries on a living professional identity employers can trust.", visual: ["Reservation Management → Demonstrated", "Evidence: simulation attempt #A7F2", "Visible to connected employers"] },
-  { name: "Opportunity", example: "Discover relevant career or industry opportunities.", detail: "Your verified capability is matched to internships, placements, mentors and roles across Zimbabwe.", visual: ["Front Office Internship · Kingdom Hotel · 91% match", "Mentorship · Farai Mutasa", "Reservations Agent · Meikles Hotel"] },
+  { name: "Competency", example: "Skill added to your Tourism Skills Passport.", detail: "Demonstrated skills become verifiable entries on a living professional identity employers can trust.", visual: ["Reservation Management → Demonstrated", "Evidence: linked simulation attempt", "Visible to connected employers"] },
+  { name: "Opportunity", example: "Discover relevant career or industry opportunities.", detail: "Your verified capability is matched to internships, placements, mentors and roles across Zimbabwe.", visual: ["Internships matched to your passport", "Mentors from the member network", "Roles posted by verified employers"] },
 ];
 
 function Landing() {

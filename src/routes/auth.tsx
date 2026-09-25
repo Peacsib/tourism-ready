@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
+      { name: "robots", content: "noindex" },
       { title: "Sign in — Tourism Workforce 2031" },
       { name: "description", content: "Create your account to build a verified Skills Passport for Zimbabwe's tourism and hospitality workforce." },
       { property: "og:title", content: "Sign in to Tourism Workforce 2031" },
