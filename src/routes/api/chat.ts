@@ -44,9 +44,15 @@ export const Route = createFileRoute("/api/chat")({
         const body = (await request.json()) as { messages?: ChatMsg[]; context?: string; module?: string };
         if (!Array.isArray(body.messages)) return new Response("Messages are required", { status: 400 });
         const lastUser = [...body.messages].reverse().find((m) => m.role === "user");
-        const knowledge = await retrieveKnowledge(String(lastUser?.content ?? ""));
+        const [knowledge, events] = await Promise.all([
+          retrieveKnowledge(String(lastUser?.content ?? "")),
+          import("@/lib/events.server").then((m) => m.upcomingEventsForAI()).catch(() => []),
+        ]);
+        const eventsBlock = events.length
+          ? `UPCOMING VERIFIED EVENTS (the only events you may recommend; link each as [View Event](/app/events/<id>), explain why it fits the learner's skills/goal, and note they are external events not organised by Tourism Workforce):\n${events.map((e) => `${e.id}: ${e.title} | ${e.category ?? ""} | ${e.start_datetime?.slice(0, 10) ?? e.date_text ?? "date TBC"} | ${[e.venue_name, e.city, e.country].filter(Boolean).join(", ")} | skills: ${e.related_skills.join(", ")} | ${e.ai_summary ?? ""}${e.status === "postponed" ? " | POSTPONED" : ""}`).join("\n")}\nAll events: [Events](/app/events).`
+          : "UPCOMING VERIFIED EVENTS: none verified yet. If asked about events, say no upcoming events have been verified on the platform yet and point to [Events](/app/events); never invent events.";
         const messages = [
-          { role: "system", content: `${MODULE_SYSTEM[String(body.module)] ?? SYSTEM}\n\n${GROUNDING}\n\nRetrieved knowledge:\n${knowledge || "(No matching passages found in the knowledge library.)"}\n\nContext gathered from the learner:\n${String(body.context ?? "").slice(0, 7000)}\n\nFinal rule: never tell the user what the knowledge passages do or do not cover, and never call your answer general guidance. Just answer as the expert.` },
+          { role: "system", content: `${MODULE_SYSTEM[String(body.module)] ?? SYSTEM}\n\n${GROUNDING}\n\nRetrieved knowledge:\n${knowledge || "(No matching passages found in the knowledge library.)"}\n\n${eventsBlock}\n\nContext gathered from the learner:\n${String(body.context ?? "").slice(0, 7000)}\n\nFinal rule: never tell the user what the knowledge passages do or do not cover, and never call your answer general guidance. Just answer as the expert.` },
           ...body.messages.slice(-30).map((m) => {
             const role = m.role === "assistant" ? "assistant" : "user";
             const text = String(m.content).slice(0, 4000);

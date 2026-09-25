@@ -185,6 +185,7 @@ const ASSIST: { prefix: string; module: string; agent: string; prompt: string }[
   { prefix: "/app/network", module: "network", agent: "Nyanzvi Connect", prompt: "Who should I connect with?" },
   { prefix: "/app/my-network", module: "network", agent: "Nyanzvi Connect", prompt: "Who should I connect with?" },
   { prefix: "/app/opportunities", module: "opportunities", agent: "Nyanzvi Careers", prompt: "Prepare for an application" },
+  { prefix: "/app/events", module: "intelligence", agent: "Nyanzvi Insight", prompt: "Which events are relevant to me?" },
   { prefix: "/app/learning", module: "learning", agent: "Nyanzvi Learn", prompt: "Need help with this topic?" },
   { prefix: "/app/hubs", module: "hubs", agent: "Nyanzvi Field", prompt: "Which programme suits me?" },
 ];
