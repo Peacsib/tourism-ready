@@ -20,6 +20,36 @@ function jobType(s: string | undefined) {
   return "Full-time";
 }
 
+type Verdict = { relevant: boolean; skills: string[] };
+
+// Nyanzvi review: confirms each job is genuinely tourism/hospitality and picks passport skills.
+// Returns null on any failure so the keyword filter still applies.
+async function aiReview(jobs: Record<string, any>[], skillNames: string[]): Promise<Verdict[] | null> {
+  const key = process.env["OPENAI_API_KEY"];
+  if (!key || !jobs.length) return null;
+  try {
+    const list = jobs.map((x, i) => `${i}. ${String(x["title"] ?? "")} @ ${String(x["company_name"] ?? "")}: ${String(x["description"] ?? "").slice(0, 500)}`).join("\n");
+    const r = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+      body: JSON.stringify({
+        model: "gpt-6-luna",
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: `You review job listings for a tourism & hospitality workforce platform. For each job decide if it is genuinely a tourism, travel, hospitality, food service, events or guiding role (not e.g. software, mining, finance roles that merely mention a hotel). Pick up to 5 matching skills ONLY from this list: ${skillNames.join("; ")}. Reply as JSON {"jobs":[{"i":0,"relevant":true,"skills":["..."]}]}.` },
+          { role: "user", content: list },
+        ],
+      }),
+    });
+    if (!r.ok) return null;
+    const j = await r.json();
+    const parsed = JSON.parse(j?.choices?.[0]?.message?.content ?? "{}") as { jobs?: { i: number; relevant: boolean; skills?: string[] }[] };
+    const out: Verdict[] = jobs.map(() => ({ relevant: true, skills: [] }));
+    for (const v of parsed.jobs ?? []) if (out[v.i]) out[v.i] = { relevant: v.relevant !== false, skills: v.skills ?? [] };
+    return out;
+  } catch { return null; }
+}
+
 export async function runJobsDiscovery(): Promise<JobsReport> {
   const key = process.env["SERPAPI_JOBS_API_KEY"];
   if (!key) throw new Error("Jobs search key is not configured");
@@ -40,16 +70,23 @@ export async function runJobsDiscovery(): Promise<JobsReport> {
       const j = (await r.json()) as { jobs_results?: Record<string, any>[] };
       const rows = j.jobs_results ?? [];
       report.found += rows.length;
-      for (const x of rows) {
+      const candidates = rows.filter((x) => {
+        const t = String(x["title"] ?? "").trim();
+        return t && RELEVANT.test(`${t} ${String(x["description"] ?? "").slice(0, 400)}`);
+      });
+      const review = await aiReview(candidates, skillNames);
+      for (const [idx, x] of candidates.entries()) {
         const title = String(x["title"] ?? "").trim();
         const desc = String(x["description"] ?? "");
-        if (!title || !RELEVANT.test(`${title} ${desc.slice(0, 400)}`)) continue;
+        const verdict = review?.[idx];
+        if (verdict && !verdict.relevant) continue;
         report.relevant++;
         const org = String(x["company_name"] ?? "Employer");
         const loc = String(x["location"] ?? "Zimbabwe");
         const apply = (x["apply_options"] as { link?: string }[] | undefined)?.[0]?.link ?? x["share_link"] ?? null;
         const text = `${title} ${desc}`.toLowerCase();
-        const skills = skillNames.filter((s) => s.toLowerCase().split(/\s+/).some((w) => w.length > 4 && text.includes(w))).slice(0, 5);
+        const aiSkills = (verdict?.skills ?? []).filter((s) => skillNames.includes(s));
+        const skills = aiSkills.length ? aiSkills.slice(0, 5) : skillNames.filter((s) => s.toLowerCase().split(/\s+/).some((w) => w.length > 4 && text.includes(w))).slice(0, 5);
         const dedupe = `serp:${(x["job_id"] as string | undefined)?.slice(0, 120) ?? `${title}|${org}|${loc}`.toLowerCase()}`;
         const row = {
           dedupe_key: dedupe, title: title.slice(0, 200), organisation: org.slice(0, 200), location: loc.slice(0, 200),
