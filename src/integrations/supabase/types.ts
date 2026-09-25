@@ -279,6 +279,39 @@ export type Database = {
           },
         ]
       }
+      kb_chunks: {
+        Row: {
+          active: boolean
+          content: string
+          created_at: string
+          fts: unknown
+          id: string
+          section: string
+          source: string
+          version: number
+        }
+        Insert: {
+          active?: boolean
+          content: string
+          created_at?: string
+          fts?: unknown
+          id?: string
+          section?: string
+          source: string
+          version?: number
+        }
+        Update: {
+          active?: boolean
+          content?: string
+          created_at?: string
+          fts?: unknown
+          id?: string
+          section?: string
+          source?: string
+          version?: number
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           actor_id: string | null
@@ -624,6 +657,15 @@ export type Database = {
       is_job_owner: {
         Args: { _job_id: string; _user_id: string }
         Returns: boolean
+      }
+      search_kb: {
+        Args: { n?: number; q: string }
+        Returns: {
+          content: string
+          rank: number
+          section: string
+          source: string
+        }[]
       }
     }
     Enums: {
