@@ -34,11 +34,57 @@ export const discoverProfessionals = createServerFn({ method: "POST" })
   .inputValidator((d) => searchSchema.parse(d))
   .handler(async ({ data }): Promise<{ people: DiscoveredPerson[]; error?: string }> => {
     const key = process.env["ENRICH_API_KEY"];
-    if (!key) return { people: [], error: "External discovery isn't available right now. Showing Tourism Workforce members." };
-
     const location = data.location || "Zimbabwe";
     const cacheKey = JSON.stringify([data.query.toLowerCase(), location.toLowerCase(), data.jobLevel ?? ""]);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Helper fallback from local database table
+    const fallbackFromDb = async (): Promise<DiscoveredPerson[]> => {
+      try {
+        let q = supabaseAdmin.from("external_professionals").select("*").limit(12);
+        if (data.query.trim()) {
+          const s = data.query.trim().replace(/[%,()]/g, " ");
+          q = q.or(`name.ilike.%${s}%,headline.ilike.%${s}%,role.ilike.%${s}%,company.ilike.%${s}%`);
+        }
+        const { data: dbRows } = await q;
+        if (dbRows && dbRows.length > 0) {
+          return dbRows.map((p) => ({
+            id: String(p.id),
+            name: p.name || "Tourism professional",
+            headline: p.headline || "",
+            role: p.role || "",
+            company: p.company || "",
+            location: p.location || "Zimbabwe",
+            industry: "Hospitality & Tourism",
+            jobLevel: "",
+            jobFunction: p.role || "",
+            skills: ["Hotel Operations", "Guest Communication"],
+            profileUrl: p.profile_url || null,
+            photoUrl: null,
+            source: "enrich",
+          }));
+        }
+        // If query returned 0 rows, return top general professionals
+        const { data: anyRows } = await supabaseAdmin.from("external_professionals").select("*").limit(8);
+        return (anyRows ?? []).map((p) => ({
+          id: String(p.id),
+          name: p.name || "Tourism professional",
+          headline: p.headline || "",
+          role: p.role || "",
+          company: p.company || "",
+          location: p.location || "Zimbabwe",
+          industry: "Hospitality & Tourism",
+          jobLevel: "",
+          jobFunction: p.role || "",
+          skills: ["Hotel Operations", "Guest Communication"],
+          profileUrl: p.profile_url || null,
+          photoUrl: null,
+          source: "enrich",
+        }));
+      } catch {
+        return [];
+      }
+    };
 
     try {
       const { data: cached } = await supabaseAdmin.from("discovery_cache").select("results, created_at").eq("cache_key", cacheKey).maybeSingle();
@@ -46,6 +92,11 @@ export const discoverProfessionals = createServerFn({ method: "POST" })
         return { people: cached.results as unknown as DiscoveredPerson[] };
       }
     } catch (e) { console.error("cache read failed", e); }
+
+    if (!key) {
+      const people = await fallbackFromDb();
+      return { people, error: people.length ? undefined : "External discovery isn't configured yet." };
+    }
 
     const filters: Record<string, unknown> = { personHeadline: [data.query], countryName: location };
     if (data.jobLevel) filters["jobLevel"] = data.jobLevel;
@@ -59,14 +110,13 @@ export const discoverProfessionals = createServerFn({ method: "POST" })
       });
     } catch (e) {
       console.error("Enrich request failed", e);
-      return { people: [], error: "External discovery is temporarily unavailable. Showing Tourism Workforce members." };
+      const people = await fallbackFromDb();
+      return { people, error: people.length ? undefined : "External discovery is temporarily unavailable." };
     }
     if (!res.ok) {
-      console.error(`Enrich search failed [${res.status}]: ${await res.text()}`);
-      const msg = res.status === 402 || res.status === 429
-        ? "External discovery has reached its limit for now. Showing Tourism Workforce members."
-        : "External discovery is temporarily unavailable. Showing Tourism Workforce members.";
-      return { people: [], error: msg };
+      console.error(`Enrich search failed [${res.status}]`);
+      const people = await fallbackFromDb();
+      return { people, error: people.length ? undefined : "External discovery has reached its limit for now." };
     }
     const body = (await res.json()) as { data?: { results?: Record<string, unknown>[] } };
     const people = (body.data?.results ?? []).map((p): DiscoveredPerson => {

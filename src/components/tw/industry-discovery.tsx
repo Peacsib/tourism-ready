@@ -27,11 +27,13 @@ export function IndustryDiscovery({ query, autoQuery }: { query: string; autoQue
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<DiscoveredPerson[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState(query || "");
   const [location, setLocation] = useState("Zimbabwe");
   const [level, setLevel] = useState("");
   const [invited, setInvited] = useState<string[]>([]);
   const skills = competencies.map((c) => c.name);
-  const run = async (q = query) => {
+
+  const run = async (q = searchTerm || query || "Hotel Manager") => {
     if (q.trim().length < 2) { toast.message("Type who you're looking for, or pick a preset below."); return; }
     setLoading(true); setError(null);
     try {
@@ -40,8 +42,23 @@ export function IndustryDiscovery({ query, autoQuery }: { query: string; autoQue
     } catch { setResults([]); setError("External discovery is temporarily unavailable. Showing Tourism Workforce members."); }
     finally { setLoading(false); }
   };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { if (autoQuery) run(autoQuery); }, [autoQuery]);
+
+  // Sync when prop query changes
+  useEffect(() => {
+    if (query && query !== searchTerm) {
+      setSearchTerm(query);
+      if (query.trim().length >= 2) {
+        const timer = setTimeout(() => run(query), 350);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [query]);
+
+  // Initial load
+  useEffect(() => {
+    run(autoQuery || (query.trim().length >= 2 ? query : "Hotel Manager"));
+  }, []);
+
   const doInvite = async (p: DiscoveredPerson) => {
     try {
       const r = await invite({ data: { person: { id: p.id, name: p.name, headline: p.headline, role: p.role, company: p.company, location: p.location, profileUrl: p.profileUrl }, invitedBy: persona.name } });
@@ -54,13 +71,14 @@ export function IndustryDiscovery({ query, autoQuery }: { query: string; autoQue
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="flex-1">
           <p className="eyebrow text-cyan">Industry discovery</p>
-          <p className="mt-1 text-sm text-muted-foreground">Find real tourism professionals beyond the platform, matching your search.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Find real tourism & hospitality leaders across Zimbabwe, powered by Enrich & industry registries.</p>
         </div>
-        <Input value={location} onChange={(e) => setLocation(e.target.value)} className="bg-surface sm:w-36" placeholder="Country" maxLength={80} />
-        <select value={level} onChange={(e) => setLevel(e.target.value)} className="h-9 rounded-md border bg-surface px-2 text-sm" aria-label="Seniority">
+        <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") run(searchTerm); }} className="bg-surface sm:w-48" placeholder="Role or title" maxLength={80} />
+        <Input value={location} onChange={(e) => setLocation(e.target.value)} className="bg-surface sm:w-32" placeholder="Country" maxLength={80} />
+        <select value={level} onChange={(e) => { setLevel(e.target.value); }} className="h-9 rounded-md border bg-surface px-2 text-sm" aria-label="Seniority">
           {LEVELS.map((l) => <option key={l} value={l}>{l || "Any seniority"}</option>)}
         </select>
-        <Button size="sm" onClick={() => run()} disabled={loading}>{loading ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <Sparkles className="mr-1 h-3.5 w-3.5" />} Discover</Button>
+        <Button size="sm" onClick={() => run(searchTerm)} disabled={loading}>{loading ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <Sparkles className="mr-1 h-3.5 w-3.5" />} Discover</Button>
       </div>
       <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
         {PRESETS.map((p) => <button key={p} onClick={() => run(PRESET_QUERY[p] ?? p)} className="shrink-0 rounded-full border px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-cyan/50 hover:text-foreground">{p}</button>)}

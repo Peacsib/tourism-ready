@@ -33,7 +33,7 @@ async function aiReview(jobs: Record<string, any>[], skillNames: string[]): Prom
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
       body: JSON.stringify({
-        model: "gpt-6-luna",
+        model: "gpt-4o-mini",
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: `You review job listings for a tourism & hospitality workforce platform. For each job decide if it is genuinely a tourism, travel, hospitality, food service, events or guiding role (not e.g. software, mining, finance roles that merely mention a hotel). Pick up to 5 matching skills ONLY from this list: ${skillNames.join("; ")}. Reply as JSON {"jobs":[{"i":0,"relevant":true,"skills":["..."]}]}.` },

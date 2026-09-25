@@ -71,13 +71,13 @@ export const Route = createFileRoute("/api/chat")({
         const upstream = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-          body: JSON.stringify({ model: "gpt-6-luna", messages, stream: true }),
+          body: JSON.stringify({ model: "gpt-4o-mini", messages, stream: true }),
           signal: request.signal,
         });
         if (!upstream.ok || !upstream.body) {
           const t = await upstream.text().catch(() => "");
           console.error("OpenAI error", upstream.status, t);
-          const msg = upstream.status === 401 ? "Your OpenAI key was rejected." : upstream.status === 429 ? "OpenAI rate limit or quota reached. Try again shortly." : upstream.status === 404 ? "The model gpt-6-luna isn't available on your OpenAI account." : "The AI Tutor couldn't respond right now.";
+          const msg = upstream.status === 401 ? "Your OpenAI key was rejected." : upstream.status === 429 ? "OpenAI rate limit or quota reached. Try again shortly." : upstream.status === 404 ? "The AI model isn't available on your OpenAI account." : "The AI Tutor couldn't respond right now.";
           return new Response(msg, { status: upstream.status });
         }
         const decoder = new TextDecoder();

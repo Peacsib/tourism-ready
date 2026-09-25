@@ -2,7 +2,7 @@
 // SerpAPI Google Images resolves imagery, and the events table is the one canonical store.
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-const OPENAI_MODEL = "gpt-6-luna";
+const OPENAI_MODEL = "gpt-4o-mini";
 const QUERY_TTL_H = 24;
 const MAX_QUERIES = 12;
 const MAX_VERIFY = 10;
