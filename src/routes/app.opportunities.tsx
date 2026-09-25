@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Briefcase, Check, Loader2, MapPin, Plus, Search, Users } from "lucide-react";
+import { Briefcase, Check, Loader2, MapPin, Plus, RefreshCw, Search, Users } from "lucide-react";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { refreshJobs } from "@/lib/jobs.functions";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +43,8 @@ function Opportunities() {
   const [posting, setPosting] = useState(false);
   const [tab, setTab] = useState<"browse" | "listings">("browse");
   const isEmployer = profile?.role === "employer" || profile?.role === "admin";
+  const [syncing, setSyncing] = useState(false);
+  const doRefreshJobs = useServerFn(refreshJobs);
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -64,9 +68,14 @@ function Opportunities() {
 
   return (
     <div>
-      <PageHeader eyebrow="Careers" title="Opportunities" subtitle="Real jobs, internships and placements posted by tourism employers. Apply with your Skills Passport."
+      <PageHeader eyebrow="Careers" title="Opportunities" subtitle="Real tourism and hospitality jobs — posted by employers here, plus live listings found on Google Jobs."
         actions={<div className="flex gap-2">
           <Button asChild variant="outline"><Link to="/app/ws/$module" params={{ module: "opportunities" }}><img src={nyanzviLogo} alt="" className="mr-1.5 h-4 w-4" /> Ask Nyanzvi Careers</Link></Button>
+          {profile?.role === "admin" && <Button variant="outline" disabled={syncing} onClick={async () => {
+            setSyncing(true);
+            try { const r = await doRefreshJobs(); if (!r.ok) toast.error(r.error); else toast.success("Jobs refreshed", { description: `${r.report.queries_run} searches · ${r.report.relevant} relevant · ${r.report.inserted} new · ${r.report.updated} updated` }); await load(); }
+            catch (e) { toast.error((e as Error).message); } finally { setSyncing(false); }
+          }}><RefreshCw className={cn("mr-1 h-4 w-4", syncing && "animate-spin")} /> Refresh Jobs</Button>}
           {isEmployer && <Button onClick={() => setPosting(true)}><Plus className="mr-1 h-4 w-4" /> Post an opportunity</Button>}
         </div>} />
 
@@ -111,7 +120,11 @@ function Opportunities() {
                     </div>
                     <div className="flex items-center gap-4 md:flex-col md:items-end">
                       {m !== null && <div className="text-right"><p className="font-display text-2xl font-semibold text-gold">{m}%</p><p className="eyebrow">Passport match</p></div>}
-                      {j.employer_id === user?.id ? <Tag>Your listing</Tag>
+                      {j.is_external ? <>
+                          <Tag>External job · via Google Jobs</Tag>
+                          {j.apply_url && <Button asChild size="sm"><a href={j.apply_url} target="_blank" rel="noreferrer">Apply on employer site</a></Button>}
+                        </>
+                        : j.employer_id === user?.id ? <Tag>Your listing</Tag>
                         : app ? <Button size="sm" variant="outline" disabled><Check className="mr-1 h-3.5 w-3.5" /> {app.status === "submitted" ? "Applied" : app.status[0]!.toUpperCase() + app.status.slice(1)}</Button>
                         : <Button size="sm" onClick={() => setApplyTo(j)}>Apply with Passport</Button>}
                     </div>

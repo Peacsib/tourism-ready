@@ -442,41 +442,56 @@ export type Database = {
       jobs: {
         Row: {
           active: boolean
+          apply_url: string | null
           closes_on: string | null
           created_at: string
+          dedupe_key: string | null
           description: string
-          employer_id: string
+          employer_id: string | null
           id: string
+          is_external: boolean
           job_type: string
+          last_synced_at: string | null
           location: string
           organisation: string
           skills: string[]
+          source: string
           title: string
         }
         Insert: {
           active?: boolean
+          apply_url?: string | null
           closes_on?: string | null
           created_at?: string
+          dedupe_key?: string | null
           description?: string
-          employer_id: string
+          employer_id?: string | null
           id?: string
+          is_external?: boolean
           job_type?: string
+          last_synced_at?: string | null
           location?: string
           organisation: string
           skills?: string[]
+          source?: string
           title: string
         }
         Update: {
           active?: boolean
+          apply_url?: string | null
           closes_on?: string | null
           created_at?: string
+          dedupe_key?: string | null
           description?: string
-          employer_id?: string
+          employer_id?: string | null
           id?: string
+          is_external?: boolean
           job_type?: string
+          last_synced_at?: string | null
           location?: string
           organisation?: string
           skills?: string[]
+          source?: string
           title?: string
         }
         Relationships: [

@@ -50,6 +50,13 @@
       "when": 1790298992700,
       "tag": "0006_events_engine",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790300613423,
+      "tag": "0007_external_jobs",
+      "breakpoints": true
     }
   ]
 }
