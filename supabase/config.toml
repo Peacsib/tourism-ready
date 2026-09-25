@@ -1,1 +1,35 @@
-project_id = "cflvlorwbtceymeepxyn"
+project_id = "kkafwrccornysyhibbpb"
+
+[auth]
+site_url = "https://tourism-ready.vercel.app"
+additional_redirect_urls = [
+  "https://tourism-ready.vercel.app/**",
+  "https://tourism-ready.vercel.app/start",
+  "https://tourism-ready.vercel.app/auth",
+  "http://localhost:5173/**",
+  "http://localhost:3000/**"
+]
+
+[auth.email]
+enable_confirmations = true
+max_frequency = "1m0s"
+otp_length = 8
+
+[auth.external.google]
+client_id = "392976332996-lrlcbokumlr7iuuilqodcf4qifl4t2ta.apps.googleusercontent.com"
+enabled = true
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+[db.pooler]
+default_pool_size = 15
+max_client_conn = 200
+
+[storage.analytics]
+enabled = true
+max_namespaces = 10
+
+[storage.image_transformation]
+enabled = true
