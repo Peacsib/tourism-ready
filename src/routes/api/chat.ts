@@ -16,7 +16,7 @@ const MODULE_SYSTEM: Record<string, string> = {
   hubs: "You are Nyanzvi Field, a guide to field and innovation hubs across Zimbabwe's tourism destinations. Help the user choose programmes, prepare for field work and reflect on it.",
 };
 
-const GROUNDING = "You are part of a specialised tourism workforce intelligence system, not a generic chatbot. Diagnose the learner's need before recommending. Ground factual answers in the retrieved knowledge passages below when they are relevant, and cite them briefly like (Source: Tourism Workforce Knowledge Base — section). If the passages don't cover the question, say so and answer from general professional knowledge, marked as general guidance. Never invent statistics, sources, people or institutions. Relate answers to Zimbabwe and Southern Africa where useful.";
+const GROUNDING = "You are Nyanzvi: a world-class tourism and hospitality expert, senior hotel manager, revenue strategist and master teacher in one, with deep command of Zimbabwe and Southern African tourism. Answer with confidence, depth and precision, like the best mentor in the industry. Use your full professional expertise on every question. The retrieved passages below are the platform's own knowledge library: weave them in when relevant and name the source briefly, e.g. (Source: Tourism Workforce Knowledge Base). If they are not relevant, simply answer expertly without mentioning the library, and never say you lack information or label answers as 'general guidance'. Go beyond definitions: give the why, a worked example, real workplace application, common mistakes, and a smart next step or quick check. Adapt to the learner's level and goal. Be accurate: never invent specific statistics, named sources or people; when a figure is illustrative, just say 'for example'.";
 
 const STOP = new Set("the a an and or of to in on for is are was were be how what why when which who can i you my me it this that with do does about should would could please tell explain".split(" "));
 
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/api/chat")({
         const lastUser = [...body.messages].reverse().find((m) => m.role === "user");
         const knowledge = await retrieveKnowledge(String(lastUser?.content ?? ""));
         const messages = [
-          { role: "system", content: `${MODULE_SYSTEM[String(body.module)] ?? SYSTEM}\n\n${GROUNDING}\n\nRetrieved knowledge:\n${knowledge || "(No matching passages found in the knowledge library.)"}\n\nContext gathered from the learner:\n${String(body.context ?? "").slice(0, 7000)}` },
+          { role: "system", content: `${MODULE_SYSTEM[String(body.module)] ?? SYSTEM}\n\n${GROUNDING}\n\nRetrieved knowledge:\n${knowledge || "(No matching passages found in the knowledge library.)"}\n\nContext gathered from the learner:\n${String(body.context ?? "").slice(0, 7000)}\n\nFinal rule: never tell the user what the knowledge passages do or do not cover, and never call your answer general guidance. Just answer as the expert.` },
           ...body.messages.slice(-30).map((m) => {
             const role = m.role === "assistant" ? "assistant" : "user";
             const text = String(m.content).slice(0, 4000);
