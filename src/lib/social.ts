@@ -145,7 +145,7 @@ export async function fetchInbox(userId: string): Promise<DM[]> {
 export async function sendDM(from: string, to: string, body: string) { const { error } = await supabase.from("direct_messages").insert({ sender_id: from, recipient_id: to, body: body.slice(0, 2000) }); fail(error); }
 export async function markRead(userId: string, otherId: string) { await supabase.from("direct_messages").update({ read_at: new Date().toISOString() }).eq("recipient_id", userId).eq("sender_id", otherId).is("read_at", null); }
 
-export type Job = { id: string; employer_id: string; title: string; organisation: string; location: string; job_type: string; description: string; skills: string[]; closes_on: string | null; active: boolean; created_at: string };
+export type Job = { id: string; employer_id: string | null; is_external: boolean; source: string; apply_url: string | null; title: string; organisation: string; location: string; job_type: string; description: string; skills: string[]; closes_on: string | null; active: boolean; created_at: string };
 export async function fetchJobs(): Promise<Job[]> {
   const { data, error } = await supabase.from("jobs").select("*").order("created_at", { ascending: false }).limit(100);
   fail(error);
