@@ -5,11 +5,13 @@
 
 ## Done
 - Real accounts (email/password + Google) and cloud-saved Skills Passport, profile, simulation results and timeline.
-
-## Next
-- Public verification page for a passport (/verify/:id) and employer candidate search.
-
 - [x] Chat-first workspaces for all main sections (Tutor, Sims, Passport, Intelligence, Network, Opportunities, Learning, Hubs)
 - [x] Nyanzvi AI Tutor logo + premium onboarding
 - [x] Nyanzvi as intelligence layer: real pages restored in menu, "Ask Nyanzvi" bar on each page, chat recommends only real resources with links
-- [ ] Learning progress/lessons and Hubs moved to database (still sample data)
+- [x] Public passport verification page (/verify/:id) — employer candidate search included
+- [x] Learning progress/lessons and Hubs moved to database (PostgreSQL tables with seed data, migration 0008)
+
+## Next
+- Wire up Learning and Hubs pages to read from DB instead of static data.ts
+- Employer dashboard: shortlist candidates from verify page, download CSV.
+- Push notifications for connection requests (Supabase Realtime).

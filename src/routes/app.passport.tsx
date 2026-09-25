@@ -1,11 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Award, Download, Eye, Share2 } from "lucide-react";
+import { Award, Download, Eye, ExternalLink, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Avatar, Meter, PageHeader, Panel, SkillsConstellation, StatePill, Tag } from "@/components/tw/motifs";
 import { BADGES, type CompetencyCategory } from "@/lib/data";
 import { useApp } from "@/lib/store";
+import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -19,15 +20,17 @@ const STATES = ["Developing", "Practising", "Demonstrated", "Verified"] as const
 
 function Passport() {
   const { persona, competencies, timeline } = useApp();
+  const { user } = useAuth();
   const [selected, setSelected] = useState<string | null>("res");
   const [cat, setCat] = useState<CompetencyCategory | "All">("All");
   const [view, setView] = useState(false);
   const sel = competencies.find((c) => c.id === selected);
   const shown = competencies.filter((c) => cat === "All" || c.category === cat);
   const passportId = `ZW-2031-${persona.initials}${persona.id.length}417`;
+  const verifyUrl = user ? `${window.location.origin}/verify/${user.id}` : null;
 
   const share = async () => {
-    const url = `${window.location.origin}/app/profile`;
+    const url = verifyUrl ?? `${window.location.origin}/verify/${persona.id}`;
     try { await navigator.clipboard.writeText(url); toast.success("Passport link copied", { description: url }); }
     catch { toast.info("Share link", { description: url }); }
   };
@@ -57,6 +60,11 @@ function Passport() {
         actions={<>
           <Button onClick={() => setView(true)}><Eye className="mr-1 h-4 w-4" /> View Passport</Button>
           <Button variant="outline" onClick={share}><Share2 className="mr-1 h-4 w-4" /> Share Profile</Button>
+          {verifyUrl && (
+            <Link to="/verify/$id" params={{ id: user!.id }} target="_blank">
+              <Button variant="outline"><ExternalLink className="mr-1 h-4 w-4" /> Public View</Button>
+            </Link>
+          )}
           <Button variant="outline" onClick={download}><Download className="mr-1 h-4 w-4" /> Download</Button>
         </>}
       />
