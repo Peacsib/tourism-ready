@@ -33,7 +33,7 @@ function str(v: unknown): string {
 export const discoverProfessionals = createServerFn({ method: "POST" })
   .inputValidator((d) => searchSchema.parse(d))
   .handler(async ({ data }): Promise<{ people: DiscoveredPerson[]; error?: string }> => {
-    const key = process.env["STRIPE_LIVE_API_KEY"];
+    const key = process.env["ENRICH_API_KEY"] || process.env["STRIPE_LIVE_API_KEY"];
     if (!key) return { people: [], error: "External discovery isn't available right now. Showing Tourism Workforce members." };
 
     const location = data.location || "Zimbabwe";

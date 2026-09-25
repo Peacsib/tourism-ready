@@ -27,6 +27,7 @@ import { Route as AppOpportunitiesRouteImport } from './routes/app.opportunities
 import { Route as AppPassportRouteImport } from './routes/app.passport'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppTutorRouteImport } from './routes/app.tutor'
+import { Route as VerifyIdRouteImport } from './routes/verify.$id'
 import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
 import { Route as AppEventsIdRouteImport } from './routes/app.events.$id'
 import { Route as AppPeopleIdRouteImport } from './routes/app.people.$id'
@@ -127,6 +128,11 @@ const AppTutorRoute = AppTutorRouteImport.update({
   path: '/tutor',
   getParentRoute: () => AppRoute,
 } as any)
+const VerifyIdRoute = VerifyIdRouteImport.update({
+  id: '/verify/$id',
+  path: '/verify/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppEventsIndexRoute = AppEventsIndexRouteImport.update({
   id: '/events/',
   path: '/events/',
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/app/passport': typeof AppPassportRoute
   '/app/profile': typeof AppProfileRoute
   '/app/tutor': typeof AppTutorRoute
+  '/verify/$id': typeof VerifyIdRoute
   '/app/': typeof AppIndexRoute
   '/app/events/$id': typeof AppEventsIdRoute
   '/app/people/$id': typeof AppPeopleIdRoute
@@ -221,6 +228,7 @@ export interface FileRoutesByTo {
   '/app/passport': typeof AppPassportRoute
   '/app/profile': typeof AppProfileRoute
   '/app/tutor': typeof AppTutorRoute
+  '/verify/$id': typeof VerifyIdRoute
   '/app': typeof AppIndexRoute
   '/app/events/$id': typeof AppEventsIdRoute
   '/app/people/$id': typeof AppPeopleIdRoute
@@ -251,6 +259,7 @@ export interface FileRoutesById {
   '/app/passport': typeof AppPassportRoute
   '/app/profile': typeof AppProfileRoute
   '/app/tutor': typeof AppTutorRoute
+  '/verify/$id': typeof VerifyIdRoute
   '/app/': typeof AppIndexRoute
   '/app/events/$id': typeof AppEventsIdRoute
   '/app/people/$id': typeof AppPeopleIdRoute
@@ -282,6 +291,7 @@ export interface FileRouteTypes {
     | '/app/passport'
     | '/app/profile'
     | '/app/tutor'
+    | '/verify/$id'
     | '/app/'
     | '/app/events/$id'
     | '/app/people/$id'
@@ -310,6 +320,7 @@ export interface FileRouteTypes {
     | '/app/passport'
     | '/app/profile'
     | '/app/tutor'
+    | '/verify/$id'
     | '/app'
     | '/app/events/$id'
     | '/app/people/$id'
@@ -339,6 +350,7 @@ export interface FileRouteTypes {
     | '/app/passport'
     | '/app/profile'
     | '/app/tutor'
+    | '/verify/$id'
     | '/app/'
     | '/app/events/$id'
     | '/app/people/$id'
@@ -358,6 +370,7 @@ export interface RootRouteChildren {
   StartRoute: typeof StartRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiTranscribeRoute: typeof ApiTranscribeRoute
+  VerifyIdRoute: typeof VerifyIdRoute
   ApiPublicHooksRefreshEventsRoute: typeof ApiPublicHooksRefreshEventsRoute
   ApiPublicHooksRefreshJobsRoute: typeof ApiPublicHooksRefreshJobsRoute
 }
@@ -490,6 +503,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTutorRouteImport
       parentRoute: typeof AppRoute
     }
+    '/verify/$id': {
+      id: '/verify/$id'
+      path: '/verify/$id'
+      fullPath: '/verify/$id'
+      preLoaderRoute: typeof VerifyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/events/': {
       id: '/app/events/'
       path: '/events'
@@ -609,6 +629,7 @@ const rootRouteChildren: RootRouteChildren = {
   StartRoute: StartRoute,
   ApiChatRoute: ApiChatRoute,
   ApiTranscribeRoute: ApiTranscribeRoute,
+  VerifyIdRoute: VerifyIdRoute,
   ApiPublicHooksRefreshEventsRoute: ApiPublicHooksRefreshEventsRoute,
   ApiPublicHooksRefreshJobsRoute: ApiPublicHooksRefreshJobsRoute,
 }
