@@ -148,6 +148,216 @@ export type Database = {
           },
         ]
       }
+      event_search_log: {
+        Row: {
+          engine: string
+          last_run_at: string
+          query: string
+          result_count: number
+        }
+        Insert: {
+          engine: string
+          last_run_at?: string
+          query: string
+          result_count?: number
+        }
+        Update: {
+          engine?: string
+          last_run_at?: string
+          query?: string
+          result_count?: number
+        }
+        Relationships: []
+      }
+      event_sync_runs: {
+        Row: {
+          candidates_found: number
+          completed_at: string | null
+          duplicates_removed: number
+          errors: Json
+          id: string
+          images_failed: number
+          images_found: number
+          provider: string
+          queries_run: number
+          rejected_count: number
+          started_at: string
+          updated_count: number
+          verified_count: number
+        }
+        Insert: {
+          candidates_found?: number
+          completed_at?: string | null
+          duplicates_removed?: number
+          errors?: Json
+          id?: string
+          images_failed?: number
+          images_found?: number
+          provider: string
+          queries_run?: number
+          rejected_count?: number
+          started_at?: string
+          updated_count?: number
+          verified_count?: number
+        }
+        Update: {
+          candidates_found?: number
+          completed_at?: string | null
+          duplicates_removed?: number
+          errors?: Json
+          id?: string
+          images_failed?: number
+          images_found?: number
+          provider?: string
+          queries_run?: number
+          rejected_count?: number
+          started_at?: string
+          updated_count?: number
+          verified_count?: number
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          ai_summary: string | null
+          category: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          date_text: string | null
+          dedupe_key: string
+          description: string | null
+          end_datetime: string | null
+          id: string
+          image_attribution: string | null
+          image_license: string | null
+          image_source_name: string | null
+          image_source_type: string | null
+          image_source_url: string | null
+          image_thumbnail_url: string | null
+          image_url: string | null
+          image_verified: boolean
+          is_external: boolean
+          is_verified: boolean
+          last_synced_at: string | null
+          last_verified_at: string | null
+          official_url: string | null
+          organiser_name: string | null
+          region: string | null
+          registration_url: string | null
+          related_skills: string[]
+          relevance_score: number | null
+          source: string
+          source_description: string | null
+          source_event_id: string | null
+          start_datetime: string | null
+          status: string
+          subcategory: string | null
+          ticket_url: string | null
+          timezone: string | null
+          title: string
+          tourism_relevance_reason: string | null
+          updated_at: string
+          venue_address: string | null
+          venue_name: string | null
+          verification_source_name: string | null
+          verification_source_url: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          ai_summary?: string | null
+          category?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          date_text?: string | null
+          dedupe_key: string
+          description?: string | null
+          end_datetime?: string | null
+          id?: string
+          image_attribution?: string | null
+          image_license?: string | null
+          image_source_name?: string | null
+          image_source_type?: string | null
+          image_source_url?: string | null
+          image_thumbnail_url?: string | null
+          image_url?: string | null
+          image_verified?: boolean
+          is_external?: boolean
+          is_verified?: boolean
+          last_synced_at?: string | null
+          last_verified_at?: string | null
+          official_url?: string | null
+          organiser_name?: string | null
+          region?: string | null
+          registration_url?: string | null
+          related_skills?: string[]
+          relevance_score?: number | null
+          source?: string
+          source_description?: string | null
+          source_event_id?: string | null
+          start_datetime?: string | null
+          status?: string
+          subcategory?: string | null
+          ticket_url?: string | null
+          timezone?: string | null
+          title: string
+          tourism_relevance_reason?: string | null
+          updated_at?: string
+          venue_address?: string | null
+          venue_name?: string | null
+          verification_source_name?: string | null
+          verification_source_url?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          ai_summary?: string | null
+          category?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          date_text?: string | null
+          dedupe_key?: string
+          description?: string | null
+          end_datetime?: string | null
+          id?: string
+          image_attribution?: string | null
+          image_license?: string | null
+          image_source_name?: string | null
+          image_source_type?: string | null
+          image_source_url?: string | null
+          image_thumbnail_url?: string | null
+          image_url?: string | null
+          image_verified?: boolean
+          is_external?: boolean
+          is_verified?: boolean
+          last_synced_at?: string | null
+          last_verified_at?: string | null
+          official_url?: string | null
+          organiser_name?: string | null
+          region?: string | null
+          registration_url?: string | null
+          related_skills?: string[]
+          relevance_score?: number | null
+          source?: string
+          source_description?: string | null
+          source_event_id?: string | null
+          start_datetime?: string | null
+          status?: string
+          subcategory?: string | null
+          ticket_url?: string | null
+          timezone?: string | null
+          title?: string
+          tourism_relevance_reason?: string | null
+          updated_at?: string
+          venue_address?: string | null
+          venue_name?: string | null
+          verification_source_name?: string | null
+          verification_source_url?: string | null
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       external_professionals: {
         Row: {
           company: string | null
@@ -521,6 +731,32 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      saved_events: {
+        Row: {
+          created_at: string
+          event_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_events_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sim_attempts: {
         Row: {
