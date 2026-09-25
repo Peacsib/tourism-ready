@@ -97,11 +97,11 @@
   --sidebar-accent: oklch(0.6 0.16 235 / 9%);
   --sidebar-accent-foreground: oklch(0.2 0.035 262);
   --sidebar-border: oklch(0.2 0.04 262 / 8%);
-  --sidebar-ring: oklch(0.6 0.16 235 / 55%);
-  --gradient-hero: radial-gradient(45% 55% at 20% 10%, oklch(0.8 0.12 225 / 45%), transparent 70%),
-    radial-gradient(40% 50% at 80% 5%, oklch(0.78 0.1 290 / 35%), transparent 70%),
-    radial-gradient(35% 45% at 60% 60%, oklch(0.88 0.1 80 / 45%), transparent 70%);
-  --gradient-text: linear-gradient(100deg, oklch(0.55 0.18 245), oklch(0.55 0.16 285) 45%, oklch(0.68 0.14 72));
+  --gradient-hero: radial-gradient(50% 55% at 20% 15%, oklch(0.82 0.14 225 / 50%), transparent 70%),
+    radial-gradient(45% 50% at 80% 10%, oklch(0.8 0.12 245 / 45%), transparent 70%),
+    radial-gradient(55% 55% at 55% 60%, oklch(0.84 0.15 210 / 55%), transparent 75%),
+    radial-gradient(40% 40% at 50% 35%, oklch(0.86 0.1 200 / 40%), transparent 70%);
+  --gradient-text: linear-gradient(100deg, oklch(0.55 0.2 245), oklch(0.58 0.17 225) 50%, oklch(0.65 0.16 200));
   --shadow-lift: 0 24px 48px -28px oklch(0.3 0.08 262 / 35%);
 }
 
@@ -118,7 +118,7 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     background-image: radial-gradient(50% 40% at 100% 0%, oklch(0.85 0.08 230 / 35%), transparent 70%),
-      radial-gradient(40% 35% at 0% 100%, oklch(0.9 0.08 80 / 30%), transparent 70%);
+      radial-gradient(40% 35% at 0% 100%, oklch(0.88 0.08 215 / 30%), transparent 70%);
     background-attachment: fixed;
   }
   h1, h2, h3, h4 {
