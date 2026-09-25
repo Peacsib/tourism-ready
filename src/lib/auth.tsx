@@ -87,7 +87,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .select(PROFILE_COLUMNS)
           .maybeSingle();
         if (data) setProfile(data as Profile);
-        await supabase.from("user_roles").insert({ user_id: user.id, role }).select();
+        try {
+          const { data: existing } = await supabase
+            .from("user_roles")
+            .select("id")
+            .eq("user_id", user.id)
+            .eq("role", role)
+            .maybeSingle();
+          if (!existing) {
+            await supabase.from("user_roles").insert({ user_id: user.id, role });
+          }
+        } catch (err) {
+          console.warn("user_roles assignment skipped or already exists", err);
+        }
       },
       signOut: async () => {
         await supabase.auth.signOut();

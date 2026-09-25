@@ -35,26 +35,46 @@ async function retrieveKnowledge(text: string): Promise<string> {
   }
 }
 
+import { getBackupOpenAIKey, getOpenAIKey } from "@/lib/openai.server";
+
 export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const key = process.env["OPENAI_API_KEY"];
-        if (!key) return new Response("The AI Tutor isn't set up yet.", { status: 500 });
+        let key = getOpenAIKey();
         const body = (await request.json()) as { messages?: ChatMsg[]; context?: string; module?: string };
         if (!Array.isArray(body.messages)) return new Response("Messages are required", { status: 400 });
+        
+        const isSimulation = body.module === "simulations";
         const lastUser = [...body.messages].reverse().find((m) => m.role === "user");
-        const [knowledge, events] = await Promise.all([
-          retrieveKnowledge(String(lastUser?.content ?? "")),
-          import("@/lib/events.server").then((m) => m.upcomingEventsForAI()).catch(() => []),
-        ]);
+        
+        const [knowledge, events] = isSimulation
+          ? ["", []]
+          : await Promise.all([
+              retrieveKnowledge(String(lastUser?.content ?? "")),
+              import("@/lib/events.server").then((m) => m.upcomingEventsForAI()).catch(() => []),
+            ]);
+
         const eventsBlock = events.length
           ? `UPCOMING VERIFIED EVENTS (the only events you may recommend; link each as [View Event](/app/events/<id>), explain why it fits the learner's skills/goal, and note they are external events not organised by Tourism Workforce):\n${events.map((e) => `${e.id}: ${e.title} | ${e.category ?? ""} | ${e.start_datetime?.slice(0, 10) ?? e.date_text ?? "date TBC"} | ${[e.venue_name, e.city, e.country].filter(Boolean).join(", ")} | skills: ${e.related_skills.join(", ")} | ${e.ai_summary ?? ""}${e.status === "postponed" ? " | POSTPONED" : ""}`).join("\n")}\nAll events: [Events](/app/events).`
           : "UPCOMING VERIFIED EVENTS: none verified yet. If asked about events, say no upcoming events have been verified on the platform yet and point to [Events](/app/events); never invent events.";
+
+        const systemMessage = isSimulation
+          ? {
+              role: "system",
+              content: `You run live hospitality role-play simulations for Tourism Workforce 2031 in Zimbabwe.
+Context / Scenario: ${String(body.context ?? "").slice(0, 4000)}
+Respond realistically, concisely, in character (1 to 3 conversational spoken sentences). Never break character.`
+            }
+          : {
+              role: "system",
+              content: `${MODULE_SYSTEM[String(body.module)] ?? SYSTEM}\n\n${GROUNDING}\n\nRetrieved knowledge:\n${knowledge || "(No matching passages found in the knowledge library.)"}\n\n${eventsBlock}\n\nContext gathered from the learner:\n${String(body.context ?? "").slice(0, 7000)}\n\nFinal rule: never tell the user what the knowledge passages do or do not cover, and never call your answer general guidance. Just answer as the expert.`
+            };
+
         const messages = [
-          { role: "system", content: `${MODULE_SYSTEM[String(body.module)] ?? SYSTEM}\n\n${GROUNDING}\n\nRetrieved knowledge:\n${knowledge || "(No matching passages found in the knowledge library.)"}\n\n${eventsBlock}\n\nContext gathered from the learner:\n${String(body.context ?? "").slice(0, 7000)}\n\nFinal rule: never tell the user what the knowledge passages do or do not cover, and never call your answer general guidance. Just answer as the expert.` },
+          systemMessage,
           ...body.messages.slice(-30).map((m) => {
-            const role = m.role === "assistant" ? "assistant" : "user";
+            const role = m.role === "assistant" ? "assistant" : m.role === "system" ? "system" : "user";
             const text = String(m.content).slice(0, 4000);
             const atts = role === "user" && Array.isArray(m.attachments) ? m.attachments.slice(0, 5) : [];
             if (!atts.length) return { role, content: text };
@@ -68,12 +88,27 @@ export const Route = createFileRoute("/api/chat")({
             return { role, content: parts };
           }),
         ];
-        const upstream = await fetch("https://api.openai.com/v1/chat/completions", {
+
+        let upstream = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
           body: JSON.stringify({ model: "gpt-4o-mini", messages, stream: true }),
           signal: request.signal,
         });
+
+        // If primary key failed with 401 Unauthorized, automatically retry with verified project key
+        const backupKey = getBackupOpenAIKey();
+        if (upstream.status === 401 && key !== backupKey) {
+          console.warn("Primary OpenAI key returned 401 on /api/chat, retrying with project backup key...");
+          key = backupKey;
+          upstream = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+            body: JSON.stringify({ model: "gpt-4o-mini", messages, stream: true }),
+            signal: request.signal,
+          });
+        }
+
         if (!upstream.ok || !upstream.body) {
           const t = await upstream.text().catch(() => "");
           console.error("OpenAI error", upstream.status, t);

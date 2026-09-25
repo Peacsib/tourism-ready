@@ -223,6 +223,8 @@ Respond realistically and concisely in 1 to 3 conversational sentences. Stay ful
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          module: "simulations",
+          context: `${scenario.title} — ${scenario.brief}`,
           messages: [
             { role: "system", content: systemPrompt },
             ...newHistory.map((m) => ({

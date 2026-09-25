@@ -97,19 +97,29 @@ const VERIFY_SCHEMA = {
 } as const;
 export type Verified = { [K in keyof typeof VERIFY_SCHEMA.properties]: any };
 
+import { getBackupOpenAIKey, getOpenAIKey } from "@/lib/openai.server";
+
 async function openAiVerify(c: Candidate, skills: string[]): Promise<Verified | null> {
-  const key = process.env["OPENAI_API_KEY"];
-  if (!key) throw new Error("OpenAI key missing");
+  let key = getOpenAIKey();
   const y = new Date().getFullYear();
   const prompt = `Verify this event using web search. Search for "${c.title}" ${c.address ?? ""} ${y}, then "${c.title}" official, organiser and registration. Prefer the official organiser, venue, government/tourism authority, recognised associations, institutions, reputable event platforms, then reputable media.
 Candidate from Google: ${JSON.stringify({ title: c.title, date: c.dateText, venue: c.venue, address: c.address, link: c.link, description: c.description })}
 Today is ${new Date().toISOString().slice(0, 10)}.
 Rules: never invent anything. Any field you can't confirm from a source is null. Dates as ISO 8601. found=false if you cannot confirm the event exists. ai_summary: 1-2 factual sentences based only on sources, no invented speakers, sponsors, prices or attendance. registration_url/ticket_url only if a real page exists. relevance_score 0-100 for a Zimbabwean tourism & hospitality workforce audience. related_skills: pick 0-4 from exactly this list: ${skills.join("; ")}.`;
-  const r = await fetch("https://api.openai.com/v1/responses", {
+  let r = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
     body: JSON.stringify({ model: OPENAI_MODEL, input: prompt, tools: [{ type: "web_search" }], stream: true, store: false, text: { format: { type: "json_schema", name: "event_verification", strict: true, schema: VERIFY_SCHEMA } } }),
   });
+  const backupKey = getBackupOpenAIKey();
+  if (r.status === 401 && key !== backupKey) {
+    key = backupKey;
+    r = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+      body: JSON.stringify({ model: OPENAI_MODEL, input: prompt, tools: [{ type: "web_search" }], stream: true, store: false, text: { format: { type: "json_schema", name: "event_verification", strict: true, schema: VERIFY_SCHEMA } } }),
+    });
+  }
   if (!r.ok || !r.body) throw new Error(`OpenAI ${r.status}: ${(await r.text()).slice(0, 200)}`);
   const reader = r.body.getReader(); const dec = new TextDecoder();
   let buf = "", out = "";

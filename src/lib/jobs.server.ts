@@ -22,14 +22,16 @@ function jobType(s: string | undefined) {
 
 type Verdict = { relevant: boolean; skills: string[] };
 
+import { getBackupOpenAIKey, getOpenAIKey } from "@/lib/openai.server";
+
 // Nyanzvi review: confirms each job is genuinely tourism/hospitality and picks passport skills.
 // Returns null on any failure so the keyword filter still applies.
 async function aiReview(jobs: Record<string, any>[], skillNames: string[]): Promise<Verdict[] | null> {
-  const key = process.env["OPENAI_API_KEY"];
-  if (!key || !jobs.length) return null;
+  let key = getOpenAIKey();
+  if (!jobs.length) return null;
   try {
     const list = jobs.map((x, i) => `${i}. ${String(x["title"] ?? "")} @ ${String(x["company_name"] ?? "")}: ${String(x["description"] ?? "").slice(0, 500)}`).join("\n");
-    const r = await fetch("https://api.openai.com/v1/chat/completions", {
+    let r = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
       body: JSON.stringify({
@@ -41,6 +43,22 @@ async function aiReview(jobs: Record<string, any>[], skillNames: string[]): Prom
         ],
       }),
     });
+    const backupKey = getBackupOpenAIKey();
+    if (r.status === 401 && key !== backupKey) {
+      key = backupKey;
+      r = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          response_format: { type: "json_object" },
+          messages: [
+            { role: "system", content: `You review job listings for a tourism & hospitality workforce platform. For each job decide if it is genuinely a tourism, travel, hospitality, food service, events or guiding role (not e.g. software, mining, finance roles that merely mention a hotel). Pick up to 5 matching skills ONLY from this list: ${skillNames.join("; ")}. Reply as JSON {"jobs":[{"i":0,"relevant":true,"skills":["..."]}]}.` },
+            { role: "user", content: list },
+          ],
+        }),
+      });
+    }
     if (!r.ok) return null;
     const j = await r.json();
     const parsed = JSON.parse(j?.choices?.[0]?.message?.content ?? "{}") as { jobs?: { i: number; relevant: boolean; skills?: string[] }[] };
