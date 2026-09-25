@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Briefcase, Check, Loader2, MapPin, Plus, Search, Users } from "lucide-react";
+import { Briefcase, Check, Loader2, MapPin, Plus, RefreshCw, Search, Users } from "lucide-react";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { refreshJobs } from "@/lib/jobs.functions";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
