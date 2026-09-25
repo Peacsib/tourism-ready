@@ -24,8 +24,10 @@ export const Route = createFileRoute("/api/chat")({
         if (!key) return new Response("The AI Tutor isn't set up yet.", { status: 500 });
         const body = (await request.json()) as { messages?: ChatMsg[]; context?: string; module?: string };
         if (!Array.isArray(body.messages)) return new Response("Messages are required", { status: 400 });
+        const lastUser = [...body.messages].reverse().find((m) => m.role === "user");
+        const knowledge = await retrieveKnowledge(String(lastUser?.content ?? ""));
         const messages = [
-          { role: "system", content: `${MODULE_SYSTEM[String(body.module)] ?? SYSTEM}\nContext gathered from the learner:\n${String(body.context ?? "").slice(0, 7000)}` },
+          { role: "system", content: `${MODULE_SYSTEM[String(body.module)] ?? SYSTEM}\n\n${GROUNDING}\n\nRetrieved knowledge:\n${knowledge || "(No matching passages found in the knowledge library.)"}\n\nContext gathered from the learner:\n${String(body.context ?? "").slice(0, 7000)}` },
           ...body.messages.slice(-30).map((m) => {
             const role = m.role === "assistant" ? "assistant" : "user";
             const text = String(m.content).slice(0, 4000);
