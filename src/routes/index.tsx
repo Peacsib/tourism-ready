@@ -2,8 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, BookOpen, Bot, Check, Network, Radar, Workflow } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Logo, SkillsConstellation, Signal, Tag } from "@/components/tw/motifs";
-import { COMPETENCIES, TRENDS } from "@/lib/data";
+import { Logo, Signal, Tag } from "@/components/tw/motifs";
+import { TRENDS } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import passportImg from "@/assets/passport-confidential.jpg";
 
