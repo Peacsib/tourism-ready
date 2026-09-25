@@ -68,15 +68,13 @@ function Landing() {
 
       {/* HERO */}
       <section className="relative">
-        <video className="pointer-events-none absolute inset-0 h-full w-full object-cover saturate-[1.12] contrast-[1.03]" autoPlay muted loop playsInline aria-hidden="true">
+        <video className="pointer-events-none absolute inset-0 h-full w-full object-cover brightness-[1.04]" autoPlay muted loop playsInline aria-hidden="true">
           <source src={heroVideo} type="video/mp4" />
           <source src="/hero-live.mp4" type="video/mp4" />
         </video>
-        {/* Fresh bluish water mist & spray atmospheric overlays */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-sky-500/15 via-cyan-400/15 to-background/90" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_65%_at_50%_45%,rgba(34,211,238,0.22),rgba(56,189,248,0.12),transparent_75%)]" />
-        <div className="hero-glow pointer-events-none absolute inset-0 opacity-65" />
-        <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(60%_60%_at_50%_30%,black,transparent)] opacity-35" />
+        <div className="pointer-events-none absolute inset-0 bg-background/40" />
+        <div className="hero-glow pointer-events-none absolute inset-0 opacity-40" />
+        <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(60%_60%_at_50%_30%,black,transparent)] opacity-40" />
         <div className="relative mx-auto max-w-5xl px-6 pb-28 pt-20 text-center md:pt-28">
           <p className="eyebrow fade-up">Zimbabwe · Tourism & Hospitality · Workforce 2031</p>
           <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-semibold uppercase leading-[1.02] md:text-7xl">
