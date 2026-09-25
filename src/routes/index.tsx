@@ -6,7 +6,7 @@ import { Logo, Signal, Tag } from "@/components/tw/motifs";
 import { TRENDS } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import passportImg from "@/assets/passport-confidential.jpg";
-import heroVideo from "@/assets/hero-live.mp4.asset.json";
+import heroVideo from "@/assets/hero-live.mp4";
 import imgTutor from "@/assets/pillar-tutor.jpg";
 import imgSim from "@/assets/pillar-sim.jpg";
 import imgIntel from "@/assets/pillar-intel.jpg";
@@ -68,7 +68,10 @@ function Landing() {
 
       {/* HERO */}
       <section className="relative">
-        <video className="pointer-events-none absolute inset-0 h-full w-full object-cover" src={heroVideo.url} autoPlay muted loop playsInline aria-hidden="true" />
+        <video className="pointer-events-none absolute inset-0 h-full w-full object-cover" autoPlay muted loop playsInline aria-hidden="true">
+          <source src={heroVideo} type="video/mp4" />
+          <source src="/hero-live.mp4" type="video/mp4" />
+        </video>
         <div className="pointer-events-none absolute inset-0 bg-background/55" />
         <div className="hero-glow pointer-events-none absolute inset-0 opacity-50" />
         <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(60%_60%_at_50%_30%,black,transparent)]" />
