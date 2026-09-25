@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, Briefcase, GraduationCap, Lightbulb, Presentation, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, Logo } from "@/components/tw/motifs";
+import { Logo } from "@/components/tw/motifs";
 import { PERSONAS, ROLES, type RoleId } from "@/lib/data";
 import { useApp } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
