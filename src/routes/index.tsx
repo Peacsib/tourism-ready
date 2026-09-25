@@ -6,6 +6,11 @@ import { Logo, Signal, Tag } from "@/components/tw/motifs";
 import { TRENDS } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import passportImg from "@/assets/passport-confidential.jpg";
+import heroVideo from "@/assets/hero-live.mp4.asset.json";
+import imgTutor from "@/assets/pillar-tutor.jpg";
+import imgSim from "@/assets/pillar-sim.jpg";
+import imgIntel from "@/assets/pillar-intel.jpg";
+import imgNet from "@/assets/pillar-network.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -22,10 +27,10 @@ export const Route = createFileRoute("/")({
 });
 
 const PILLARS = [
-  { icon: Bot, title: "AI Smart Tutor", body: "Personalised learning assistance and feedback that knows your role, your goals and your gaps.", tone: "text-cyan" },
-  { icon: Workflow, title: "Industry Simulator", body: "Practise realistic tourism and hospitality operations — reservation desks, ticketing, service recovery.", tone: "text-gold" },
-  { icon: Radar, title: "Industry Intelligence", body: "Stay informed about the trends, research, technologies and industry changes shaping your work.", tone: "text-cyan" },
-  { icon: Network, title: "Professional Network", body: "Connect learners, educators, employers and practitioners across Zimbabwe's tourism sector.", tone: "text-gold" },
+  { icon: Bot, img: imgTutor, title: "AI Smart Tutor", body: "Personalised learning assistance and feedback that knows your role, your goals and your gaps.", tone: "text-cyan" },
+  { icon: Workflow, img: imgSim, title: "Industry Simulator", body: "Practise realistic tourism and hospitality operations — reservation desks, ticketing, service recovery.", tone: "text-gold" },
+  { icon: Radar, img: imgIntel, title: "Industry Intelligence", body: "Stay informed about the trends, research, technologies and industry changes shaping your work.", tone: "text-cyan" },
+  { icon: Network, img: imgNet, title: "Professional Network", body: "Connect learners, educators, employers and practitioners across Zimbabwe's tourism sector.", tone: "text-gold" },
 ];
 
 const STAGES = [
@@ -54,7 +59,9 @@ function Landing() {
 
       {/* HERO */}
       <section className="relative">
-        <div className="hero-glow pointer-events-none absolute inset-0" />
+        <video className="pointer-events-none absolute inset-0 h-full w-full object-cover" src={heroVideo.url} autoPlay muted loop playsInline aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-0 bg-background/55" />
+        <div className="hero-glow pointer-events-none absolute inset-0 opacity-50" />
         <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(60%_60%_at_50%_30%,black,transparent)]" />
         <div className="relative mx-auto max-w-5xl px-6 pb-28 pt-20 text-center md:pt-28">
           <p className="eyebrow fade-up">Zimbabwe · Tourism & Hospitality · Workforce 2031</p>
@@ -97,6 +104,9 @@ function Landing() {
           <div className="mt-14 grid gap-px overflow-hidden rounded-3xl border bg-border md:grid-cols-2">
             {PILLARS.map((p, i) => (
               <div key={p.title} className="group bg-background p-8 transition-colors hover:bg-surface md:p-10">
+                <div className="mb-8 overflow-hidden rounded-2xl border">
+                  <img src={p.img} alt={p.title} width={1024} height={640} loading="lazy" className="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                </div>
                 <div className="flex items-center justify-between">
                   <p.icon className={cn("h-6 w-6", p.tone)} strokeWidth={1.5} />
                   <span className="font-mono text-xs text-muted-foreground">0{i + 1}</span>

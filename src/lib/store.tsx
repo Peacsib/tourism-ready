@@ -183,11 +183,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       firstName: name.split(" ")[0] ?? name,
       role,
       title: profile.headline?.trim() || ROLES.find((r) => r.id === role)?.label || base.title,
-      organisation: profile.organisation?.trim() || base.organisation,
-      location: profile.location?.trim() || base.location,
+      organisation: profile.organisation?.trim() || "",
+      location: profile.location?.trim() || "",
       initials: initialsOf(name),
-      statement: profile.bio?.trim() || base.statement,
-      goal: profile.goal?.trim() || base.goal,
+      statement: profile.bio?.trim() || "",
+      goal: profile.goal?.trim() || "",
     };
   }, [state.personaId, state.role, profile]);
 
