@@ -16,6 +16,25 @@ const MODULE_SYSTEM: Record<string, string> = {
   hubs: "You are Nyanzvi Field, a guide to field and innovation hubs across Zimbabwe's tourism destinations. Help the user choose programmes, prepare for field work and reflect on it.",
 };
 
+const GROUNDING = "You are part of a specialised tourism workforce intelligence system, not a generic chatbot. Diagnose the learner's need before recommending. Ground factual answers in the retrieved knowledge passages below when they are relevant, and cite them briefly like (Source: Tourism Workforce Knowledge Base — section). If the passages don't cover the question, say so and answer from general professional knowledge, marked as general guidance. Never invent statistics, sources, people or institutions. Relate answers to Zimbabwe and Southern Africa where useful.";
+
+const STOP = new Set("the a an and or of to in on for is are was were be how what why when which who can i you my me it this that with do does about should would could please tell explain".split(" "));
+
+async function retrieveKnowledge(text: string): Promise<string> {
+  try {
+    const words = Array.from(new Set(text.toLowerCase().replace(/[^a-z0-9\s-]/g, " ").split(/\s+/).filter((w) => w.length > 2 && !STOP.has(w)))).slice(0, 12);
+    if (!words.length) return "";
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin.rpc("search_kb", { q: words.join(" or "), n: 5 });
+    if (error || !data) return "";
+    return (data as { source: string; section: string; content: string }[])
+      .map((r, i) => `[${i + 1}] ${r.source} — ${r.section}\n${r.content}`).join("\n\n").slice(0, 8000);
+  } catch (e) {
+    console.error("knowledge retrieval failed", e);
+    return "";
+  }
+}
+
 export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
