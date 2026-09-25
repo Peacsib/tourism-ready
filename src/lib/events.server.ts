@@ -44,7 +44,9 @@ function buildQueries() {
   const sa = ["tourism conference Southern Africa", "hospitality conference South Africa", "travel expo South Africa", "tourism events Zambia Botswana"];
   const af = ["Africa tourism conference", "Africa hospitality investment summit", "sustainable tourism conference Africa"];
   const gl = ["hospitality technology conference", "AI tourism conference", "travel trade show"];
-  const all = [...zw.map((q) => `${q} ${y}`), ...zw.slice(0, 4).map((q) => `${q} ${y + 1}`), ...sa.map((q) => `${q} ${y}`), ...af.map((q) => `${q} ${y}`), ...gl.map((q) => `${q} ${y}`)];
+  // Google shows its events panel mostly for "events in <place>" phrasing, so lead with those.
+  const panel = ["tourism events in Harare", "conferences in Harare", "events in Victoria Falls", "expos in Zimbabwe", "events in Bulawayo", "tourism conferences in Johannesburg", "hospitality events in Cape Town", "tourism events in Nairobi"];
+  const all = [...panel, ...zw.map((q) => `${q} ${y}`), ...zw.slice(0, 4).map((q) => `${q} ${y + 1}`), ...sa.map((q) => `${q} ${y}`), ...af.map((q) => `${q} ${y}`), ...gl.map((q) => `${q} ${y}`)];
   return Array.from(new Set(all));
 }
 
