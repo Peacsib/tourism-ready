@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { CARD_LABELS, isWorkspaceId, WORKSPACES, type CardKind, type WorkspaceConfig } from "@/lib/workspaces";
 import { deleteThread, loadThreads, newId, upsertThread, type WsMessage, type WsThread } from "@/lib/ws-threads";
 import { useAuth } from "@/lib/auth";
+import { ConnectButton, useMyConnections } from "@/components/tw/connect-button";
 import { useApp } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
@@ -433,16 +434,26 @@ export function AgentMark({ w, size }: { w: WorkspaceConfig; size: "sm" | "lg" }
 
 function RealPeople({ item, onPick, disabled }: { item: string; onPick: (q: string) => void; disabled: boolean }) {
   const { user } = useAuth();
+  const net = useMyConnections();
   const [list, setList] = useState<Member[] | null>(null);
   useEffect(() => { fetchMembers(user?.id).then((m) => setList(m.slice(0, 6))).catch(() => setList([])); }, [user]);
   if (list === null) return <p className="text-xs text-muted-foreground">Loading members…</p>;
   if (!list.length) return <p className="text-xs text-muted-foreground">No other members yet. Use Industry discovery on the Network page to find real professionals.</p>;
-  return <>{list.map((p) => (
-    <button key={p.id} disabled={disabled} className={item} onClick={() => onPick(`Help me connect with ${displayName(p)}${p.headline ? `, ${p.headline}` : ""}${p.organisation ? ` at ${p.organisation}` : ""}. Write a short connection request.`)}>
-      <span className="block text-sm font-medium">{displayName(p)}</span>
-      <span className="mt-0.5 block text-xs text-muted-foreground">{p.headline || ROLE_LABEL[p.role] || "Member"}</span>
-    </button>
-  ))}</>;
+  return <>{list.map((p) => {
+    const st = net.statusWith(p.id);
+    return (
+      <div key={p.id} className={cn(item, "cursor-default")}>
+        <Link to="/app/people/$id" params={{ id: p.id }} className="block text-sm font-medium hover:underline">{displayName(p)}</Link>
+        <span className="mt-0.5 block text-xs text-muted-foreground">{p.headline || ROLE_LABEL[p.role] || "Member"}</span>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          <Button size="sm" variant="ghost" asChild><Link to="/app/people/$id" params={{ id: p.id }}>View profile</Link></Button>
+          <ConnectButton personId={p.id} name={displayName(p)} net={net} />
+          {st === "connected" && <Button size="sm" variant="outline" asChild><Link to="/app/messages" search={{ to: p.id }}>Message</Link></Button>}
+          {st !== "connected" && <Button size="sm" variant="ghost" disabled={disabled} onClick={() => onPick(`Help me connect with ${displayName(p)}${p.headline ? `, ${p.headline}` : ""}${p.organisation ? ` at ${p.organisation}` : ""}. Write a short connection request based only on what's known about us.`)}>Draft intro</Button>}
+        </div>
+      </div>
+    );
+  })}</>;
 }
 
 function RealJobs({ item, onPick, disabled }: { item: string; onPick: (q: string) => void; disabled: boolean }) {
