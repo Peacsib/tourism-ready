@@ -43,9 +43,9 @@ function Overview() {
         <div>
           <p className="eyebrow">Tourism Workforce 2031 · Workforce readiness engine</p>
           <h1 className="mt-3 max-w-3xl text-4xl font-semibold leading-[1.04] tracking-tight md:text-6xl">
-            {greeting()}, {persona.firstName}.<br /><span className="text-gradient">Let’s make your capability visible.</span>
+            {greeting()}, {persona.firstName}.<br /><span className="text-gradient">Build proof employers can trust.</span>
           </h1>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">Learn the knowledge, practise the work, prove what you can do, and connect that evidence to Zimbabwe’s tourism opportunities.</p>
+          <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">Turn tourism knowledge into workplace capability through guided learning, realistic practice and evidence you can take to an employer.</p>
         </div>
         <div className="lg:justify-self-end lg:text-right">
           <p className="eyebrow">Your current readiness</p>
@@ -61,7 +61,7 @@ function Overview() {
             <div className="flex items-center gap-2 text-cyan"><Compass className="h-4 w-4" /><p className="eyebrow text-cyan">The readiness pathway</p></div>
             <h2 className="mt-4 text-2xl font-semibold">From classroom confidence to workplace proof.</h2>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">Every activity should move you closer to being trusted with real guests, real systems and real decisions.</p>
-            <span className="mt-5 inline-flex rounded-md border border-cyan/30 bg-cyan/10 px-2 py-1 font-mono text-[11px] text-cyan">Current focus · {persona.goal}</span>
+            <span className="mt-5 inline-flex max-w-full rounded-md border border-cyan/30 bg-cyan/10 px-2 py-1 font-mono text-[11px] text-cyan">Current focus · {persona.goal || "Build job-ready tourism capability"}</span>
           </div>
           <div className="rounded-2xl border bg-background/50 p-5 md:p-7">
             <ReadinessPath active={attempts.some((attempt) => attempt.addedToPassport) ? 3 : 2} progress={0.4} />
@@ -75,8 +75,8 @@ function Overview() {
       </Panel>
 
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div><p className="eyebrow">Four ways to move forward</p><h2 className="mt-2 text-2xl font-semibold md:text-3xl">One platform. Four purposeful workspaces.</h2></div>
-        <p className="max-w-md text-sm leading-6 text-muted-foreground">Choose the action that matches where you are today. The platform keeps the evidence connected.</p>
+        <div><p className="eyebrow">Choose your next move</p><h2 className="mt-2 text-2xl font-semibold md:text-3xl">Become ready for the work.</h2></div>
+        <p className="max-w-md text-sm leading-6 text-muted-foreground">Each path builds the same outcome: practical capability with evidence behind it.</p>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         {PILLARS.map((pillar) => (

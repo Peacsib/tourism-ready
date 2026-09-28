@@ -44,7 +44,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     <div className="flex h-full flex-col">
       <div className="px-5 py-5">
         <Link to="/" onClick={onNavigate}><Logo /></Link>
-        <p className="mt-4 max-w-[180px] text-xs leading-5 text-muted-foreground">A practical pathway from tourism learning to workplace proof.</p>
+        <p className="mt-4 max-w-[180px] text-xs leading-5 text-muted-foreground">Learn. Practise. Prove. Connect.</p>
       </div>
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3" aria-label="Main">
         {NAV.map((n) => {
