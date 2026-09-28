@@ -44,6 +44,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     <div className="flex h-full flex-col">
       <div className="px-5 py-5">
         <Link to="/" onClick={onNavigate}><Logo /></Link>
+        <p className="mt-4 max-w-[180px] text-xs leading-5 text-muted-foreground">A practical pathway from tourism learning to workplace proof.</p>
       </div>
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3" aria-label="Main">
         {NAV.map((n) => {
@@ -309,9 +310,6 @@ function AppLayout() {
           "fade-up mx-auto w-full px-4 py-6 md:px-8 md:py-8",
           isFocusView ? "max-w-none px-2 sm:px-4 md:px-6 py-2" : "max-w-7xl"
         )}>
-          {!loc.pathname.startsWith("/app/network") && !loc.pathname.startsWith("/app/simulations") && (
-            <AssistBar pathname={loc.pathname} />
-          )}
           <Outlet />
           {!loc.pathname.startsWith("/app/ws/") && !loc.pathname.startsWith("/app/simulations/") && <ReadinessLoop pathname={loc.pathname} />}
         </main>
