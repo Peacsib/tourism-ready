@@ -65,7 +65,7 @@ function StatePill({ state }: { state: string }) {
     Developing: "bg-slate-100 text-slate-600 border-slate-200",
   };
   return (
-    <span className={cn("rounded-full border px-2.5 py-0.5 text-xs font-medium", map[state] ?? map.Developing)}>
+    <span className={cn("rounded-full border px-2.5 py-0.5 text-xs font-medium", map[state] ?? map["Developing"])}>
       {state}
     </span>
   );

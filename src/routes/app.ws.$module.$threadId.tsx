@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowUp, AudioLines, Check, Copy, FileText, LayoutGrid, Loader2, Mic, PanelLeftClose, PanelLeftOpen, Paperclip, Plus, SlidersHorizontal, Square, Trash2, X } from "lucide-react";
+import { ArrowUp, AudioLines, Check, Copy, FileText, LayoutGrid, Loader2, Mic, PanelLeft, PanelLeftClose, PanelLeftOpen, Paperclip, Plus, SlidersHorizontal, Square, Trash2, X } from "lucide-react";
 import nyanzviLogo from "@/assets/nyanzvi-logo.png";
 import ReactMarkdown from "react-markdown";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";

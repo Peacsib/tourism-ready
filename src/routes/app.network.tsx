@@ -152,13 +152,13 @@ function NetworkPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">Tourism Network</h1>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">Professional Network</h1>
             <span className="inline-flex items-center gap-1 rounded-full bg-gold/10 px-2.5 py-0.5 text-xs font-medium text-gold">
               ● Zimbabwe
             </span>
           </div>
           <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
-            Connect with verified hospitality leaders, lodge managers, and tourism peers across Zimbabwe.
+            Turn demonstrated capability into mentors, employers and opportunity across Zimbabwe’s tourism community.
           </p>
         </div>
 

@@ -52,6 +52,7 @@ export function IndustryDiscovery({ query, autoQuery }: { query: string; autoQue
         return () => clearTimeout(timer);
       }
     }
+    return undefined;
   }, [query]);
 
   // Initial load

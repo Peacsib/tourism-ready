@@ -74,7 +74,7 @@ Respond realistically, concisely, in character (1 to 3 conversational spoken sen
         const messages = [
           systemMessage,
           ...body.messages.slice(-30).map((m) => {
-            const role = m.role === "assistant" ? "assistant" : m.role === "system" ? "system" : "user";
+            const role: "assistant" | "user" = m.role === "assistant" ? "assistant" : "user";
             const text = String(m.content).slice(0, 4000);
             const atts = role === "user" && Array.isArray(m.attachments) ? m.attachments.slice(0, 5) : [];
             if (!atts.length) return { role, content: text };

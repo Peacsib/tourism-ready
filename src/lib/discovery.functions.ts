@@ -95,7 +95,7 @@ export const discoverProfessionals = createServerFn({ method: "POST" })
 
     if (!key) {
       const people = await fallbackFromDb();
-      return { people, error: people.length ? undefined : "External discovery isn't configured yet." };
+      return people.length ? { people } : { people, error: "External discovery isn't configured yet." };
     }
 
     const filters: Record<string, unknown> = { personHeadline: [data.query], countryName: location };
@@ -111,12 +111,12 @@ export const discoverProfessionals = createServerFn({ method: "POST" })
     } catch (e) {
       console.error("Enrich request failed", e);
       const people = await fallbackFromDb();
-      return { people, error: people.length ? undefined : "External discovery is temporarily unavailable." };
+      return people.length ? { people } : { people, error: "External discovery is temporarily unavailable." };
     }
     if (!res.ok) {
       console.error(`Enrich search failed [${res.status}]`);
       const people = await fallbackFromDb();
-      return { people, error: people.length ? undefined : "External discovery has reached its limit for now." };
+      return people.length ? { people } : { people, error: "External discovery has reached its limit for now." };
     }
     const body = (await res.json()) as { data?: { results?: Record<string, unknown>[] } };
     const people = (body.data?.results ?? []).map((p): DiscoveredPerson => {
