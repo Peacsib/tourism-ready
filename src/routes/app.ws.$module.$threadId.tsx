@@ -598,7 +598,7 @@ function RealPeople({ item, disabled }: { item: string; onPick: (q: string) => v
           <div className="mt-3 space-y-2">
             <label className="text-xs font-medium text-muted-foreground">Edit your introduction</label>
             <textarea value={draft} onChange={(e) => setDraft(e.target.value.slice(0, 1000))} rows={4} disabled={drafting}
-              className="w-full rounded-md border bg-background p-2 text-sm" placeholder={drafting ? "Nyanzvi is drafting…" : ""} />
+              className="w-full rounded-md border bg-background p-2 text-sm" placeholder={drafting ? "Your tutor is drafting…" : ""} />
             <div className="flex gap-1.5">
               <Button size="sm" disabled={drafting || sending || !draft.trim()} onClick={() => send(p)}>{sending ? "Sending…" : "Send Connection Request"}</Button>
               <Button size="sm" variant="ghost" onClick={() => setDraftFor(null)}>Cancel</Button>

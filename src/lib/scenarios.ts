@@ -62,7 +62,7 @@ export const SCENARIOS: Record<string, Scenario> = {
       title: "[NEW] Tourism Workforce: Front Office & Hospitality Role Play",
       code: "ZIM-HOSP-2031",
       image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
-      instructor: "Nyanzvi AI Mentor",
+      instructor: "Industry Simulator Mentor",
       instructorAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
     },
     initialMessage: "Hi, thanks for taking the time to speak with me. I need a room from the 12th to the 15th for an upcoming conference. My flight plans might change depending on the committee, so I need to be able to cancel or adjust. What room options and rates do you have available?",
@@ -142,7 +142,7 @@ export const SCENARIOS: Record<string, Scenario> = {
       title: "[NEW] Tourism Workforce: Front Office & Hospitality Role Play",
       code: "ZIM-HOSP-2031",
       image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
-      instructor: "Nyanzvi AI Mentor",
+      instructor: "Industry Simulator Mentor",
       instructorAvatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
     },
     initialMessage: "I booked and paid for this room three weeks ago. I've just driven six hours from Harare in the rain with my family, and you're telling me there is no room? What do you mean there's no room?",

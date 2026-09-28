@@ -70,7 +70,7 @@ function Opportunities() {
     <div>
       <PageHeader eyebrow="Careers" title="Opportunities" subtitle="Real tourism and hospitality jobs — posted by employers here, plus live listings found on Google Jobs."
         actions={<div className="flex gap-2">
-          <Button asChild variant="outline"><Link to="/app/ws/$module" params={{ module: "opportunities" }}><img src={nyanzviLogo} alt="" className="mr-1.5 h-4 w-4" /> Ask Nyanzvi Careers</Link></Button>
+          <Button asChild variant="outline"><Link to="/app/network"><img src={nyanzviLogo} alt="" className="mr-1.5 h-4 w-4" /> Open Professional Network</Link></Button>
           {profile?.role === "admin" && <Button variant="outline" disabled={syncing} onClick={async () => {
             setSyncing(true);
             try { const r = await doRefreshJobs(); if (!r.ok) toast.error(r.error); else toast.success("Jobs refreshed", { description: `${r.report.queries_run} searches · ${r.report.relevant} relevant · ${r.report.inserted} new · ${r.report.updated} updated` }); await load(); }
@@ -98,9 +98,9 @@ function Opportunities() {
             <div className="rounded-2xl border border-dashed bg-card/60 p-10 text-center">
               <Briefcase className="mx-auto h-8 w-8 text-gold" />
               <p className="mt-3 font-display text-lg font-semibold">{jobs.length === 0 ? "No opportunities posted yet" : "No opportunities match"}</p>
-              <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">{jobs.length === 0 ? "Employers on Tourism Workforce 2031 post real roles here. While you wait, Nyanzvi Careers can help you prepare applications and practise interviews." : "Try another search or type."}</p>
+              <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">{jobs.length === 0 ? "Employers on Tourism Workforce 2031 post real roles here. Use the Professional Network to prepare applications and practise interviews." : "Try another search or type."}</p>
               <div className="mt-4 flex justify-center gap-2">
-                <Button asChild variant="outline"><Link to="/app/ws/$module" params={{ module: "opportunities" }}>Prepare with Nyanzvi</Link></Button>
+                <Button asChild variant="outline"><Link to="/app/network">Prepare in Professional Network</Link></Button>
                 {isEmployer && jobs.length === 0 && <Button onClick={() => setPosting(true)}>Be the first employer to post</Button>}
               </div>
             </div>

@@ -39,7 +39,7 @@ function EventDetail() {
   const isSaved = !!saved.data?.has(e.id);
   const skills = COMPETENCIES.filter((c) => e.related_skills.includes(c.name));
   const courses = COURSES.filter((c) => c.skills.some((s) => e.related_skills.some((r) => r.toLowerCase().includes(s.toLowerCase()) || s.toLowerCase().includes(r.toLowerCase())))).slice(0, 3);
-  const nyanzviHref = `/app/ws/intelligence`;
+  const intelligenceHref = `/app/intelligence`;
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -68,7 +68,7 @@ function EventDetail() {
         <Button variant="outline" onClick={async () => { if (!user) return; await toggleSavedEvent(user.id, e.id, isSaved); qc.invalidateQueries({ queryKey: ["saved-events"] }); toast.success(isSaved ? "Removed from saved events" : "Event saved"); }}>
           {isSaved ? <><BookmarkCheck className="mr-1.5 h-4 w-4 text-gold" /> Saved</> : <><Bookmark className="mr-1.5 h-4 w-4" /> Save Event</>}
         </Button>
-        <Button asChild variant="outline"><a href={nyanzviHref}><img src={nyanzviLogo} alt="" className="mr-1.5 h-4 w-4" />Ask Nyanzvi</a></Button>
+        <Button asChild variant="outline"><a href={intelligenceHref}><img src={nyanzviLogo} alt="" className="mr-1.5 h-4 w-4" />Open Industry Intelligence</a></Button>
       </div>
 
       {e.ai_summary && <Panel className="mt-6 p-5"><p className="eyebrow mb-2">Summary</p><p className="text-sm">{e.ai_summary}</p></Panel>}

@@ -952,14 +952,14 @@ Respond realistically and concisely in 1 to 3 conversational sentences. Stay ful
               <div>
                 <p className="text-xs text-muted-foreground">Instructor</p>
                 <p className="font-semibold text-sm">
-                  {scenario.course?.instructor || "Nyanzvi AI Mentor"}
+                  {scenario.course?.instructor || "Industry Simulator Mentor"}
                 </p>
               </div>
             </div>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => toast.info("Nyanzvi AI Coach is ready for your session.")}
+              onClick={() => toast.info("Your Industry Simulator coach is ready for your session.")}
               className="rounded-lg text-[#5b32e5] border-[#5b32e5]/40 hover:bg-[#5b32e5]/10"
             >
               View Profile

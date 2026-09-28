@@ -1,9 +1,8 @@
 import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import nyanzviLogo from "@/assets/nyanzvi-logo.png";
 import { ReadinessLoop } from "@/components/tw/readiness-loop";
 import { useEffect, useState } from "react";
 import {
-  Bell, BookOpen, Bot, Briefcase, CalendarDays, CircleHelp, Compass, IdCard, LayoutGrid, LogOut, MapPin, Menu, Network, PanelLeft, PanelLeftClose, Radar, RotateCcw, Search, UserRound, Workflow, MessagesSquare } from "lucide-react";
+  Bell, Bot, CircleHelp, Compass, LogOut, Menu, Network, PanelLeft, PanelLeftClose, Radar, RotateCcw, Search, UserRound, Workflow } from "lucide-react";
 import { Avatar, Logo } from "@/components/tw/motifs";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -32,18 +31,10 @@ export const Route = createFileRoute("/app")({
 });
 
 export const NAV = [
-  { to: "/app", label: "Overview", icon: LayoutGrid, exact: true },
-  { to: "/app/tutor", label: "AI Tutor", icon: Bot, ws: "tutor" },
-  { to: "/app/simulations", label: "Simulations", icon: Workflow, assist: "simulations" },
-  { to: "/app/passport", label: "Skills Passport", icon: IdCard, assist: "passport" },
+  { to: "/app/tutor", label: "AI Smart Tutor", icon: Bot, assist: "tutor" },
+  { to: "/app/simulations", label: "Industry Simulator", icon: Workflow, assist: "simulations" },
   { to: "/app/intelligence", label: "Industry Intelligence", icon: Radar, assist: "intelligence" },
-  { to: "/app/network", label: "Network", icon: Network, assist: "network" },
-  { to: "/app/messages", label: "Messages", icon: MessagesSquare },
-  { to: "/app/opportunities", label: "Opportunities", icon: Briefcase, assist: "opportunities" },
-  { to: "/app/events", label: "Events", icon: CalendarDays },
-  { to: "/app/learning", label: "Learning", icon: BookOpen, assist: "learning" },
-  { to: "/app/hubs", label: "Field & Innovation Hubs", icon: MapPin, assist: "hubs" },
-  { to: "/app/profile", label: "Profile", icon: UserRound },
+  { to: "/app/network", label: "Professional Network", icon: Network, assist: "network" },
 ] as const;
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
@@ -178,16 +169,17 @@ function Notifications() {
   );
 }
 
-const ASSIST: { prefix: string; module: string; agent: string; prompt: string }[] = [
-  { prefix: "/app/simulations", module: "simulations", agent: "Nyanzvi Sim", prompt: "Explain my performance or rehearse a scenario" },
-  { prefix: "/app/passport", module: "passport", agent: "Nyanzvi Passport", prompt: "How can I improve this skill?" },
-  { prefix: "/app/intelligence", module: "intelligence", agent: "Nyanzvi Insight", prompt: "What does this mean for my career?" },
-  { prefix: "/app/network", module: "network", agent: "Nyanzvi Connect", prompt: "Who should I connect with?" },
-  { prefix: "/app/my-network", module: "network", agent: "Nyanzvi Connect", prompt: "Who should I connect with?" },
-  { prefix: "/app/opportunities", module: "opportunities", agent: "Nyanzvi Careers", prompt: "Prepare for an application" },
-  { prefix: "/app/events", module: "intelligence", agent: "Nyanzvi Insight", prompt: "Which events are relevant to me?" },
-  { prefix: "/app/learning", module: "learning", agent: "Nyanzvi Learn", prompt: "Need help with this topic?" },
-  { prefix: "/app/hubs", module: "hubs", agent: "Nyanzvi Field", prompt: "Which programme suits me?" },
+const ASSIST: { prefix: string; module: string; label: string; prompt: string }[] = [
+  { prefix: "/app/tutor", module: "tutor", label: "AI Smart Tutor", prompt: "Learn, review or prepare for your next shift" },
+  { prefix: "/app/simulations", module: "simulations", label: "Industry Simulator", prompt: "Explain my performance or rehearse a scenario" },
+  { prefix: "/app/passport", module: "tutor", label: "AI Smart Tutor", prompt: "How can I improve this skill?" },
+  { prefix: "/app/intelligence", module: "intelligence", label: "Industry Intelligence", prompt: "What does this mean for my career?" },
+  { prefix: "/app/network", module: "network", label: "Professional Network", prompt: "Who should I connect with?" },
+  { prefix: "/app/my-network", module: "network", label: "Professional Network", prompt: "Who should I connect with?" },
+  { prefix: "/app/opportunities", module: "network", label: "Professional Network", prompt: "Find and prepare for your next opportunity" },
+  { prefix: "/app/events", module: "intelligence", label: "Industry Intelligence", prompt: "Which events are relevant to me?" },
+  { prefix: "/app/learning", module: "tutor", label: "AI Smart Tutor", prompt: "Need help with this topic?" },
+  { prefix: "/app/hubs", module: "intelligence", label: "Industry Intelligence", prompt: "Which programme suits me?" },
 ];
 
 function AssistBar({ pathname }: { pathname: string }) {
@@ -195,8 +187,8 @@ function AssistBar({ pathname }: { pathname: string }) {
   if (!a) return null;
   return (
     <Link to="/app/ws/$module" params={{ module: a.module }} className="group mb-6 flex items-center gap-3 rounded-xl border border-cyan/30 bg-cyan/5 px-4 py-2.5 text-sm transition-colors hover:bg-cyan/10">
-      <img src={nyanzviLogo} alt="" className="h-6 w-6" />
-      <span className="min-w-0 flex-1 truncate"><span className="font-medium">{a.prompt}</span> <span className="text-muted-foreground">· Ask {a.agent}</span></span>
+      <span className="flex h-6 w-6 items-center justify-center rounded-md bg-cyan/15 text-cyan">↗</span>
+      <span className="min-w-0 flex-1 truncate"><span className="font-medium">{a.prompt}</span> <span className="text-muted-foreground">· Open {a.label}</span></span>
       <span className="text-xs font-medium text-cyan group-hover:translate-x-0.5 transition-transform">Open →</span>
     </Link>
   );

@@ -240,7 +240,7 @@ function NetworkPage() {
                 <MessageSquare className="h-3.5 w-3.5 text-cyan" /> Direct Messages
               </Link>
               <Link to="/app/ws/$module" params={{ module: "network" }} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors">
-                <img src={nyanzviLogo} alt="" className="h-3.5 w-3.5" /> Ask Nyanzvi Connect
+                <img src={nyanzviLogo} alt="" className="h-3.5 w-3.5" /> Open Professional Network
               </Link>
               {liEnabled && (
                 <button

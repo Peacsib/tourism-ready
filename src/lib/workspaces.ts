@@ -30,7 +30,7 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
   tutor: {
     id: "tutor",
     label: "AI Tutor",
-    agent: "Nyanzvi",
+    agent: "AI Smart Tutor",
     tagline: "Your expert in every shift.",
     capabilities: ["Explains concepts in plain language","Quizzes you and gives instant feedback","Builds study plans around your Skills Passport"],
     logo: nyanzviLogo,
@@ -49,7 +49,7 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
   simulations: {
     id: "simulations",
     label: "Simulations",
-    agent: "Nyanzvi Sim",
+    agent: "Industry Simulator",
     tagline: "Rehearse the moments that matter.",
     capabilities: ["Plays guests, managers and partners in character","Scores every response against service standards","Debriefs what to do differently next time"],
     icon: Workflow,
@@ -67,7 +67,7 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
   passport: {
     id: "passport",
     label: "Skills Passport",
-    agent: "Nyanzvi Passport",
+    agent: "Skills Passport",
     tagline: "Turn evidence into opportunity.",
     capabilities: ["Reads your verified skills and evidence","Finds the gap that matters most","Writes CV lines employers trust"],
     icon: IdCard,
@@ -85,7 +85,7 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
   intelligence: {
     id: "intelligence",
     label: "Industry Intelligence",
-    agent: "Nyanzvi Insight",
+    agent: "Industry Intelligence",
     tagline: "See where tourism is heading.",
     capabilities: ["Briefs you on trends shaping Zimbabwe","Shows which skills are rising","Connects signals to your career"],
     icon: Radar,
@@ -103,7 +103,7 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
   network: {
     id: "network",
     label: "Network",
-    agent: "Nyanzvi Connect",
+    agent: "Professional Network",
     tagline: "Your professional circle, curated.",
     capabilities: ["Finds mentors and peers who fit your goal", "Drafts warm, professional introductions", "Suggests posts that showcase your progress"],
     icon: Network,
@@ -121,7 +121,7 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
   opportunities: {
     id: "opportunities",
     label: "Opportunities",
-    agent: "Nyanzvi Careers",
+    agent: "Career Opportunities",
     tagline: "The right role, at the right moment.",
     capabilities: ["Matches openings to your verified skills", "Tailors applications and cover letters", "Runs mock interviews for each role"],
     icon: Briefcase,
@@ -139,7 +139,7 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
   learning: {
     id: "learning",
     label: "Learning",
-    agent: "Nyanzvi Learn",
+    agent: "AI Smart Tutor",
     tagline: "Lessons that fit between shifts.",
     capabilities: ["Teaches course lessons conversationally", "Checks understanding with quick questions", "Keeps your learning path on track"],
     icon: BookOpen,
@@ -157,7 +157,7 @@ export const WORKSPACES: Record<WorkspaceId, WorkspaceConfig> = {
   hubs: {
     id: "hubs",
     label: "Field & Innovation Hubs",
-    agent: "Nyanzvi Field",
+    agent: "Industry Intelligence",
     tagline: "Learning where tourism happens.",
     capabilities: ["Recommends field programmes near you", "Prepares you for community projects", "Helps you reflect on field experience"],
     icon: MapPin,
