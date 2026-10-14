@@ -12,6 +12,9 @@
 - [x] Learning progress/lessons and Hubs moved to database (PostgreSQL tables with seed data, migration 0008)
 
 ## Next
+- [x] Finish and validate the light PowerPoint against the FLC judging criteria.
+- [ ] Fix member-data security issues without breaking Network discovery (visibility decision required).
+- [ ] Apply the required package security update and verify the app.
 - Wire up Learning and Hubs pages to read from DB instead of static data.ts
 - Employer dashboard: shortlist candidates from verify page, download CSV.
 - Push notifications for connection requests (Supabase Realtime).
